@@ -61,37 +61,30 @@
     <!-- ===== JS ===== --> 
    <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbx3nwBSBPpC_kaksG98KjfQ8IDPfioc-j9JDULHqzqwSvJs-_sZmJ-H9xSFHFh8-oyh/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyA3a8VALFrKpv3lKIzZH5z3HhVzQzjVPip8CUkYRYMqtM1ahckea4aRQVy3G4ue6Vk/exec";
 
 let allData = [];
 
-/* LOAD */
+/* LOAD DATA */
 async function loadData(){
-
-  try{
-
+  try {
+    // Menggunakan .json() terus berbanding .text()
     const res = await fetch(API_URL);
-    const text = await res.text();
-
-    console.log("RAW:", text);
-
-    allData = JSON.parse(text);
-
+    allData = await res.json(); 
+    
+    console.log("Data Berjaya Diambil:", allData);
     renderTable();
-
-  }catch(err){
+  } catch(err) {
     console.log("LOAD ERROR:", err);
   }
 }
 
-/* RENDER */
+/* RENDER TABLE */
 function renderTable(){
-
   const tbody = document.getElementById("winnerTable");
   tbody.innerHTML = "";
 
   allData.forEach(item => {
-
     tbody.innerHTML += `
       <tr>
         <td>${item.place || ""}</td>
@@ -108,46 +101,48 @@ function renderTable(){
   });
 }
 
-/* ADD */
+/* ADD ITEM */
 async function addItem(){
-
-  const luckyNo = document.getElementById("luckyNo").value.trim();
+  const luckyNoInput = document.getElementById("luckyNo");
+  const luckyNo = luckyNoInput.value.trim();
 
   if(!luckyNo){
     alert("Enter lucky number");
     return;
   }
 
-  await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
+  // Hantar request ke API untuk tambah data
+  await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo), { mode: 'no-cors' });
 
-  document.getElementById("luckyNo").value = "";
-
-  loadData();
+  luckyNoInput.value = "";
+  
+  // Tunggu 1 saat untuk Google Sheets proses kemas kini sebelum load semula data
+  setTimeout(loadData, 1000);
 }
 
-/* DELETE */
+/* DELETE ROW */
 async function deleteRow(row){
-
-  await fetch(API_URL + "?action=delete&row=" + row);
-
-  loadData();
+  if(confirm("Adakah anda pasti mahu memadam baris ini?")) {
+    await fetch(API_URL + "?action=delete&row=" + row, { mode: 'no-cors' });
+    setTimeout(loadData, 1000);
+  }
 }
 
-/* EDIT */
+/* EDIT ROW */
 async function editRow(row){
-
   const newNo = prompt("New Lucky Number");
-
   if(!newNo) return;
 
-  await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo));
-
-  loadData();
+  await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo), { mode: 'no-cors' });
+  setTimeout(loadData, 1000);
 }
 
 /* INIT */
 loadData();
-setInterval(loadData, 5000);
+// Elakkan guna setInterval terlalu kerap (contoh: setiap 5 saat) agar tidak melanggar kuota harian Google API.
+// Sila aktifkan semula talian di bawah jika fungsi auto-refresh amat diperlukan:
+ setInterval(loadData, 5000); 
+
 
 </script>
 
