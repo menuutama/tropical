@@ -33,7 +33,7 @@
           <input type="text" id="luckyNo" placeholder="Enter Lucky No" oninput="toggleClearBtn()" onkeypress="if(event.key === 'Enter') addItem()"> 
           <button type="button" id="clearInputBtn" class="clear-btn" onclick="clearInput()">X</button>
         </div>
-        <button onclick="addItem()"> Add </button> 
+        <button id="addBtn" onclick="addItem()"> Add </button> 
       </div> 
       
       <!-- TABLE AREA --> 
@@ -70,33 +70,31 @@
       let currentPage = 1;
       const rowsPerPage = 10;
 
-      /* 1. MUAT TURUN & SUSUN DATA (SORT 1st -> 91st) */
+      /* SUSUN DATA UTILITI (Helper Function) */
+      function sortData(data) {
+        return data.sort((a, b) => {
+          const numA = parseInt((a.place || "").match(/\d+/)?.[0] || 999, 10);
+          const numB = parseInt((b.place || "").match(/\d+/)?.[0] || 999, 10);
+          return numA - numB; 
+        });
+      }
+
+      /* 1. MUAT TURUN & SUSUN DATA */
       async function loadData(){
         try {
           const res = await fetch(API_URL);
-          allData = await res.json(); 
-          
-          allData.sort((a, b) => {
-            const matchA = (a.place || "").match(/\d+/);
-            const matchB = (b.place || "").match(/\d+/);
-            
-            const numA = matchA ? parseInt(matchA[0], 10) : 999; 
-            const numB = matchB ? parseInt(matchB[0], 10) : 999;
-            
-            return numA - numB; 
-          });
-
+          const data = await res.json(); 
+          allData = sortData(data);
           renderTable();
         } catch(err) {
-          console.log("LOAD ERROR:", err);
+          console.error("LOAD ERROR:", err);
         }
       }
 
-      /* 2. PAPARKAN JADUAL MENGGUNA-HAD MAX 10 ROW */
+      /* 2. PAPARKAN JADUAL (Lebih Cepat Menggunakan Array.map) */
       function renderTable(){
         const tbody = document.getElementById("winnerTable");
-        tbody.innerHTML = "";
-
+        
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = startIndex + rowsPerPage;
         const paginatedItems = allData.slice(startIndex, endIndex);
@@ -107,21 +105,20 @@
           return;
         }
 
-        paginatedItems.forEach(item => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${item.place || ""}</td>
-              <td>${item.luckyNo || ""}</td>
-              <td>${item.winner || ""}</td>
-              <td>${item.company || ""}</td>
-              <td>${item.prize || ""}</td>
-              <td>
-                <button class="btn-edit" onclick="editRow('${item.row}')">Edit</button>
-                <button class="btn-danger" onclick="deleteRow('${item.row}')">Delete</button>
-              </td>
-            </tr>
-          `;
-        });
+        // Gunakan join() untuk elakkan manipulasi DOM berulang kali di dalam loop
+        tbody.innerHTML = paginatedItems.map(item => `
+          <tr>
+            <td>${item.place || ""}</td>
+            <td>${item.luckyNo || ""}</td>
+            <td>${item.winner || ""}</td>
+            <td>${item.company || ""}</td>
+            <td>${item.prize || ""}</td>
+            <td>
+              <button class="btn-edit" onclick="editRow('${item.row}')">Edit</button>
+              <button class="btn-danger" onclick="deleteRow('${item.row}')">Delete</button>
+            </td>
+          </tr>
+        `).join("");
 
         setupPagination();
       }
@@ -134,13 +131,15 @@
         const totalPages = Math.ceil(allData.length / rowsPerPage);
         if (totalPages <= 1) return;
 
+        const fragment = document.createDocumentFragment();
+
         // Button Previous
         const prevBtn = document.createElement("button");
         prevBtn.className = "pagination-btn";
         prevBtn.innerText = "| PREVIOUS |";
         prevBtn.disabled = currentPage === 1;
         prevBtn.onclick = () => { currentPage--; renderTable(); };
-        paginationContainer.appendChild(prevBtn);
+        fragment.appendChild(prevBtn);
 
         // Angka Halaman
         for (let i = 1; i <= totalPages; i++) {
@@ -148,7 +147,7 @@
           pageBtn.className = `pagination-btn ${currentPage === i ? 'active' : ''}`;
           pageBtn.innerText = i;
           pageBtn.onclick = () => { currentPage = i; renderTable(); };
-          paginationContainer.appendChild(pageBtn);
+          fragment.appendChild(pageBtn);
         }
 
         // Button Next
@@ -157,21 +156,25 @@
         nextBtn.innerText = "| NEXT |";
         nextBtn.disabled = currentPage === totalPages;
         nextBtn.onclick = () => { currentPage++; renderTable(); };
-        paginationContainer.appendChild(nextBtn);
+        fragment.appendChild(nextBtn);
+
+        paginationContainer.appendChild(fragment);
       }
 
-      /* 4. TAMBAH DATA (CARI & ISI DENGAN SEKATAN) */
+      /* 4. TAMBAH DATA (Kemas Kini Tempatan Tanpa Reload Seluruh Fail) */
       async function addItem(){
         const luckyNoInput = document.getElementById("luckyNo");
+        const addBtn = document.getElementById("addBtn");
         const luckyNo = luckyNoInput.value.trim();
 
-        if(!luckyNo){
-          alert("Enter lucky number");
-          return;
-        }
+        if(!luckyNo) return alert("Enter lucky number");
+
+        // Tukar status butang supaya user tak tekan berkali-kali
+        addBtn.disabled = true;
+        addBtn.innerText = "Adding...";
 
         try {
-          const res = await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
+          const res = await fetch(`${API_URL}?action=add&luckyNo=${encodeURIComponent(luckyNo)}`);
           const result = await res.json();
 
           if(result.status === "not_found") {
@@ -181,20 +184,31 @@
           } else if(result.status === "success") {
             luckyNoInput.value = "";
             toggleClearBtn();
-            setTimeout(loadData, 1000); 
+            
+            // OPTIMASI: Masukkan data baru terus ke dalam array tanpa melakukan fetch semula
+            if(result.data) {
+              allData.push(result.data);
+              allData = sortData(allData);
+              renderTable();
+            } else {
+              // Jika API tidak pulangkan objek data baharu, barulah muat semula secara paksa
+              await loadData();
+            }
           } else if(result.status === "error") {
             alert(result.message); 
           }
         } catch (error) {
           console.error("Ralat komunikasi API:", error);
+        } finally {
+          addBtn.disabled = false;
+          addBtn.innerText = "Add";
         }
       }
 
       /* 5. URUSAN BUTANG X CLEAR INPUT */
       function toggleClearBtn() {
         const inputVal = document.getElementById("luckyNo").value;
-        const clearBtn = document.getElementById("clearInputBtn");
-        clearBtn.style.display = inputVal.length > 0 ? "block" : "none";
+        document.getElementById("clearInputBtn").style.display = inputVal.length > 0 ? "block" : "none";
       }
 
       function clearInput() {
@@ -204,21 +218,53 @@
         toggleClearBtn();
       }
 
-      /* 6. PADAM DATA BARIS */
+      /* 6. PADAM DATA BARIS (Kemas Kini Tempatan) */
       async function deleteRow(row){
-        if(confirm("Adakah anda pasti mahu memadam baris ini?")) {
-          await fetch(API_URL + "?action=delete&row=" + row);
-          setTimeout(loadData, 1000);
+        if(!confirm("Adakah anda pasti mahu memadam baris ini?")) return;
+
+        try {
+          const res = await fetch(`${API_URL}?action=delete&row=${row}`);
+          const result = await res.json();
+          
+          if(result.status === "success") {
+            // OPTIMASI: Buang baris terus daripada array di browser
+            allData = allData.filter(item => String(item.row) !== String(row));
+            renderTable();
+          } else {
+            alert("Gagal memadam data di server.");
+          }
+        } catch (error) {
+          console.error("Error deleting:", error);
         }
       }
 
-      /* 7. EDIT DATA BARIS */
+      /* 7. EDIT DATA BARIS (Kemas Kini Tempatan) */
       async function editRow(row){
         const newNo = prompt("New Lucky Number:");
         if(!newNo) return;
 
-        await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo));
-        setTimeout(loadData, 1000);
+        try {
+          const res = await fetch(`${API_URL}?action=edit&row=${row}&luckyNo=${encodeURIComponent(newNo)}`);
+          const result = await res.json();
+
+          if(result.status === "success") {
+            // OPTIMASI: Kemas kini nilai di dalam memori browser terus
+            const index = allData.findIndex(item => String(item.row) === String(row));
+            if(index !== -1) {
+              allData[index].luckyNo = newNo;
+              // Jika server memulangkan data pemenang/syarikat yang baru selepas edit, masukkan di sini:
+              if(result.data) {
+                allData[index] = { ...allData[index], ...result.data };
+              }
+              allData = sortData(allData);
+              renderTable();
+            }
+          } else {
+            alert("Gagal mengedit data di server.");
+          }
+        } catch (error) {
+          console.error("Error editing:", error);
+        }
       }
 
       /* MULAKAN PROSES */
