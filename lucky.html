@@ -68,103 +68,181 @@
     <!-- ===== JAVASCRIPT LOGIC ===== --> 
     <script>
       const API_URL = "https://script.google.com/macros/s/AKfycbyq-IPzcpQmMsfxBGBouoJb4-dFHh6YMO_1jbJvIsNX6t2S471hsFyQlRaMyUIbaPpQ/exec";
-      let allData = [];
+let allData = [];
 
-      /* 1. MUAT TURUN DATA & URUS SUSUNAN (SORTING) */
-      async function loadData(){
-        try {
-          const res = await fetch(API_URL);
-          allData = await res.json(); 
-          
-          // ALGORITMA SORTING MENAIK KETAT (1st -> 91st)
-          allData.sort((a, b) => {
-            const matchA = (a.place || "").match(/\d+/);
-            const matchB = (b.place || "").match(/\d+/);
-            
-            const numA = matchA ? parseInt(matchA[0], 10) : 999; 
-            const numB = matchB ? parseInt(matchB[0], 10) : 999;
-            
-            return numA - numB; 
-          });
+// Tetapan Pagination
+let currentPage = 1;
+const rowsPerPage = 10;
 
-          console.log("Data Berjaya Disusun:", allData);
-          renderTable();
-        } catch(err) {
-          console.log("LOAD ERROR:", err);
-        }
-      }
+/* 1. MUAT TURUN DATA & URUS SUSUNAN (SORTING) */
+async function loadData(){
+  try {
+    const res = await fetch(API_URL);
+    allData = await res.json(); 
+    
+    // ALGORITMA SORTING MENAIK KETAT (1st -> 91st)
+    allData.sort((a, b) => {
+      const matchA = (a.place || "").match(/\d+/);
+      const matchB = (b.place || "").match(/\d+/);
+      
+      const numA = matchA ? parseInt(matchA, 10) : 999; 
+      const numB = matchB ? parseInt(matchB, 10) : 999;
+      
+      return numA - numB; 
+    });
 
-      /* 2. PAPARKAN DATA KEDALAM JADUAL */
-      function renderTable(){
-        const tbody = document.getElementById("winnerTable");
-        tbody.innerHTML = "";
+    console.log("Data Berjaya Disusun:", allData);
+    renderTable();
+  } catch(err) {
+    console.log("LOAD ERROR:", err);
+  }
+}
 
-        allData.forEach(item => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${item.place || ""}</td>
-              <td>${item.luckyNo || ""}</td>
-              <td>${item.winner || ""}</td>
-              <td>${item.company || ""}</td>
-              <td>${item.prize || ""}</td>
-              <td>
-                <button onclick="editRow('${item.row}')">Edit</button>
-                <button onclick="deleteRow('${item.row}')">Delete</button>
-              </td>
-            </tr>
-          `;
-        });
-      }
+/* 2. PAPARKAN DATA KEDALAM JADUAL (MAX 10 BARIS) */
+function renderTable(){
+  const tbody = document.getElementById("winnerTable");
+  tbody.innerHTML = "";
 
-      /* 3. TAMBAH DATA (CARI & ISI DENGAN SEKATAN) */
-      async function addItem(){
-        const luckyNoInput = document.getElementById("luckyNo");
-        const luckyNo = luckyNoInput.value.trim();
+  // Mengira indeks baris bermula dan berakhir mengikut halaman aktif
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  
+  // Memotong (slice) senarai penuh untuk ambil 10 baris sahaja
+  const paginatedItems = allData.slice(startIndex, endIndex);
 
-        if(!luckyNo){
-          alert("Enter lucky number");
-          return;
-        }
+  if (paginatedItems.length === 0 && currentPage > 1) {
+    currentPage--; // Kawalan automatik jika baris berkurang selepas padam data
+    renderTable();
+    return;
+  }
 
-        try {
-          const res = await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
-          const result = await res.json();
+  paginatedItems.forEach(item => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.place || ""}</td>
+        <td>${item.luckyNo || ""}</td>
+        <td>${item.winner || ""}</td>
+        <td>${item.company || ""}</td>
+        <td>${item.prize || ""}</td>
+        <td>
+          <button class="btn-edit" onclick="editRow('${item.row}')">Edit</button>
+          <button class="btn-danger" onclick="deleteRow('${item.row}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
 
-          // Semakan status ralat dari Google Sheets Backend
-          if(result.status === "not_found") {
-            alert("Lucky Draw No. Not Found"); 
-          } else if(result.status === "duplicate") {
-            alert("Nombor bertuah ini sudah pun didaftarkan!");
-          } else if(result.status === "success") {
-            luckyNoInput.value = "";
-            setTimeout(loadData, 1000); // Segarkan jadual selepas 1 saat
-          } else if(result.status === "error") {
-            alert(result.message); 
-          }
-        } catch (error) {
-          console.error("Ralat komunikasi API:", error);
-        }
-      }
+  // Bina butang penukar halaman di bawah jadual
+  setupPagination();
+}
 
-      /* 4. PADAM DATA BARIS */
-      async function deleteRow(row){
-        if(confirm("Adakah anda pasti mahu memadam baris ini?")) {
-          await fetch(API_URL + "?action=delete&row=" + row);
-          setTimeout(loadData, 1000);
-        }
-      }
+/* 3. BINA BUTANG PAGINATION IN THE CENTER */
+function setupPagination() {
+  const paginationContainer = document.getElementById("pagination");
+  paginationContainer.innerHTML = "";
 
-      /* 5. EDIT DATA BARIS */
-      async function editRow(row){
-        const newNo = prompt("New Lucky Number:");
-        if(!newNo) return;
+  const totalPages = Math.ceil(allData.length / rowsPerPage);
+  if (totalPages <= 1) return; // Sembunyikan bar butang jika data bawah 10 baris
 
-        await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo));
-        setTimeout(loadData, 1000);
-      }
+  // 1. Butang PREVIOUS
+  const prevBtn = document.createElement("button");
+  prevBtn.className = "pagination-btn";
+  prevBtn.innerText = "| PREVIOUS |";
+  prevBtn.disabled = currentPage === 1;
+  prevBtn.onclick = () => {
+    currentPage--;
+    renderTable();
+  };
+  paginationContainer.appendChild(prevBtn);
 
-      /* MULAKAN PROSES APABILA HALAMAN DIKUNJUNGI */
-      loadData();
+  // 2. Butang Angka Dinamik (Contoh: 1 2 3)
+  for (let i = 1; i <= totalPages; i++) {
+    const pageBtn = document.createElement("button");
+    pageBtn.className = `pagination-btn ${currentPage === i ? 'active' : ''}`;
+    pageBtn.innerText = i;
+    pageBtn.onclick = () => {
+      currentPage = i;
+      renderTable();
+    };
+    paginationContainer.appendChild(pageBtn);
+  }
+
+  // 3. Butang NEXT
+  const nextBtn = document.createElement("button");
+  nextBtn.className = "pagination-btn";
+  nextBtn.innerText = "| NEXT |";
+  nextBtn.disabled = currentPage === totalPages;
+  nextBtn.onclick = () => {
+    currentPage++;
+    renderTable();
+  };
+  paginationContainer.appendChild(nextBtn);
+}
+
+/* 4. TAMBAH DATA (CARI & ISI DENGAN SEKATAN) */
+async function addItem(){
+  const luckyNoInput = document.getElementById("luckyNo");
+  const luckyNo = luckyNoInput.value.trim();
+
+  if(!luckyNo){
+    alert("Enter lucky number");
+    return;
+  }
+
+  try {
+    const res = await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
+    const result = await res.json();
+
+    if(result.status === "not_found") {
+      alert("Lucky Draw No. Not Found"); 
+    } else if(result.status === "duplicate") {
+      alert("Nombor bertuah ini sudah pun didaftarkan!");
+    } else if(result.status === "success") {
+      luckyNoInput.value = "";
+      toggleClearBtn(); // Padam paparan butang X selepas data berjaya dihantar
+      setTimeout(loadData, 1000); 
+    } else if(result.status === "error") {
+      alert(result.message); 
+    }
+  } catch (error) {
+    console.error("Ralat komunikasi API:", error);
+  }
+}
+
+/* 5. FUNGSI URUSAN BUTANG CLEAR 'X' INDOOR INPUT */
+function toggleClearBtn() {
+  const inputVal = document.getElementById("luckyNo").value;
+  const clearBtn = document.getElementById("clearInputBtn");
+  // Papar butang X jika kotak input ada isi, sebaliknya sembunyikan
+  clearBtn.style.display = inputVal.length > 0 ? "block" : "none";
+}
+
+function clearInput() {
+  const inputField = document.getElementById("luckyNo");
+  inputField.value = "";
+  inputField.focus(); // Kekalkan fokus tetikus pada input box selepas padam
+  toggleClearBtn();
+}
+
+/* 6. PADAM DATA BARIS */
+async function deleteRow(row){
+  if(confirm("Adakah anda pasti mahu memadam baris ini?")) {
+    await fetch(API_URL + "?action=delete&row=" + row);
+    setTimeout(loadData, 1000);
+  }
+}
+
+/* 7. EDIT DATA BARIS */
+async function editRow(row){
+  const newNo = prompt("New Lucky Number:");
+  if(!newNo) return;
+
+  await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo));
+  setTimeout(loadData, 1000);
+}
+
+/* MULAKAN PROSES */
+loadData();
 
       /* ========================================================
    PENGESAN ENTER PADA INPUT KOTAK (KEYPRESS EVENT)
