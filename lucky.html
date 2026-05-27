@@ -157,6 +157,20 @@
 
       /* MULAKAN PROSES APABILA HALAMAN DIKUNJUNGI */
       loadData();
+
+      /* ========================================================
+   PENGESAN ENTER PADA INPUT KOTAK (KEYPRESS EVENT)
+   ======================================================== */
+document.getElementById("luckyNo").addEventListener("keypress", function(event) {
+  // Semak jika butang yang ditekan adalah 'Enter'
+  if (event.key === "Enter") {
+    // Menghalang aksi asal browser (jika ada)
+    event.preventDefault(); 
+    // Menjalankan fungsi asal addItem() yang anda gunakan sebelum ini
+    addItem(); 
+  }
+});
+
     </script>
   </body>
 </html>
