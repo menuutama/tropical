@@ -88,42 +88,27 @@
 
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbycoinemN8BPtJE7zyDBJ0L9Ou3Ls7lo-Y6cZgBTc_sl9CIrwLvcJEzet-XcI8QcbY/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyAxjZQ0eU6dwl7jbww5IU_EYbfqtlF31HYjBtD_ZUzwJGf1AwBFMm4FqdmonnMPxE/exec";
 
 let allData = [];
 
-/* LOAD DATA */
 async function loadData(){
 
   try{
 
     const response = await fetch(API_URL);
+    const text = await response.text();
 
-    allData = await response.json();
+    console.log("RAW:", text);
 
-    allData = allData.filter(item => {
-      return (item.luckyNo ?? "").toString().trim() !== "";
-    });
-
-    allData.sort((a,b)=>{
-
-      let A = parseInt(a.place) || 0;
-      let B = parseInt(b.place) || 0;
-
-      return A - B;
-
-    });
+    allData = JSON.parse(text);
 
     renderTable();
 
-  }catch(error){
-
-    console.log("LOAD ERROR:", error);
-
+  }catch(err){
+    console.log(err);
   }
-
 }
-
 /* RENDER TABLE */
 function renderTable(){
 
@@ -166,22 +151,13 @@ function renderTable(){
 /* ADD */
 async function addItem(){
 
-  const luckyNo =
-    document.getElementById("luckyNo")
-    .value.trim();
+  const luckyNo = document.getElementById("luckyNo").value.trim();
 
-  const response = await fetch(
-    API_URL +
-    "?action=add&luckyNo=" +
-    encodeURIComponent(luckyNo)
-  );
+  if(!luckyNo) return;
 
-  const result = await response.json();
-
-  console.log(result);
+  await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
 
   loadData();
-
 }
 
 /* DELETE */
