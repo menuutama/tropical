@@ -1,1 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Event System</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ===== HEADER NAV START ===== -->
+<div class="topnav">
+  <a href="index.html">MENU</a>
+  <a href="lucky.html">LUCKY DRAW</a>
+  <a href="pink.html">PINK AWARD</a>
+  <a href="service.html">LONG SERVICE</a>
+  <a href="media.html">VIDEO / IMAGE / SONG</a>
+</div>
+<!-- ===== HEADER NAV END ===== -->
+
+
+<!-- ===== CONTENT START ===== -->
+
+
+
+<!-- ===== CONTENT END ===== -->
+
+<!-- ===== FOOTER JS START ===== -->
+
+<script src="config.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
+<script src="api.js"></script>
+<script src="include.js"></script>
+
+</body>
+</html>
+
+<!-- ===== FOOTER JS END ===== -->
