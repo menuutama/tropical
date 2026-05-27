@@ -61,7 +61,7 @@
     <!-- ===== JS ===== --> 
    <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyELZDUI-AAVt3e0vWkjnr0vGonPAtiSeztXCwxHvu1JRQE119BnHLtsYiC_58Owabk/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzarjoBZD1mqbAJLURRHot4G1lX4wBiVmhKW5GKMcr18fujnxh_lmF9Vgmf-CYjDfh3/exec";
 
 let allData = [];
 
@@ -70,7 +70,16 @@ async function loadData(){
   try {
     const res = await fetch(API_URL);
     allData = await res.json(); 
-    console.log("Data Diterima:", allData);
+    
+    // --- FUNGSI SORTING (Small to Large mengikut Kolum A: 1st, 2nd, 3rd...) ---
+    allData.sort((a, b) => {
+      // Ekstrak nombor sahaja daripada string (contoh: "91st" jadi 91)
+      const numA = parseInt(a.place) || 0;
+      const numB = parseInt(b.place) || 0;
+      return numA - numB;
+    });
+
+    console.log("Data Tersusun:", allData);
     renderTable();
   } catch(err) {
     console.log("LOAD ERROR:", err);
@@ -99,26 +108,30 @@ function renderTable(){
   });
 }
 
-/* ADD ITEM */
+/* ADD ITEM (Kini bertindak sebagai fungsi Find & Fill) */
 async function addItem(){
   const luckyNoInput = document.getElementById("luckyNo");
   const luckyNo = luckyNoInput.value.trim();
 
   if(!luckyNo){
-    alert("Please enter a lucky number");
+    alert("Enter lucky number");
     return;
   }
 
-  // Menghantar data ke API
+  // Hantar request semakan ke API backend
   const res = await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
   const result = await res.json();
 
-  if(result.status === "duplicate"){
-    alert("Lucky number sudah wujud!");
-  } else {
+  // --- SEMAKAN RESPONS RESPOND DARIPADA BACKEND ---
+  if(result.status === "not_found") {
+    alert("Lucky Draw No. Not Found"); // Pop-up amaran jika tiada dalam Sheet List
+  } else if(result.status === "duplicate") {
+    alert("Nombor ini sudah dimasukkan ke dalam senarai pemenang!");
+  } else if(result.status === "success") {
     luckyNoInput.value = "";
-    // Tunggu sebentar untuk Google Sheet selesai kemas kini data, kemudian refresh web table
-    setTimeout(loadData, 1000);
+    setTimeout(loadData, 1000); // Segarkan jadual selepas 1 saat
+  } else {
+    alert("Ralat sistem berlaku.");
   }
 }
 
@@ -141,6 +154,7 @@ async function editRow(row){
 
 /* INIT */
 loadData();
+
 </script>
 
   </body>
