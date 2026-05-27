@@ -7,20 +7,27 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Poppins', Arial, sans-serif;
-  /* Latar belakang gelap premium dengan tona biru gelap malam malam (sesuai gambar tema) */
   background: radial-gradient(circle at center, #0c1f40 0%, #050d1a 100%);
   color: #ffffff;
   min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Memastikan semua elemen dikira saiznya termasuk padding */
+*, *:before, *:after {
+  box-sizing: border-box;
 }
 
 /* ========================================================
-   NAVIGATION BAR (Premium Gradient & Glow)
+   NAVIGATION BAR (Responsive Wrap)
    ======================================================== */
 .topnav {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  padding: 12px;
+  align-items: center;
+  flex-wrap: wrap; /* Membolehkan menu turun ke bawah jika skrin phone sempit */
+  gap: 8px;
+  padding: 10px;
   background: linear-gradient(90deg, rgba(6, 20, 46, 0.95), rgba(18, 60, 122, 0.95));
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 111, 255, 0.2);
@@ -28,53 +35,52 @@ body {
   top: 0;
   z-index: 1000;
   border-bottom: 1px solid rgba(29, 111, 255, 0.2);
+  width: 100%;
 }
 
 .topnav a {
   color: #b0c9f0;
   text-decoration: none;
   font-weight: 500;
-  font-size: 14px;
-  letter-spacing: 1px;
-  padding: 10px 20px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  padding: 8px 14px;
   border-radius: 8px;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 .topnav a:hover {
   color: #ffffff;
   background: rgba(29, 111, 255, 0.2);
   box-shadow: 0 0 15px rgba(29, 111, 255, 0.4);
-  transform: translateY(-1px);
 }
 
 /* ========================================================
-   HERO HEADER (Tropical Luxury Theme)
+   HERO HEADER (Fluid Scaling)
    ======================================================== */
 .hero-header {
   width: 100%;
   text-align: center;
-  padding: 50px 20px 20px;
-  box-sizing: border-box;
+  padding: 40px 15px 10px;
 }
 
-/* Tulisan TROPICAL mengikut warna merah menyerlah seperti gambar logo */
+/* Guna fon berskala mengikut saiz paparan (vw / viewport width) */
 .hero-header h1 {
   margin: 0;
-  font-size: 55px;
+  font-size: clamp(32px, 5vw, 55px); /* Saiz automatik: Min 32px, Max 55px */
   font-weight: 700;
-  letter-spacing: 6px;
+  letter-spacing: 4px;
   color: #ff3344;
   text-shadow: 0 0 20px rgba(255, 51, 68, 0.4);
 }
 
-/* Tulisan Lucky Draw System menggunakan gaya tulisan "Blue Vibes" neon menyala */
 .hero-header h2 {
-  margin: 10px 0 0;
-  font-size: 38px;
+  margin: 8px 0 0;
+  font-size: clamp(20px, 3.5vw, 38px); /* Saiz automatik: Min 20px, Max 38px */
   font-weight: 600;
   font-style: italic;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   background: linear-gradient(135deg, #7ad3ff 0%, #1d6fff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -88,15 +94,14 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
 }
 
 /* ========================================================
-   INPUT AREA (Luxury Search & Add Box)
+   INPUT AREA (Responsive Input + Button)
    ======================================================== */
 .input-box {
   width: 100%;
@@ -104,42 +109,40 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin: 30px auto;
-  padding: 10px;
+  gap: 10px;
+  margin: 20px auto 30px;
+  padding: 0 10px;
 }
 
 .input-box input {
   flex: 1;
-  padding: 14px 20px;
+  width: 100%;
+  padding: 12px 16px;
   border: 1px solid rgba(77, 163, 255, 0.3);
   border-radius: 12px;
   background: rgba(16, 40, 79, 0.6);
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   font-family: 'Poppins', sans-serif;
   outline: none;
   backdrop-filter: blur(5px);
   transition: all 0.3s ease;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .input-box input:focus {
   border-color: #4da3ff;
-  box-shadow: 0 0 15px rgba(77, 163, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 15px rgba(77, 163, 255, 0.4);
   background: rgba(16, 40, 79, 0.9);
 }
 
-/* Butang Add dengan kesan kilauan mewah */
 .input-box button {
-  padding: 14px 28px;
+  padding: 12px 24px;
   border: none;
   border-radius: 12px;
   background: linear-gradient(135deg, #1d6fff 0%, #004ecc 100%);
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(29, 111, 255, 0.4);
@@ -149,15 +152,10 @@ body {
 .input-box button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(77, 163, 255, 0.6);
-  background: linear-gradient(135deg, #4da3ff 0%, #1d6fff 100%);
-}
-
-.input-box button:active {
-  transform: translateY(1px);
 }
 
 /* ========================================================
-   TABLE DESIGN (Glassmorphism Effect)
+   TABLE DESIGN (Fluid & Anti-Break Mobile)
    ======================================================== */
 .main-content {
   width: 100%;
@@ -172,28 +170,30 @@ body {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 20px;
-  padding: 20px;
-  box-sizing: border-box;
+  padding: 15px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  overflow-x: auto;
+  overflow-x: auto; /* Wajib ada: Supaya table boleh diskrol ke kiri-kanan pada skrin phone tanpa merosakkan susun atur web */
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 8px; /* Memberi ruang terapung antara baris */
+  border-spacing: 0 8px;
   margin: 0;
+  min-width: 600px; /* Mengekalkan kelebaran minimum jadual di phone supaya tulisan tidak mengecil melampau */
 }
 
 th {
   background: rgba(15, 45, 94, 0.6);
   color: #8bc4ff;
   font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 1.5px;
+  font-size: 13px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  padding: 16px;
+  padding: 14px;
   border-bottom: 2px solid rgba(77, 163, 255, 0.3);
+  white-space: nowrap;
 }
 
 th:first-child { border-top-left-radius: 12px; }
@@ -202,15 +202,14 @@ th:last-child { border-top-right-radius: 12px; }
 td {
   background: rgba(16, 40, 79, 0.4);
   color: #e0e9f5;
-  font-size: 15px;
-  padding: 14px;
+  font-size: 14px;
+  padding: 12px;
   text-align: center;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  transition: all 0.2s ease;
+  white-space: nowrap; /* Mengelakkan teks patah ke baris bawah di skrin kecil */
 }
 
-/* Melengkungkan sudut hujung baris data */
 tr td:first-child { 
   border-left: 1px solid rgba(255, 255, 255, 0.03);
   border-top-left-radius: 10px; 
@@ -222,86 +221,83 @@ tr td:last-child {
   border-bottom-right-radius: 10px; 
 }
 
-/* Kesan pencahayaan baris jadual apabila disentuh (Hover effect) */
 tr:hover td {
   background: rgba(29, 111, 255, 0.15);
   color: #ffffff;
   border-color: rgba(77, 163, 255, 0.3);
-  transform: scale(1.002);
 }
 
 /* ========================================================
    ACTION BUTTONS INSIDE TABLE
    ======================================================== */
 table button {
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 500;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin: 0 4px;
+  margin: 2px;
   transition: all 0.2s ease;
   font-family: 'Poppins', sans-serif;
+  display: inline-block;
 }
 
-/* Warna butang Edit (Emas Luksuri) */
 table button:nth-child(1) {
   background: linear-gradient(135deg, #f5b041 0%, #ca8a22 100%);
   color: #000000;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(245, 176, 65, 0.3);
 }
 
-table button:nth-child(1):hover {
-  background: linear-gradient(135deg, #f7c26e 0%, #f5b041 100%);
-  box-shadow: 0 4px 12px rgba(245, 176, 65, 0.5);
-  transform: translateY(-1px);
-}
-
-/* Warna butang Delete (Merah Garang) */
 table button:nth-child(2) {
   background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
-table button:nth-child(2):hover {
-  background: linear-gradient(135deg, #ec7063 0%, #e74c3c 100%);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5);
+table button:hover {
   transform: translateY(-1px);
+  filter: brightness(1.1);
 }
 
 /* ========================================================
-   CARDS & MODALS (Sekiranya digunakan pada halaman lain)
+   📱 MEDIA QUERIES (Saringan Khusus Untuk Skrin Telefon)
    ======================================================== */
-.card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-}
+@media screen and (max-width: 600px) {
+  /* Menu Navigasi bertukar saiz kecil sedikit */
+  .topnav {
+    padding: 8px;
+    gap: 5px;
+  }
+  
+  .topnav a {
+    padding: 6px 10px;
+    font-size: 12px;
+    flex: 1 1 calc(50% - 10px); /* Memecahkan menu kepada 2 kolum pada skrin kecil */
+    text-align: center;
+  }
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(5px);
-  z-index: 2000;
-}
+  .hero-header {
+    padding: 25px 10px 5px;
+  }
 
-.modal-content {
-  background: radial-gradient(circle at top, #0f2d5e 0%, #07152d 100%);
-  border: 1px solid rgba(77, 163, 255, 0.3);
-  width: 100%;
-  max-width: 350px;
-  margin: 15% auto;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  /* Kotak carian mengambil ruang penuh telefon */
+  .input-box {
+    flex-direction: column; /* Input dan butang disusun menegak */
+    width: 100%;
+    padding: 0;
+  }
+
+  .input-box input {
+    width: 100%;
+  }
+
+  .input-box button {
+    width: 100%; /* Butang jadi lebar penuh di phone supaya senang ditekan */
+    padding: 12px;
+  }
+
+  .table-wrapper {
+    padding: 10px;
+    border-radius: 12px;
+  }
 }
