@@ -63,18 +63,18 @@
     
     <!-- ===== JAVASCRIPT LOGIC ===== --> 
     <script>
-      const API_URL = "https://script.google.com/macros/s/AKfycbwkCmO3GyBgkaOgXpeaXc5dQuwLKbLy0NZCSmNr9GcY9AhZMD3VjcRgyZwfZYNUagbn/exec";
+      const API_URL = "https://script.google.com/macros/s/AKfycbyEIR8saftBM9WH1l-CCbF7d0KdUsbrlmmSfjT-pHcKKgx7B2u6bdWUWYSItL-rJ1bp/exec";
       let allData = [];
 
       // Konfigurasi Pagination
       let currentPage = 1;
       const rowsPerPage = 10;
 
-      /* SUSUN DATA UTILITI (Helper Function) */
+      /* FUNGSI SUSUN DATA (Helper) */
       function sortData(data) {
         return data.sort((a, b) => {
-          const numA = parseInt((a.place || "").match(/\d+/)?.[0] || 999, 10);
-          const numB = parseInt((b.place || "").match(/\d+/)?.[0] || 999, 10);
+          const numA = parseInt((a.place || "").match(/\d+/) ? (a.place || "").match(/\d+/)[0] : 999, 10);
+          const numB = parseInt((b.place || "").match(/\d+/) ? (b.place || "").match(/\d+/)[0] : 999, 10);
           return numA - numB; 
         });
       }
@@ -91,7 +91,7 @@
         }
       }
 
-      /* 2. PAPARKAN JADUAL (Lebih Cepat Menggunakan Array.map) */
+      /* 2. PAPARKAN JADUAL SECARA PUKAL */
       function renderTable(){
         const tbody = document.getElementById("winnerTable");
         
@@ -105,7 +105,6 @@
           return;
         }
 
-        // Gunakan join() untuk elakkan manipulasi DOM berulang kali di dalam loop
         tbody.innerHTML = paginatedItems.map(item => `
           <tr>
             <td>${item.place || ""}</td>
@@ -133,7 +132,6 @@
 
         const fragment = document.createDocumentFragment();
 
-        // Button Previous
         const prevBtn = document.createElement("button");
         prevBtn.className = "pagination-btn";
         prevBtn.innerText = "| PREVIOUS |";
@@ -141,7 +139,6 @@
         prevBtn.onclick = () => { currentPage--; renderTable(); };
         fragment.appendChild(prevBtn);
 
-        // Angka Halaman
         for (let i = 1; i <= totalPages; i++) {
           const pageBtn = document.createElement("button");
           pageBtn.className = `pagination-btn ${currentPage === i ? 'active' : ''}`;
@@ -150,7 +147,6 @@
           fragment.appendChild(pageBtn);
         }
 
-        // Button Next
         const nextBtn = document.createElement("button");
         nextBtn.className = "pagination-btn";
         nextBtn.innerText = "| NEXT |";
@@ -161,7 +157,7 @@
         paginationContainer.appendChild(fragment);
       }
 
-      /* 4. TAMBAH DATA (Kemas Kini Tempatan Tanpa Reload Seluruh Fail) */
+      /* 4. TAMBAH DATA (Kemas Kini Tempatan + Auto Padam Input Jika Salah) */
       async function addItem(){
         const luckyNoInput = document.getElementById("luckyNo");
         const addBtn = document.getElementById("addBtn");
@@ -169,7 +165,6 @@
 
         if(!luckyNo) return alert("Enter lucky number");
 
-        // Tukar status butang supaya user tak tekan berkali-kali
         addBtn.disabled = true;
         addBtn.innerText = "Adding...";
 
@@ -179,23 +174,27 @@
 
           if(result.status === "not_found") {
             alert("Lucky Draw No. Not Found"); 
+            clearInput(); // <--- Fungsi Tambahan: Auto padam & fokus semula
           } else if(result.status === "duplicate") {
             alert("Nombor bertuah ini sudah pun didaftarkan!");
+            clearInput(); // <--- Fungsi Tambahan: Auto padam & fokus semula
           } else if(result.status === "success") {
             luckyNoInput.value = "";
             toggleClearBtn();
             
-            // OPTIMASI: Masukkan data baru terus ke dalam array tanpa melakukan fetch semula
+            // Mengemas kini data lokal jika ada respon data penuh dari server
             if(result.data) {
+              // Jika data sedia ada mempunyai row yang sama (kes ganti template kosong), buang yang lama
+              allData = allData.filter(item => String(item.row) !== String(result.data.row));
               allData.push(result.data);
               allData = sortData(allData);
               renderTable();
             } else {
-              // Jika API tidak pulangkan objek data baharu, barulah muat semula secara paksa
               await loadData();
             }
           } else if(result.status === "error") {
             alert(result.message); 
+            clearInput();
           }
         } catch (error) {
           console.error("Ralat komunikasi API:", error);
@@ -218,7 +217,7 @@
         toggleClearBtn();
       }
 
-      /* 6. PADAM DATA BARIS (Kemas Kini Tempatan) */
+      /* 6. PADAM DATA BARIS (Kemas Kini Tempatan - Pantas Tanpa Reload) */
       async function deleteRow(row){
         if(!confirm("Adakah anda pasti mahu memadam baris ini?")) return;
 
@@ -227,7 +226,7 @@
           const result = await res.json();
           
           if(result.status === "success") {
-            // OPTIMASI: Buang baris terus daripada array di browser
+            // Padam terus dari memori array browser
             allData = allData.filter(item => String(item.row) !== String(row));
             renderTable();
           } else {
@@ -238,7 +237,7 @@
         }
       }
 
-      /* 7. EDIT DATA BARIS (Kemas Kini Tempatan) */
+      /* 7. EDIT DATA BARIS (Kemas Kini Tempatan - Pantas Tanpa Reload) */
       async function editRow(row){
         const newNo = prompt("New Lucky Number:");
         if(!newNo) return;
@@ -248,13 +247,12 @@
           const result = await res.json();
 
           if(result.status === "success") {
-            // OPTIMASI: Kemas kini nilai di dalam memori browser terus
             const index = allData.findIndex(item => String(item.row) === String(row));
             if(index !== -1) {
-              allData[index].luckyNo = newNo;
-              // Jika server memulangkan data pemenang/syarikat yang baru selepas edit, masukkan di sini:
               if(result.data) {
                 allData[index] = { ...allData[index], ...result.data };
+              } else {
+                allData[index].luckyNo = newNo;
               }
               allData = sortData(allData);
               renderTable();
