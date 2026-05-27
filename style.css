@@ -13,19 +13,18 @@ body {
   box-sizing: border-box;
 }
 
-/* Memastikan semua elemen dikira saiznya termasuk padding */
 *, *:before, *:after {
   box-sizing: border-box;
 }
 
 /* ========================================================
-   NAVIGATION BAR (Responsive Wrap)
+   NAVIGATION BAR
    ======================================================== */
 .topnav {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap; /* Membolehkan menu turun ke bawah jika skrin phone sempit */
+  flex-wrap: wrap;
   gap: 8px;
   padding: 10px;
   background: linear-gradient(90deg, rgba(6, 20, 46, 0.95), rgba(18, 60, 122, 0.95));
@@ -57,7 +56,7 @@ body {
 }
 
 /* ========================================================
-   HERO HEADER (Fluid Scaling)
+   HERO HEADER
    ======================================================== */
 .hero-header {
   width: 100%;
@@ -65,10 +64,9 @@ body {
   padding: 40px 15px 10px;
 }
 
-/* Guna fon berskala mengikut saiz paparan (vw / viewport width) */
 .hero-header h1 {
   margin: 0;
-  font-size: clamp(32px, 5vw, 55px); /* Saiz automatik: Min 32px, Max 55px */
+  font-size: clamp(32px, 5vw, 55px);
   font-weight: 700;
   letter-spacing: 4px;
   color: #ff3344;
@@ -77,7 +75,7 @@ body {
 
 .hero-header h2 {
   margin: 8px 0 0;
-  font-size: clamp(20px, 3.5vw, 38px); /* Saiz automatik: Min 20px, Max 38px */
+  font-size: clamp(20px, 3.5vw, 38px);
   font-weight: 600;
   font-style: italic;
   letter-spacing: 1px;
@@ -88,7 +86,7 @@ body {
 }
 
 /* ========================================================
-   MAIN LAYOUT CONTAINER
+   CONTAINER & INPUT AREA (FIXED: "X" Indoor Input Box)
    ======================================================== */
 .container {
   width: 100%;
@@ -100,24 +98,27 @@ body {
   align-items: center;
 }
 
-/* ========================================================
-   INPUT AREA (Responsive Input + Button)
-   ======================================================== */
 .input-box {
   width: 100%;
   max-width: 500px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin: 20px auto 30px;
   padding: 0 10px;
 }
 
-.input-box input {
+.input-container {
+  position: relative;
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.input-container input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 40px 12px 16px !important; /* Ruang kanan untuk butang X */
   border: 1px solid rgba(77, 163, 255, 0.3);
   border-radius: 12px;
   background: rgba(16, 40, 79, 0.6);
@@ -129,13 +130,40 @@ body {
   transition: all 0.3s ease;
 }
 
-.input-box input:focus {
+.input-container input:focus {
   border-color: #4da3ff;
   box-shadow: 0 0 15px rgba(77, 163, 255, 0.4);
   background: rgba(16, 40, 79, 0.9);
 }
 
-.input-box button {
+/* Butang X Terapung di Dalam Input Box */
+.clear-btn {
+  position: absolute;
+  right: 14px;
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  top: 50%;
+  transform: translateY(-50%) !important;
+  display: none;
+  z-index: 5;
+  transition: color 0.2s ease;
+  width: auto !important;
+  height: auto !important;
+}
+
+.clear-btn:hover {
+  color: #ff3344 !important;
+  text-shadow: 0 0 10px rgba(255, 51, 68, 0.6);
+}
+
+.input-box button:not(.clear-btn) {
   padding: 12px 24px;
   border: none;
   border-radius: 12px;
@@ -147,15 +175,16 @@ body {
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(29, 111, 255, 0.4);
   white-space: nowrap;
+  height: 46px;
 }
 
-.input-box button:hover {
+.input-box button:not(.clear-btn):hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(77, 163, 255, 0.6);
 }
 
 /* ========================================================
-   TABLE DESIGN (Fluid & Anti-Break Mobile)
+   TABLE DESIGN & PAGINATION
    ======================================================== */
 .main-content {
   width: 100%;
@@ -167,12 +196,11 @@ body {
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 20px;
   padding: 15px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  overflow-x: auto; /* Wajib ada: Supaya table boleh diskrol ke kiri-kanan pada skrin phone tanpa merosakkan susun atur web */
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -181,7 +209,7 @@ table {
   border-collapse: separate;
   border-spacing: 0 8px;
   margin: 0;
-  min-width: 600px; /* Mengekalkan kelebaran minimum jadual di phone supaya tulisan tidak mengecil melampau */
+  min-width: 600px;
 }
 
 th {
@@ -207,7 +235,7 @@ td {
   text-align: center;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  white-space: nowrap; /* Mengelakkan teks patah ke baris bawah di skrin kecil */
+  white-space: nowrap;
 }
 
 tr td:first-child { 
@@ -227,9 +255,6 @@ tr:hover td {
   border-color: rgba(77, 163, 255, 0.3);
 }
 
-/* ========================================================
-   ACTION BUTTONS INSIDE TABLE
-   ======================================================== */
 table button {
   padding: 6px 12px;
   font-size: 12px;
@@ -243,101 +268,18 @@ table button {
   display: inline-block;
 }
 
-table button:nth-child(1) {
-  background: linear-gradient(135deg, #f5b041 0%, #ca8a22 100%);
-  color: #000000;
+.btn-edit, table button:nth-child(1) {
+  background: linear-gradient(135deg, #f5b041 0%, #ca8a22 100%) !important;
+  color: #000000 !important;
   font-weight: 600;
 }
 
-table button:nth-child(2) {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  color: #ffffff;
+.btn-danger, table button:nth-child(2) {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+  color: #ffffff !important;
 }
 
-table button:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.1);
-}
-
-/* ========================================================
-   📱 MEDIA QUERIES (Saringan Khusus Untuk Skrin Telefon)
-   ======================================================== */
-@media screen and (max-width: 600px) {
-  /* Menu Navigasi bertukar saiz kecil sedikit */
-  .topnav {
-    padding: 8px;
-    gap: 5px;
-  }
-  
-  .topnav a {
-    padding: 6px 10px;
-    font-size: 12px;
-    flex: 1 1 calc(50% - 10px); /* Memecahkan menu kepada 2 kolum pada skrin kecil */
-    text-align: center;
-  }
-
-  .hero-header {
-    padding: 25px 10px 5px;
-  }
-
-  /* Kotak carian mengambil ruang penuh telefon */
-  .input-box {
-    flex-direction: column; /* Input dan butang disusun menegak */
-    width: 100%;
-    padding: 0;
-  }
-
-  .input-box input {
-    width: 100%;
-  }
-
-  .input-box button {
-    width: 100%; /* Butang jadi lebar penuh di phone supaya senang ditekan */
-    padding: 12px;
-  }
-
-  .table-wrapper {
-    padding: 10px;
-    border-radius: 12px;
-  }
-   /* ========================================================
-   GAYA BUTANG PANGKAH 'X' INDOOR INPUT BOX
-   ======================================================== */
-.input-container {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.input-container input {
-  padding-right: 40px !important; /* Beri ruang supaya teks tidak bertindih dengan butang X */
-}
-
-.clear-btn {
-  position: absolute;
-  right: 12px;
-  background: transparent !important;
-  border: none !important;
-  color: #8bc4ff !important;
-  font-size: 16px !important;
-  font-weight: bold !important;
-  cursor: pointer;
-  padding: 4px !important;
-  box-shadow: none !important;
-  transform: none !important;
-  display: none; /* Disembunyikan secara lalai, muncul apabila ada teks */
-}
-
-.clear-btn:hover {
-  color: #ff3344 !important;
-  text-shadow: 0 0 10px rgba(255, 51, 68, 0.6);
-}
-
-/* ========================================================
-   GAYA BUTANG PAGINATION (CENTERED & LUXURY)
-   ======================================================== */
+/* Pagination Container (Centered) */
 .pagination-container {
   display: flex;
   justify-content: center;
@@ -357,13 +299,11 @@ table button:hover {
   border-radius: 8px !important;
   cursor: pointer;
   transition: all 0.3s ease !important;
-  box-shadow: none !important;
 }
 
 .pagination-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #1d6fff 0%, #004ecc 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(29, 111, 255, 0.4) !important;
   border-color: #4da3ff !important;
 }
 
@@ -372,13 +312,35 @@ table button:hover {
   color: #ffffff !important;
   border-color: #4da3ff !important;
   font-weight: 700 !important;
-  box-shadow: 0 0 10px rgba(77, 163, 255, 0.4) !important;
 }
 
 .pagination-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
+/* ========================================================
+   📱 RESPONSIVE MEDIA QUERIES
+   ======================================================== */
+@media screen and (max-width: 600px) {
+  .topnav a {
+    padding: 6px 10px;
+    font-size: 12px;
+    flex: 1 1 calc(50% - 10px);
+  }
+
+  .input-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .input-container {
+    width: 100%;
+  }
+
+  .input-box button:not(.clear-btn) {
+    width: 100%;
+    height: 46px;
+  }
 }
