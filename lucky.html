@@ -61,18 +61,16 @@
     <!-- ===== JS ===== --> 
    <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyA3a8VALFrKpv3lKIzZH5z3HhVzQzjVPip8CUkYRYMqtM1ahckea4aRQVy3G4ue6Vk/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzv27zOYu8SHyMg0XbTPfM72r8tyI4FvbIg7XB0ajKs4Gle9i2wXap187Uv9-q7HQX9/exec";
 
 let allData = [];
 
 /* LOAD DATA */
 async function loadData(){
   try {
-    // Menggunakan .json() terus berbanding .text()
     const res = await fetch(API_URL);
     allData = await res.json(); 
-    
-    console.log("Data Berjaya Diambil:", allData);
+    console.log("Data Diterima:", allData);
     renderTable();
   } catch(err) {
     console.log("LOAD ERROR:", err);
@@ -107,43 +105,42 @@ async function addItem(){
   const luckyNo = luckyNoInput.value.trim();
 
   if(!luckyNo){
-    alert("Enter lucky number");
+    alert("Please enter a lucky number");
     return;
   }
 
-  // Hantar request ke API untuk tambah data
-  await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo), { mode: 'no-cors' });
+  // Menghantar data ke API
+  const res = await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
+  const result = await res.json();
 
-  luckyNoInput.value = "";
-  
-  // Tunggu 1 saat untuk Google Sheets proses kemas kini sebelum load semula data
-  setTimeout(loadData, 1000);
+  if(result.status === "duplicate"){
+    alert("Lucky number sudah wujud!");
+  } else {
+    luckyNoInput.value = "";
+    // Tunggu sebentar untuk Google Sheet selesai kemas kini data, kemudian refresh web table
+    setTimeout(loadData, 1000);
+  }
 }
 
 /* DELETE ROW */
 async function deleteRow(row){
   if(confirm("Adakah anda pasti mahu memadam baris ini?")) {
-    await fetch(API_URL + "?action=delete&row=" + row, { mode: 'no-cors' });
+    await fetch(API_URL + "?action=delete&row=" + row);
     setTimeout(loadData, 1000);
   }
 }
 
 /* EDIT ROW */
 async function editRow(row){
-  const newNo = prompt("New Lucky Number");
+  const newNo = prompt("New Lucky Number:");
   if(!newNo) return;
 
-  await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo), { mode: 'no-cors' });
+  await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo));
   setTimeout(loadData, 1000);
 }
 
 /* INIT */
 loadData();
-// Elakkan guna setInterval terlalu kerap (contoh: setiap 5 saat) agar tidak melanggar kuota harian Google API.
-// Sila aktifkan semula talian di bawah jika fungsi auto-refresh amat diperlukan:
- setInterval(loadData, 5000); 
-
-
 </script>
 
   </body>
