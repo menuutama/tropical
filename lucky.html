@@ -27,11 +27,15 @@
     </header> 
     
     <!-- ===== MAIN CONTAINER ===== -->
+        <!-- ===== MAIN CONTAINER ===== -->
     <div class="container"> 
       
-      <!-- INPUT AREA -->
+      <!-- INPUT AREA (Siri kotak input ditambah bekas wrapper untuk menempatkan butang X) -->
       <div class="input-box"> 
-        <input type="text" id="luckyNo" placeholder="Enter Lucky No"> 
+        <div class="input-container">
+          <input type="text" id="luckyNo" placeholder="Enter Lucky No" oninput="toggleClearBtn()" onkeypress="if(event.key === 'Enter') addItem()"> 
+          <button type="button" id="clearInputBtn" class="clear-btn" onclick="clearInput()">X</button>
+        </div>
         <button onclick="addItem()"> Add </button> 
       </div> 
       
@@ -50,12 +54,16 @@
               </tr> 
             </thead> 
             <tbody id="winnerTable">
-              <!-- Data akan diisi secara automatik oleh JavaScript -->
+              <!-- Data dimasukkan secara dinamik -->
             </tbody> 
           </table> 
+          
+          <!-- TEMPAT BUTANG PAGINATION (Diletakkan di dalam table-wrapper supaya kekal center dengan jadual) -->
+          <div id="pagination" class="pagination-container"></div>
         </div>
       </div> 
     </div>
+
     
     <!-- ===== JAVASCRIPT LOGIC ===== --> 
     <script>
