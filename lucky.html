@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Lucky Draw System</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<!-- ===== HEADER NAV ===== -->
+
+<div class="topnav">
+  <a href="index.html">MENU</a>
+  <a href="lucky.html">LUCKY DRAW</a>
+  <a href="pink.html">PINK AWARD</a>
+  <a href="service.html">LONG SERVICE</a>
+  <a href="media.html">VIDEO / IMAGE / SONG</a>
+</div>
+
+<!-- ===== PAGE TITLE ===== -->
+
+<header class="hero-header">
+  <h1>TROPICAL DINNER 2026</h1>
+  <h2>Lucky Draw System</h2>
+</header>
+
+<!-- ===== MAIN CONTAINER ===== -->
+
+<div class="container">
+
+  <!-- INPUT AREA -->
+
+  <div class="input-box">
+
+    <input 
+      type="text" 
+      id="luckyNo" 
+      placeholder="Enter Lucky No"
+    >
+
+    <button onclick="addItem()">
+      Add
+    </button>
+
+  </div>
+
+  <!-- TABLE AREA -->
+
+  <div class="main-content">
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+  <tr>
+    <th>PLACE</th>
+    <th>LUCKY NO.</th>
+    <th>WINNER</th>
+    <th>COMPANY</th>
+    <th>PRIZE</th>
+    <th>ACTION</th>
+  </tr>
+</thead>
+
+        <tbody id="winnerTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ===== JS ===== -->
+
+<script>
+
+const API_URL = "https://script.google.com/macros/s/AKfycbxLo-QcQDZNnK2YhWqDw0iyA2QG44ts4xsFz8GgerDWP792PJDccfuUBhy12pOlwTtP/exec";
+
+let allData = [];
+
+/* LOAD DATA */
+async function loadData(){
+
+  try{
+
+    const response = await fetch(API_URL);
+
+    allData = await response.json();
+
+    allData = allData.filter(item => {
+      return (item.luckyNo ?? "").toString().trim() !== "";
+    });
+
+    allData.sort((a,b)=>{
+
+      let A = parseInt(a.place) || 0;
+      let B = parseInt(b.place) || 0;
+
+      return A - B;
+
+    });
+
+    renderTable();
+
+  }catch(error){
+
+    console.log("LOAD ERROR:", error);
+
+  }
+
+}
+
+/* RENDER TABLE */
+function renderTable(){
+
+  const tbody = document.getElementById("winnerTable");
+
+  tbody.innerHTML = "";
+
+  allData.forEach(item => {
+
+    tbody.innerHTML += `
+      <tr>
+
+        <td>${item.place}</td>
+        <td>${item.luckyNo}</td>
+        <td>${item.winner}</td>
+        <td>${item.company}</td>
+        <td>${item.prize}</td>
+
+        <td>
+
+          <button class="btn-edit"
+            onclick="editRow('${item.row}')">
+            Edit
+          </button>
+
+          <button class="btn-danger"
+            onclick="deleteRow('${item.row}')">
+            Delete
+          </button>
+
+        </td>
+
+      </tr>
+    `;
+
+  });
+
+}
+
+/* ADD */
+async function addItem(){
+
+  const luckyNo =
+    document.getElementById("luckyNo")
+    .value.trim();
+
+  const response = await fetch(
+    API_URL +
+    "?action=add&luckyNo=" +
+    encodeURIComponent(luckyNo)
+  );
+
+  const result = await response.json();
+
+  console.log(result);
+
+  loadData();
+
+}
+
+/* DELETE */
+async function deleteRow(row){
+
+  await fetch(
+    API_URL +
+    "?action=delete&row=" + row
+  );
+
+  loadData();
+
+}
+
+/* EDIT */
+async function editRow(row){
+
+  const newLuckyNo =
+    prompt("New Lucky Number");
+
+  if(!newLuckyNo) return;
+
+  await fetch(
+    API_URL +
+    "?action=edit&row=" + row +
+    "&luckyNo=" +
+    encodeURIComponent(newLuckyNo)
+  );
+
+  loadData();
+
+}
+
+/* FIRST LOAD */
+loadData();
+
+setInterval(loadData,3000);
+
+</script>
+
+</body>
+</html>
+
