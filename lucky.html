@@ -4,22 +4,21 @@
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Lucky Draw System</title> 
-    <link rel="preconnect" href="https://fonts.googleapis.com"> 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://googleapis.com"> 
+    <link href="https://googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
   </head>
   
   <body> 
     
     <!-- ===== HEADER NAV ===== -->
-    
-  <div class="topnav"> 
-    <a href="index.html">MENU</a> 
-    <a href="lucky.html">LUCKY DRAW</a>
-    <a href="pink.html">PINK AWARD</a> 
-    <a href="service.html">LONG SERVICE</a> 
-    <a href="media.html">VIDEO / IMAGE / SONG</a> 
-  </div> 
+    <div class="topnav"> 
+      <a href="index.html">MENU</a> 
+      <a href="lucky.html">LUCKY DRAW</a>
+      <a href="pink.html">PINK AWARD</a> 
+      <a href="service.html">LONG SERVICE</a> 
+      <a href="media.html">VIDEO / IMAGE / SONG</a> 
+    </div> 
     
     <!-- ===== PAGE TITLE ===== -->
     <header class="hero-header">
@@ -31,9 +30,8 @@
     <div class="container"> 
       
       <!-- INPUT AREA -->
-      
       <div class="input-box"> 
-        <input type="text" id="luckyNo" placeholder="Enter Lucky No" > 
+        <input type="text" id="luckyNo" placeholder="Enter Lucky No"> 
         <button onclick="addItem()"> Add </button> 
       </div> 
       
@@ -49,114 +47,116 @@
                 <th>COMPANY</th> 
                 <th>PRIZE</th>
                 <th>ACTION</th>
-              </tr> </thead> 
+              </tr> 
+            </thead> 
             <tbody id="winnerTable">
-              
+              <!-- Data akan diisi secara automatik oleh JavaScript -->
             </tbody> 
           </table> 
         </div>
       </div> 
     </div>
     
-    <!-- ===== JS ===== --> 
-   <script>
+    <!-- ===== JAVASCRIPT LOGIC ===== --> 
+    <script>
+      const API_URL = "https://google.com";
+      let allData = [];
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzarjoBZD1mqbAJLURRHot4G1lX4wBiVmhKW5GKMcr18fujnxh_lmF9Vgmf-CYjDfh3/exec";
+      /* 1. MUAT TURUN DATA & URUS SUSUNAN (SORTING) */
+      async function loadData(){
+        try {
+          const res = await fetch(API_URL);
+          allData = await res.json(); 
+          
+          // ALGORITMA SORTING MENAIK KETAT (1st -> 91st)
+          allData.sort((a, b) => {
+            const matchA = (a.place || "").match(/\d+/);
+            const matchB = (b.place || "").match(/\d+/);
+            
+            const numA = matchA ? parseInt(matchA[0], 10) : 999; 
+            const numB = matchB ? parseInt(matchB[0], 10) : 999;
+            
+            return numA - numB; 
+          });
 
-let allData = [];
+          console.log("Data Berjaya Disusun:", allData);
+          renderTable();
+        } catch(err) {
+          console.log("LOAD ERROR:", err);
+        }
+      }
 
-/* LOAD DATA */
-async function loadData(){
-  try {
-    const res = await fetch(API_URL);
-    allData = await res.json(); 
-    
-    // --- FUNGSI SORTING (Small to Large mengikut Kolum A: 1st, 2nd, 3rd...) ---
-    allData.sort((a, b) => {
-      // Ekstrak nombor sahaja daripada string (contoh: "91st" jadi 91)
-      const numA = parseInt(a.place) || 0;
-      const numB = parseInt(b.place) || 0;
-      return numA - numB;
-    });
+      /* 2. PAPARKAN DATA KEDALAM JADUAL */
+      function renderTable(){
+        const tbody = document.getElementById("winnerTable");
+        tbody.innerHTML = "";
 
-    console.log("Data Tersusun:", allData);
-    renderTable();
-  } catch(err) {
-    console.log("LOAD ERROR:", err);
-  }
-}
+        allData.forEach(item => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${item.place || ""}</td>
+              <td>${item.luckyNo || ""}</td>
+              <td>${item.winner || ""}</td>
+              <td>${item.company || ""}</td>
+              <td>${item.prize || ""}</td>
+              <td>
+                <button onclick="editRow('${item.row}')">Edit</button>
+                <button onclick="deleteRow('${item.row}')">Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
 
-/* RENDER TABLE */
-function renderTable(){
-  const tbody = document.getElementById("winnerTable");
-  tbody.innerHTML = "";
+      /* 3. TAMBAH DATA (CARI & ISI DENGAN SEKATAN) */
+      async function addItem(){
+        const luckyNoInput = document.getElementById("luckyNo");
+        const luckyNo = luckyNoInput.value.trim();
 
-  allData.forEach(item => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${item.place || ""}</td>
-        <td>${item.luckyNo || ""}</td>
-        <td>${item.winner || ""}</td>
-        <td>${item.company || ""}</td>
-        <td>${item.prize || ""}</td>
-        <td>
-          <button onclick="editRow('${item.row}')">Edit</button>
-          <button onclick="deleteRow('${item.row}')">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
-}
+        if(!luckyNo){
+          alert("Enter lucky number");
+          return;
+        }
 
-/* ADD ITEM (Kini bertindak sebagai fungsi Find & Fill) */
-async function addItem(){
-  const luckyNoInput = document.getElementById("luckyNo");
-  const luckyNo = luckyNoInput.value.trim();
+        try {
+          const res = await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
+          const result = await res.json();
 
-  if(!luckyNo){
-    alert("Enter lucky number");
-    return;
-  }
+          // Semakan status ralat dari Google Sheets Backend
+          if(result.status === "not_found") {
+            alert("Lucky Draw No. Not Found"); 
+          } else if(result.status === "duplicate") {
+            alert("Nombor bertuah ini sudah pun didaftarkan!");
+          } else if(result.status === "success") {
+            luckyNoInput.value = "";
+            setTimeout(loadData, 1000); // Segarkan jadual selepas 1 saat
+          } else if(result.status === "error") {
+            alert(result.message); 
+          }
+        } catch (error) {
+          console.error("Ralat komunikasi API:", error);
+        }
+      }
 
-  // Hantar request semakan ke API backend
-  const res = await fetch(API_URL + "?action=add&luckyNo=" + encodeURIComponent(luckyNo));
-  const result = await res.json();
+      /* 4. PADAM DATA BARIS */
+      async function deleteRow(row){
+        if(confirm("Adakah anda pasti mahu memadam baris ini?")) {
+          await fetch(API_URL + "?action=delete&row=" + row);
+          setTimeout(loadData, 1000);
+        }
+      }
 
-  // --- SEMAKAN RESPONS RESPOND DARIPADA BACKEND ---
-  if(result.status === "not_found") {
-    alert("Lucky Draw No. Not Found"); // Pop-up amaran jika tiada dalam Sheet List
-  } else if(result.status === "duplicate") {
-    alert("Nombor ini sudah dimasukkan ke dalam senarai pemenang!");
-  } else if(result.status === "success") {
-    luckyNoInput.value = "";
-    setTimeout(loadData, 1000); // Segarkan jadual selepas 1 saat
-  } else {
-    alert("Ralat sistem berlaku.");
-  }
-}
+      /* 5. EDIT DATA BARIS */
+      async function editRow(row){
+        const newNo = prompt("New Lucky Number:");
+        if(!newNo) return;
 
-/* DELETE ROW */
-async function deleteRow(row){
-  if(confirm("Adakah anda pasti mahu memadam baris ini?")) {
-    await fetch(API_URL + "?action=delete&row=" + row);
-    setTimeout(loadData, 1000);
-  }
-}
+        await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo));
+        setTimeout(loadData, 1000);
+      }
 
-/* EDIT ROW */
-async function editRow(row){
-  const newNo = prompt("New Lucky Number:");
-  if(!newNo) return;
-
-  await fetch(API_URL + "?action=edit&row=" + row + "&luckyNo=" + encodeURIComponent(newNo));
-  setTimeout(loadData, 1000);
-}
-
-/* INIT */
-loadData();
-
-</script>
-
+      /* MULAKAN PROSES APABILA HALAMAN DIKUNJUNGI */
+      loadData();
+    </script>
   </body>
 </html>
-
