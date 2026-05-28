@@ -24,6 +24,283 @@
 
 <!-- ===== CONTENT START ===== -->
 
+<!-- ===== CONTENT START ===== -->
+<div class="media-container">
+  <h2>Event Media Hub</h2>
+
+  <!-- ===== BAHAGIAN CARIAN & DROPDOWN ===== -->
+  <div class="search-filter-box">
+    <select id="mediaTypeDropdown" onchange="tapisMedia()">
+      <option value="all">Semua Jenis</option>
+      <option value="video">Video (🎬)</option>
+      <option value="gambar">Gambar (📸)</option>
+      <option value="lagu">Lagu (🎵)</option>
+    </select>
+    
+    <input type="text" id="mediaSearchInput" onkeyup="tapisMedia()" placeholder="Cari nama fail...">
+    <button onclick="tapisMedia()">Cari</button>
+  </div>
+
+  <!-- ===== SENARAI KAD MEDIA (HASIL TAPISAN) ===== -->
+  <div class="media-grid" id="mediaGridContainer">
+    <!-- Fail Video Anda -->
+    <div class="media-item" data-jenis="video" data-nama="opening perasmian 1" onclick="paparMedia('video', 'https://cloudinary.com')">
+      <div class="media-icon">🎬</div>
+      <div class="media-title">Opening - Perasmian 1</div>
+    </div>
+
+    <!-- Contoh Fail Gambar (Ganti URL gambar anda di sini) -->
+    <div class="media-item" data-jenis="gambar" data-nama="pink award background" onclick="paparMedia('gambar', 'https://cloudinary.com')">
+      <div class="media-icon">📸</div>
+      <div class="media-title">Pink Award Background</div>
+    </div>
+
+    <!-- Contoh Fail Lagu (Ganti URL audio anda di sini) -->
+    <div class="media-item" data-jenis="lagu" data-nama="gimmick perasmian song" onclick="paparMedia('lagu', 'https://cloudinary.com')">
+      <div class="media-icon">🎵</div>
+      <div class="media-title">Gimmick Perasmian Song</div>
+    </div>
+  </div>
+
+  <!-- ===== KAWASAN TAYANGAN UTAMA ===== -->
+  <div class="media-display-wrapper" id="displayWrapper">
+    <div class="media-display" id="mediaDisplayBox">
+      <p id="placeholderText">Sila pilih media dari senarai di atas untuk ditayangkan.</p>
+      
+      <!-- Elemen Gambar -->
+      <img id="outputImage" src="" alt="Event Image" style="display: none;">
+
+      <!-- Elemen Video -->
+      <video id="outputVideo" controls style="display: none;">
+        <source id="videoSource" src="" type="video/mp4">
+      </video>
+
+      <!-- Elemen Audio / Lagu -->
+      <div id="audioPlayerContainer" style="display: none;">
+        <div class="audio-gimmick">🎵 Sedang Dimainkan...</div>
+        <audio id="outputAudio" controls>
+          <source id="audioSource" src="" type="audio/mp3">
+        </audio>
+      </div>
+    </div>
+    <div class="note-skrin">Tip: Tarikh tetingkap ini ke skrin kedua (projector) sebelum memainkan video/gambar untuk paparan penuh di sana.</div>
+  </div>
+</div>
+
+<script>
+  // 1. FUNGSI CARIAN & TAPISAN (SEARCH & DROPDOWN)
+  function tapisMedia() {
+    const dropdownValue = document.getElementById('mediaTypeDropdown').value;
+    const searchValue = document.getElementById('mediaSearchInput').value.toLowerCase();
+    const items = document.getElementsByClassName('media-item');
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const jenisFail = item.getAttribute('data-jenis');
+      const namaFail = item.getAttribute('data-nama');
+
+      // Semak padanan dropdown dan padanan teks carian
+      const padanDropdown = (dropdownValue === 'all' || jenisFail === dropdownValue);
+      const padanCarian = namaFail.includes(searchValue);
+
+      if (padanDropdown && padanCarian) {
+        item.style.display = 'block'; // Papar jika padan
+      } else {
+        item.style.display = 'none'; // Sembunyi jika tidak padan
+      }
+    }
+  }
+
+  // 2. FUNGSI PAPAR MEDIA & AUTO FULLSCREEN
+  function paparMedia(jenis, url) {
+    const imgElement = document.getElementById('outputImage');
+    const videoElement = document.getElementById('outputVideo');
+    const videoSrc = document.getElementById('videoSource');
+    const audioElement = document.getElementById('outputAudio');
+    const audioSrc = document.getElementById('audioSource');
+    const audioContainer = document.getElementById('audioPlayerContainer');
+    const placeholder = document.getElementById('placeholderText');
+    const displayBox = document.getElementById('mediaDisplayBox');
+
+    // Sembunyikan semua elemen dan hentikan media yang sedang berjalan
+    imgElement.style.display = 'none';
+    videoElement.style.display = 'none';
+    audioContainer.style.display = 'none';
+    placeholder.style.display = 'none';
+    videoElement.pause();
+    audioElement.pause();
+
+    if (jenis === 'gambar') {
+      imgElement.src = url;
+      imgElement.style.display = 'block';
+      mintaFullscreen(displayBox); // Jadikan kawasan paparan skrin penuh
+    } 
+    else if (jenis === 'video') {
+      videoSrc.src = url;
+      videoElement.load();
+      videoElement.style.display = 'block';
+      videoElement.play();
+      mintaFullscreen(displayBox); // Jadikan kawasan paparan skrin penuh
+    } 
+    else if (jenis === 'lagu') {
+      audioSrc.src = url;
+      audioElement.load();
+      audioContainer.style.display = 'block';
+      audioElement.play();
+      // Lagu biasanya tidak memerlukan skrin penuh, tetapi jika mahu, boleh kekalkan kotak paparan biasa
+    }
+  }
+
+  // FUNGSI AKTIFKAN SKRIN PENULISAN (FULLSCREEN API)
+  function mintaFullscreen(element) {
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) { /* Firefox */
+      element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { /* IE/Edge */
+      element.msRequestFullscreen();
+    }
+  }
+
+  // KAWALAN BUTTON ESCAPE (PULANG KE ASAL)
+  // Nota: Apabila keluar dari fullscreen (sama ada tekan ESC atau keluar manual), 
+  // video akan dihentikan secara automatik demi kelancaran acara.
+  document.addEventListener('fullscreenchange', exitHandler);
+  document.addEventListener('webkitfullscreenchange', exitHandler);
+  document.addEventListener('mozfullscreenchange', exitHandler);
+  document.addEventListener('MSFullscreenChange', exitHandler);
+
+  function exitHandler() {
+    if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+      // Jika keluar dari skrin penuh, hentikan video
+      const videoElement = document.getElementById('outputVideo');
+      videoElement.pause();
+    }
+  }
+</script>
+
+<style>
+  /* ===== CSS LAYOUT SYSTEM ===== */
+  .media-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  h2 {
+    text-align: center;
+    color: #e91e63;
+    margin-bottom: 25px;
+  }
+
+  /* Kotak Carian */
+  .search-filter-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+  }
+  .search-filter-box select, .search-filter-box input {
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+  }
+  .search-filter-box input {
+    width: 40%;
+  }
+  .search-filter-box button {
+    padding: 12px 25px;
+    background-color: #e91e63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .search-filter-box button:hover {
+    background-color: #c2185b;
+  }
+
+  /* Grid Item Media */
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+  }
+  .media-item {
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .media-item:hover {
+    transform: translateY(-4px);
+    border-color: #e91e63;
+    box-shadow: 0 5px 15px rgba(233, 30, 99, 0.2);
+  }
+  .media-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  .media-title {
+    font-size: 14px;
+    font-weight: 600;
+    word-break: break-word;
+  }
+
+  /* Kotak Paparan Skrin Utama */
+  .media-display-wrapper {
+    margin-top: 20px;
+  }
+  .media-display {
+    background-color: #000; /* Hitam supaya cantik waktu fullscreen */
+    border-radius: 12px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .media-display img, .media-display video {
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: contain;
+  }
+  #placeholderText {
+    color: #fff;
+    font-style: italic;
+  }
+  .note-skrin {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .audio-gimmick {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+</style>
+<!-- ===== CONTENT END ===== -->
 
 
 <!-- ===== CONTENT END ===== -->
