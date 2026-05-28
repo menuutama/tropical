@@ -122,40 +122,55 @@
         setupPagination();
       }
 
-      /* 3. BINA INTERFAS PAGINATION */
-      function setupPagination() {
-        const paginationContainer = document.getElementById("pagination");
-        paginationContainer.innerHTML = "";
+      /* 3. BINA INTERFAS PAGINATION (MAKSIMUM 3 ANGKA DI TAYANG) */
+function setupPagination() {
+  const paginationContainer = document.getElementById("pagination");
+  paginationContainer.innerHTML = "";
 
-        const totalPages = Math.ceil(allData.length / rowsPerPage);
-        if (totalPages <= 1) return;
+  const totalPages = Math.ceil(allData.length / rowsPerPage);
+  if (totalPages <= 1) return;
 
-        const fragment = document.createDocumentFragment();
+  // 1. Cipta butang PREVIOUS
+  const prevBtn = document.createElement("button");
+  prevBtn.className = "pagination-btn";
+  prevBtn.innerText = "Previous";
+  prevBtn.disabled = currentPage === 1;
+  prevBtn.onclick = () => { currentPage--; renderTable(); };
+  paginationContainer.appendChild(prevBtn);
 
-        const prevBtn = document.createElement("button");
-        prevBtn.className = "pagination-btn";
-        prevBtn.innerText = "PREVIOUS";
-        prevBtn.disabled = currentPage === 1;
-        prevBtn.onclick = () => { currentPage--; renderTable(); };
-        fragment.appendChild(prevBtn);
+  // LOGIK BARU: Tentukan julat mula dan tamat untuk 3 butang sahaja
+  let startPage = currentPage - 1;
+  let endPage = currentPage + 1;
 
-        for (let i = 1; i <= totalPages; i++) {
-          const pageBtn = document.createElement("button");
-          pageBtn.className = `pagination-btn ${currentPage === i ? 'active' : ''}`;
-          pageBtn.innerText = i;
-          pageBtn.onclick = () => { currentPage = i; renderTable(); };
-          fragment.appendChild(pageBtn);
-        }
+  // Jika di halaman pertama, tunjuk halaman 1, 2, 3
+  if (startPage < 1) {
+    startPage = 1;
+    endPage = Math.min(3, totalPages);
+  }
 
-        const nextBtn = document.createElement("button");
-        nextBtn.className = "pagination-btn";
-        nextBtn.innerText = "NEXT";
-        nextBtn.disabled = currentPage === totalPages;
-        nextBtn.onclick = () => { currentPage++; renderTable(); };
-        fragment.appendChild(nextBtn);
+  // Jika di halaman terakhir, tunjuk 3 halaman terakhir
+  if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(1, totalPages - 2);
+  }
 
-        paginationContainer.appendChild(fragment);
-      }
+  // 2. Cipta butang angka berdasarkan julat yang dikira (Maksimum 3 butang)
+  for (let i = startPage; i <= endPage; i++) {
+    const pageBtn = document.createElement("button");
+    pageBtn.className = `pagination-btn ${currentPage === i ? 'active' : ''}`;
+    pageBtn.innerText = i;
+    pageBtn.onclick = () => { currentPage = i; renderTable(); };
+    paginationContainer.appendChild(pageBtn);
+  }
+
+  // 3. Cipta butang NEXT
+  const nextBtn = document.createElement("button");
+  nextBtn.className = "pagination-btn";
+  nextBtn.innerText = "Next";
+  nextBtn.disabled = currentPage === totalPages;
+  nextBtn.onclick = () => { currentPage++; renderTable(); };
+  paginationContainer.appendChild(nextBtn);
+}
 
       /* 4. TAMBAH DATA (Kemas Kini Tempatan + Auto Padam Input Jika Salah) */
       async function addItem(){
