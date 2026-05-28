@@ -134,7 +134,7 @@
 
         const prevBtn = document.createElement("button");
         prevBtn.className = "pagination-btn";
-        prevBtn.innerText = "| PREVIOUS |";
+        prevBtn.innerText = "PREVIOUS";
         prevBtn.disabled = currentPage === 1;
         prevBtn.onclick = () => { currentPage--; renderTable(); };
         fragment.appendChild(prevBtn);
@@ -149,7 +149,7 @@
 
         const nextBtn = document.createElement("button");
         nextBtn.className = "pagination-btn";
-        nextBtn.innerText = "| NEXT |";
+        nextBtn.innerText = "NEXT";
         nextBtn.disabled = currentPage === totalPages;
         nextBtn.onclick = () => { currentPage++; renderTable(); };
         fragment.appendChild(nextBtn);
