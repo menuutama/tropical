@@ -24,7 +24,7 @@
 
 <!-- ===== CONTENT START ===== -->
 <div class="media-container">
-  <h2>Event Media Hub (Auto-Sync)</h2>
+  <h2>Event Media Hub</h2>
 
   <!-- ===== BAHAGIAN CARIAN & DROPDOWN ===== -->
   <div class="search-filter-box">
@@ -39,9 +39,25 @@
     <button onclick="tapisMedia()">Cari</button>
   </div>
 
-  <!-- ===== SENARAI KAD MEDIA (DIJANA AUTOMATIK) ===== -->
+  <!-- ===== SENARAI KAD MEDIA (HASIL TAPISAN) ===== -->
   <div class="media-grid" id="mediaGridContainer">
-    <p id="loadingText" style="grid-column: 1/-1; color: #888;">Sedang membaca fail dari Cloudinary...</p>
+    <!-- Fail Video Anda -->
+    <div class="media-item" data-jenis="video" data-nama="opening perasmian 1" onclick="paparMedia('video', 'https://cloudinary.com')">
+      <div class="media-icon">🎬</div>
+      <div class="media-title">Opening - Perasmian 1</div>
+    </div>
+
+    <!-- Contoh Fail Gambar (Ganti URL gambar anda di sini) -->
+    <div class="media-item" data-jenis="gambar" data-nama="pink award background" onclick="paparMedia('gambar', 'https://cloudinary.com')">
+      <div class="media-icon">📸</div>
+      <div class="media-title">Pink Award Background</div>
+    </div>
+
+    <!-- Contoh Fail Lagu (Ganti URL audio anda di sini) -->
+    <div class="media-item" data-jenis="lagu" data-nama="gimmick perasmian song" onclick="paparMedia('lagu', 'https://cloudinary.com')">
+      <div class="media-icon">🎵</div>
+      <div class="media-title">Gimmick Perasmian Song</div>
+    </div>
   </div>
 
   <!-- ===== KAWASAN TAYANGAN UTAMA ===== -->
@@ -70,54 +86,7 @@
 </div>
 
 <script>
-  // FUNGSI JANA SENARAI MEDIA SECARA AUTOMATIK DARI CLOUDINARY
-  async function muatFailAutomatik() {
-    const container = document.getElementById('mediaGridContainer');
-    
-    // Panggil fungsi dari api.js
-    const senaraiMedia = await ambilMediaDariCloudinary();
-    
-    if (senaraiMedia.length === 0) {
-      container.innerHTML = '<p style="grid-column: 1/-1; color: red;">Tiada fail ditemui dengan tag "eventsystem" atau masalah sambungan.</p>';
-      return;
-    }
-
-    container.innerHTML = ''; // Kosongkan perkataan 'loading...'
-
-    senaraiMedia.forEach(fail => {
-      let jenis = 'gambar';
-      let ikon = '📸';
-      let resourceType = 'image'; // Keperluan struktur URL Cloudinary
-
-      // Sistem semakan jenis fail berdasarkan format extension
-      const formatLovercase = fail.format.toLowerCase();
-      if (['mp4', 'mkv', 'mov', 'avi'].includes(formatLovercase)) {
-        jenis = 'video';
-        ikon = '🎬';
-        resourceType = 'video';
-      } else if (['mp3', 'wav', 'ogg'].includes(formatLovercase)) {
-        jenis = 'lagu';
-        ikon = '🎵';
-        resourceType = 'video'; // Cloudinary mengkategorikan audio di bawah lubang 'video'
-      }
-
-      // Bina URL Direct Link secara dinamik mengikut spesifikasi Cloudinary anda
-      const urlFail = `https://cloudinary.com{resourceType}/upload/v${fail.version}/${fail.public_id}.${fail.format}`;
-      
-      // Ambil nama fail sahaja untuk paparan tajuk ringkas
-      const namaPaparan = fail.public_id.split('/').pop().replace(/[_-]/g, ' ');
-
-      // Suntik kod kotak media ke dalam HTML grid
-      container.innerHTML += `
-        <div class="media-item" data-jenis="${jenis}" data-nama="${namaPaparan.toLowerCase()}" onclick="paparMedia('${jenis}', '${urlFail}')">
-          <div class="media-icon">${ikon}</div>
-          <div class="media-title">${namaPaparan}</div>
-        </div>
-      `;
-    });
-  }
-
-  // FUNGSI CARIAN & TAPISAN (SEARCH & DROPDOWN)
+  // 1. FUNGSI CARIAN & TAPISAN (SEARCH & DROPDOWN)
   function tapisMedia() {
     const dropdownValue = document.getElementById('mediaTypeDropdown').value;
     const searchValue = document.getElementById('mediaSearchInput').value.toLowerCase();
@@ -128,18 +97,19 @@
       const jenisFail = item.getAttribute('data-jenis');
       const namaFail = item.getAttribute('data-nama');
 
+      // Semak padanan dropdown dan padanan teks carian
       const padanDropdown = (dropdownValue === 'all' || jenisFail === dropdownValue);
       const padanCarian = namaFail.includes(searchValue);
 
       if (padanDropdown && padanCarian) {
-        item.style.display = 'block';
+        item.style.display = 'block'; // Papar jika padan
       } else {
-        item.style.display = 'none';
+        item.style.display = 'none'; // Sembunyi jika tidak padan
       }
     }
   }
 
-  // FUNGSI PAPAR MEDIA & AUTO FULLSCREEN
+  // 2. FUNGSI PAPAR MEDIA & AUTO FULLSCREEN
   function paparMedia(jenis, url) {
     const imgElement = document.getElementById('outputImage');
     const videoElement = document.getElementById('outputVideo');
@@ -150,6 +120,7 @@
     const placeholder = document.getElementById('placeholderText');
     const displayBox = document.getElementById('mediaDisplayBox');
 
+    // Sembunyikan semua elemen dan hentikan media yang sedang berjalan
     imgElement.style.display = 'none';
     videoElement.style.display = 'none';
     audioContainer.style.display = 'none';
@@ -160,31 +131,40 @@
     if (jenis === 'gambar') {
       imgElement.src = url;
       imgElement.style.display = 'block';
-      mintaFullscreen(displayBox);
+      mintaFullscreen(displayBox); // Jadikan kawasan paparan skrin penuh
     } 
     else if (jenis === 'video') {
       videoSrc.src = url;
       videoElement.load();
       videoElement.style.display = 'block';
       videoElement.play();
-      mintaFullscreen(displayBox);
+      mintaFullscreen(displayBox); // Jadikan kawasan paparan skrin penuh
     } 
     else if (jenis === 'lagu') {
       audioSrc.src = url;
       audioElement.load();
       audioContainer.style.display = 'block';
       audioElement.play();
+      // Lagu biasanya tidak memerlukan skrin penuh, tetapi jika mahu, boleh kekalkan kotak paparan biasa
     }
   }
 
+  // FUNGSI AKTIFKAN SKRIN PENULISAN (FULLSCREEN API)
   function mintaFullscreen(element) {
-    if (element.requestFullscreen) { element.requestFullscreen(); }
-    else if (element.mozRequestFullScreen) { element.mozRequestFullScreen(); }
-    else if (element.webkitRequestFullscreen) { element.webkitRequestFullscreen(); }
-    else if (element.msRequestFullscreen) { element.msRequestFullscreen(); }
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) { /* Firefox */
+      element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { /* IE/Edge */
+      element.msRequestFullscreen();
+    }
   }
 
-  // EVENT DETECTOR UNTUK BUTTON ESCAPE
+  // KAWALAN BUTTON ESCAPE (PULANG KE ASAL)
+  // Nota: Apabila keluar dari fullscreen (sama ada tekan ESC atau keluar manual), 
+  // video akan dihentikan secara automatik demi kelancaran acara.
   document.addEventListener('fullscreenchange', exitHandler);
   document.addEventListener('webkitfullscreenchange', exitHandler);
   document.addEventListener('mozfullscreenchange', exitHandler);
@@ -192,13 +172,11 @@
 
   function exitHandler() {
     if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+      // Jika keluar dari skrin penuh, hentikan video
       const videoElement = document.getElementById('outputVideo');
       videoElement.pause();
     }
   }
-
-  // JALANKAN PROSES AUTO-LOAD APABILA WEB DIBUKA
-  document.addEventListener("DOMContentLoaded", muatFailAutomatik);
 </script>
 
 <style>
@@ -215,6 +193,8 @@
     color: #e91e63;
     margin-bottom: 25px;
   }
+
+  /* Kotak Carian */
   .search-filter-box {
     display: flex;
     gap: 10px;
@@ -228,7 +208,9 @@
     border-radius: 8px;
     outline: none;
   }
-  .search-filter-box input { width: 40%; }
+  .search-filter-box input {
+    width: 40%;
+  }
   .search-filter-box button {
     padding: 12px 25px;
     background-color: #e91e63;
@@ -238,8 +220,11 @@
     cursor: pointer;
     font-weight: bold;
   }
-  .search-filter-box button:hover { background-color: #c2185b; }
+  .search-filter-box button:hover {
+    background-color: #c2185b;
+  }
 
+  /* Grid Item Media */
   .media-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -261,17 +246,22 @@
     border-color: #e91e63;
     box-shadow: 0 5px 15px rgba(233, 30, 99, 0.2);
   }
-  .media-icon { font-size: 32px; margin-bottom: 10px; }
+  .media-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
   .media-title {
     font-size: 14px;
     font-weight: 600;
     word-break: break-word;
-    text-transform: capitalize;
   }
 
-  .media-display-wrapper { margin-top: 20px; }
+  /* Kotak Paparan Skrin Utama */
+  .media-display-wrapper {
+    margin-top: 20px;
+  }
   .media-display {
-    background-color: #000;
+    background-color: #000; /* Hitam supaya cantik waktu fullscreen */
     border-radius: 12px;
     min-height: 400px;
     display: flex;
@@ -285,8 +275,16 @@
     max-height: 100vh;
     object-fit: contain;
   }
-  #placeholderText { color: #fff; font-style: italic; }
-  .note-skrin { font-size: 12px; color: #666; text-align: center; margin-top: 8px; }
+  #placeholderText {
+    color: #fff;
+    font-style: italic;
+  }
+  .note-skrin {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 8px;
+  }
   .audio-gimmick {
     color: #fff;
     font-size: 20px;
@@ -300,7 +298,6 @@
     100% { opacity: 0.6; }
   }
 </style>
-
 <!-- ===== CONTENT END ===== -->
 
 <!-- ===== FOOTER JS START ===== -->
