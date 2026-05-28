@@ -122,7 +122,7 @@
         setupPagination();
       }
 
-      /* 3. BINA INTERFAS PAGINATION (MAKSIMUM 3 ANGKA DI TAYANG) */
+      /* 3. BINA INTERFAS PAGINATION (FIRST PAGE & LAST PAGE) */
 function setupPagination() {
   const paginationContainer = document.getElementById("pagination");
   paginationContainer.innerHTML = "";
@@ -130,31 +130,29 @@ function setupPagination() {
   const totalPages = Math.ceil(allData.length / rowsPerPage);
   if (totalPages <= 1) return;
 
-  // 1. Cipta butang PREVIOUS
-  const prevBtn = document.createElement("button");
-  prevBtn.className = "pagination-btn";
-  prevBtn.innerText = "Previous";
-  prevBtn.disabled = currentPage === 1;
-  prevBtn.onclick = () => { currentPage--; renderTable(); };
-  paginationContainer.appendChild(prevBtn);
+  // 1. TUKAR PREVIOUS KEPADA FIRST PAGE (Halaman 1)
+  const firstBtn = document.createElement("button");
+  firstBtn.className = "pagination-btn";
+  firstBtn.innerText = "Previous"; // Kekalkan teks paparan asal
+  firstBtn.disabled = currentPage === 1;
+  firstBtn.onclick = () => { currentPage = 1; renderTable(); }; // Lompat terus ke page 1
+  paginationContainer.appendChild(firstBtn);
 
-  // LOGIK BARU: Tentukan julat mula dan tamat untuk 3 butang sahaja
+  // Logat julat untuk paparan 3 butang angka sahaja
   let startPage = currentPage - 1;
   let endPage = currentPage + 1;
 
-  // Jika di halaman pertama, tunjuk halaman 1, 2, 3
   if (startPage < 1) {
     startPage = 1;
     endPage = Math.min(3, totalPages);
   }
 
-  // Jika di halaman terakhir, tunjuk 3 halaman terakhir
   if (endPage > totalPages) {
     endPage = totalPages;
     startPage = Math.max(1, totalPages - 2);
   }
 
-  // 2. Cipta butang angka berdasarkan julat yang dikira (Maksimum 3 butang)
+  // 2. Cipta 3 butang angka di tengah
   for (let i = startPage; i <= endPage; i++) {
     const pageBtn = document.createElement("button");
     pageBtn.className = `pagination-btn ${currentPage === i ? 'active' : ''}`;
@@ -163,14 +161,15 @@ function setupPagination() {
     paginationContainer.appendChild(pageBtn);
   }
 
-  // 3. Cipta butang NEXT
-  const nextBtn = document.createElement("button");
-  nextBtn.className = "pagination-btn";
-  nextBtn.innerText = "Next";
-  nextBtn.disabled = currentPage === totalPages;
-  nextBtn.onclick = () => { currentPage++; renderTable(); };
-  paginationContainer.appendChild(nextBtn);
+  // 3. TUKAR NEXT KEPADA LAST PAGE (Halaman Terakhir)
+  const lastBtn = document.createElement("button");
+  lastBtn.className = "pagination-btn";
+  lastBtn.innerText = "Next"; // Kekalkan teks paparan asal
+  lastBtn.disabled = currentPage === totalPages;
+  lastBtn.onclick = () => { currentPage = totalPages; renderTable(); }; // Lompat terus ke page terakhir
+  paginationContainer.appendChild(lastBtn);
 }
+
 
       /* 4. TAMBAH DATA (Kemas Kini Tempatan + Auto Padam Input Jika Salah) */
       async function addItem(){
