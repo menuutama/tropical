@@ -2,5 +2,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwyHlDqGumNenEhW6w5iAcA
 
 const CLOUDINARY_CONFIG = {
   cloudName: 'dwtcmpzez',
-  apiKey: '958334142538248'
+  tagTarget: 'eventsystem' // Tag yang kita set di Cloudinary tadi
 };
+
