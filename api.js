@@ -173,6 +173,25 @@ function playSlide(){
 
 }
 
+async function ambilMediaDariCloudinary() {
+  const cloudName = CLOUDINARY_CONFIG.cloudName;
+  const tag = CLOUDINARY_CONFIG.tagTarget;
+  
+  // URL khas Cloudinary untuk menarik senarai fail berdasarkan Tag secara Open/Public
+  const url = `https://cloudinary.com{cloudName}/image/list/${tag}.json`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Gagal hubungi Cloudinary");
+    const data = await response.json();
+    return data.resources; 
+  } catch (error) {
+    console.error("Ralat sistem API Cloudinary:", error);
+    return [];
+  }
+}
+
+
 loadData();
 
 setInterval(loadData,3000);
