@@ -133,7 +133,7 @@ function setupPagination() {
   // 1. TUKAR PREVIOUS KEPADA FIRST PAGE (Halaman 1)
   const firstBtn = document.createElement("button");
   firstBtn.className = "pagination-btn";
-  firstBtn.innerText = "Previous"; // Kekalkan teks paparan asal
+  firstBtn.innerText = "First Page"; // Kekalkan teks paparan asal
   firstBtn.disabled = currentPage === 1;
   firstBtn.onclick = () => { currentPage = 1; renderTable(); }; // Lompat terus ke page 1
   paginationContainer.appendChild(firstBtn);
@@ -164,7 +164,7 @@ function setupPagination() {
   // 3. TUKAR NEXT KEPADA LAST PAGE (Halaman Terakhir)
   const lastBtn = document.createElement("button");
   lastBtn.className = "pagination-btn";
-  lastBtn.innerText = "Next"; // Kekalkan teks paparan asal
+  lastBtn.innerText = "Last Page"; // Kekalkan teks paparan asal
   lastBtn.disabled = currentPage === totalPages;
   lastBtn.onclick = () => { currentPage = totalPages; renderTable(); }; // Lompat terus ke page terakhir
   paginationContainer.appendChild(lastBtn);
