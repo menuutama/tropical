@@ -23,9 +23,133 @@
 
 
 <!-- ===== CONTENT START ===== -->
+<div id="startScreen">
+
+  <h1>GOOGLE SLIDE DISPLAY</h1>
+
+  <p>Tap button below to launch fullscreen presentation</p>
+
+  <button onclick="startPresentation()">
+    START PRESENTATION
+  </button>
+
+</div>
+
+
+<iframe
+  id="slideFrame"
+  allowfullscreen
+  allow="fullscreen"
+  src="">
+</iframe>
+
+<!-- ===== CONTENT END ===== -->
 
 
 
+<script>
+
+// =============================
+// PASTE GOOGLE SLIDE LINK HERE
+// =============================
+const slideURL =
+"https://docs.google.com/presentation/d/e/SLIDE_ID/embed?start=true&loop=true&delayms=5000";
+
+// AUTO REFRESH EVERY 5 MINUTES
+const autoRefreshMinutes = 5;
+
+function startPresentation(){
+
+  // hide start screen
+  document.getElementById("startScreen").style.display = "none";
+
+  // load slide
+  document.getElementById("slideFrame").src = slideURL;
+
+  // request fullscreen
+  openFullscreen();
+
+  // hide mouse cursor
+  autoHideCursor();
+
+}
+
+
+// FULLSCREEN
+function openFullscreen(){
+
+  const elem = document.documentElement;
+
+  if(elem.requestFullscreen){
+    elem.requestFullscreen();
+  }
+  else if(elem.webkitRequestFullscreen){
+    elem.webkitRequestFullscreen();
+  }
+  else if(elem.msRequestFullscreen){
+    elem.msRequestFullscreen();
+  }
+
+}
+
+
+// AUTO HIDE CURSOR
+function autoHideCursor(){
+
+  let timer;
+
+  document.onmousemove = function(){
+
+    clearTimeout(timer);
+
+    document.body.style.cursor = "default";
+
+    timer = setTimeout(() => {
+      document.body.style.cursor = "none";
+    }, 2000);
+
+  };
+
+}
+
+
+// AUTO REFRESH
+setInterval(() => {
+
+  const frame = document.getElementById("slideFrame");
+
+  if(frame.src){
+    frame.src = frame.src;
+  }
+
+}, autoRefreshMinutes * 60 * 1000);
+
+
+// BLOCK RIGHT CLICK
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+
+// BLOCK SOME KEYS
+document.addEventListener("keydown", function(e){
+
+  // F12
+  if(e.key === "F12"){
+    e.preventDefault();
+  }
+
+  // CTRL+SHIFT+I
+  if(e.ctrlKey && e.shiftKey && e.key === "I"){
+    e.preventDefault();
+  }
+
+  // CTRL+U
+  if(e.ctrlKey && e.key === "u"){
+    e.preventDefault();
+  }
+
+});
+
+</script>
 <!-- ===== CONTENT END ===== -->
 
 <!-- ===== FOOTER JS START ===== -->
