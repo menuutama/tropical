@@ -233,6 +233,25 @@ async function addItem(){
     addBtn.innerText = "Add";
   }
 }
+// Mengesan dan menggerakkan kotak input jika cuba menaip digit ke-5
+document.getElementById("luckyNo").addEventListener("input", function(e) {
+  const inputField = e.target;
+  
+  // Jika panjang nombor yang ditaip mencecah atau melebihi 5 digit
+  if (inputField.value.length >= 5) {
+    
+    // 1. Masukkan class untuk cetuskan animasi gegar (shaking)
+    inputField.classList.add("shake-input");
+    
+    // 2. Potong dan sekat input supaya kekal 4 digit sahaja serta-merta
+    inputField.value = inputField.value.slice(0, 4);
+    
+    // 3. Buang class gegar selepas 300ms supaya boleh bergegar lagi jika ditekan lagi
+    setTimeout(() => {
+      inputField.classList.remove("shake-input");
+    }, 300);
+  }
+});
 
 // Mengawal input supaya hanya menerima nombor & bergegar jika taip huruf
 document.getElementById("luckyNo").addEventListener("input", function(e) {
