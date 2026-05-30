@@ -135,6 +135,20 @@ body {
   box-shadow: 0 0 15px rgba(77, 163, 255, 0.4);
   background: rgba(16, 40, 79, 0.9);
 }
+/* Animasi Gegar */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* Class gegar */
+.shake-input {
+  animation: shake 0.3s ease-in-out;
+  border-color: #ff4d4d !important; /* Border jadi merah semasa gegar */
+  box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+}
+
 
 /* Butang X Terapung di Dalam Input Box */
 .clear-btn {
