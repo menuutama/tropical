@@ -65,7 +65,9 @@
     
     <!-- ===== JAVASCRIPT LOGIC ===== --> 
     <script>
-      import const API_URL = "api.js";
+      import {API_URL, ambilData} from 'api.js';
+      console.log(API_URL);
+      ambilData();
       let allData = [];
 
       // Konfigurasi Pagination
