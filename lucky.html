@@ -65,7 +65,7 @@
     
     <!-- ===== JAVASCRIPT LOGIC ===== --> 
     <script>
-      const API_URL = "https://script.google.com/macros/s/AKfycbyEIR8saftBM9WH1l-CCbF7d0KdUsbrlmmSfjT-pHcKKgx7B2u6bdWUWYSItL-rJ1bp/exec";
+      const API_URL = "https://script.google.com/macros/s/AKfycbzfe5rC_LbWSLT5uNKsA5CdLttBtcab6ALvJ1hRTFlOMaechmmx-IxW2X4NdqjUkyo/exec";
       let allData = [];
 
       // Konfigurasi Pagination
@@ -173,28 +173,13 @@ function setupPagination() {
 }
 
 
-      /* 4. TAMBAH DATA (Kemas Kini Tempatan + Auto Padam Input Jika Salah) */
-      async function addItem(){
+/* 4. TAMBAH DATA (Kemas Kini Tempatan + Auto Padam Input Jika Salah) */
+async function addItem(){
   const luckyNoInput = document.getElementById("luckyNo");
   const addBtn = document.getElementById("addBtn");
   const luckyNo = luckyNoInput.value.trim();
 
   if(!luckyNo) return alert("Enter lucky number");
-
-  // SEKATAN: Jika input mengandungi apa-apa selain nombor (huruf/simbol)
-  if (!/^\d+$/.test(luckyNo)) {
-    // Tambah class gegar
-    luckyNoInput.classList.add("shake-input");
-    
-    // Buang class gegar selepas animasi tamat (0.3 saat) supaya boleh gegar lagi nanti
-    setTimeout(() => {
-      luckyNoInput.classList.remove("shake-input");
-    }, 300);
-
-    alert("Sila masukkan NOMBOR sahaja!");
-    clearInput(); // Padam dan fokus semula
-    return; // Hentikan fungsi daripada hantar ke API
-  }
 
   addBtn.disabled = true;
   addBtn.innerText = "Adding...";
@@ -203,7 +188,23 @@ function setupPagination() {
     const res = await fetch(`${API_URL}?action=add&luckyNo=${encodeURIComponent(luckyNo)}`);
     const result = await res.json();
 
-    if(result.status === "not_found") {
+    // --------------------------------------------------------
+    // KOD TAMBAHAN BARU: Jika status dari backend adalah 'not_in_winner_table'
+    // --------------------------------------------------------
+    if (result.status === "not_in_winner_table") {
+      // Efek kotak input bergegar
+      luckyNoInput.classList.add("shake-input");
+      setTimeout(() => {
+        luckyNoInput.classList.remove("shake-input");
+      }, 300);
+
+      alert("Nombor ini tidak tersenarai dalam winnerTable B2:B!"); 
+      clearInput(); // Auto padam & fokus semula
+    } 
+    // --------------------------------------------------------
+    // KOD ASAL ANDA DI BAWAH (KEKAL & TIDAK DIUBAH)
+    // --------------------------------------------------------
+    else if(result.status === "not_found") {
       alert("Lucky Draw No. Not Found"); 
       clearInput(); 
     } else if(result.status === "duplicate") {
