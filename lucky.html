@@ -8,6 +8,10 @@
   </head>
   
   <body> 
+    <script>      
+      import {API_URL, ambilData} from 'api.js';
+      console.log(API_URL);
+      ambilData();</script>
     
     <!-- ===== HEADER NAV ===== -->
     <div class="topnav"> 
@@ -65,9 +69,7 @@
     
     <!-- ===== JAVASCRIPT LOGIC ===== --> 
     <script>
-      import {API_URL, ambilData} from 'api.js';
-      console.log(API_URL);
-      ambilData();
+
       let allData = [];
 
       // Konfigurasi Pagination
