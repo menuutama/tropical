@@ -173,50 +173,83 @@ function setupPagination() {
 
       /* 4. TAMBAH DATA (Kemas Kini Tempatan + Auto Padam Input Jika Salah) */
       async function addItem(){
-        const luckyNoInput = document.getElementById("luckyNo");
-        const addBtn = document.getElementById("addBtn");
-        const luckyNo = luckyNoInput.value.trim();
+  const luckyNoInput = document.getElementById("luckyNo");
+  const addBtn = document.getElementById("addBtn");
+  const luckyNo = luckyNoInput.value.trim();
 
-        if(!luckyNo) return alert("Enter lucky number");
+  if(!luckyNo) return alert("Enter lucky number");
 
-        addBtn.disabled = true;
-        addBtn.innerText = "Adding...";
+  // SEKATAN: Jika input mengandungi apa-apa selain nombor (huruf/simbol)
+  if (!/^\d+$/.test(luckyNo)) {
+    // Tambah class gegar
+    luckyNoInput.classList.add("shake-input");
+    
+    // Buang class gegar selepas animasi tamat (0.3 saat) supaya boleh gegar lagi nanti
+    setTimeout(() => {
+      luckyNoInput.classList.remove("shake-input");
+    }, 300);
 
-        try {
-          const res = await fetch(`${API_URL}?action=add&luckyNo=${encodeURIComponent(luckyNo)}`);
-          const result = await res.json();
+    alert("Sila masukkan NOMBOR sahaja!");
+    clearInput(); // Padam dan fokus semula
+    return; // Hentikan fungsi daripada hantar ke API
+  }
 
-          if(result.status === "not_found") {
-            alert("Lucky Draw No. Not Found"); 
-            clearInput(); // <--- Fungsi Tambahan: Auto padam & fokus semula
-          } else if(result.status === "duplicate") {
-            alert("Nombor bertuah ini sudah pun didaftarkan!");
-            clearInput(); // <--- Fungsi Tambahan: Auto padam & fokus semula
-          } else if(result.status === "success") {
-            luckyNoInput.value = "";
-            toggleClearBtn();
-            
-            // Mengemas kini data lokal jika ada respon data penuh dari server
-            if(result.data) {
-              // Jika data sedia ada mempunyai row yang sama (kes ganti template kosong), buang yang lama
-              allData = allData.filter(item => String(item.row) !== String(result.data.row));
-              allData.push(result.data);
-              allData = sortData(allData);
-              renderTable();
-            } else {
-              await loadData();
-            }
-          } else if(result.status === "error") {
-            alert(result.message); 
-            clearInput();
-          }
-        } catch (error) {
-          console.error("Ralat komunikasi API:", error);
-        } finally {
-          addBtn.disabled = false;
-          addBtn.innerText = "Add";
-        }
+  addBtn.disabled = true;
+  addBtn.innerText = "Adding...";
+
+  try {
+    const res = await fetch(`${API_URL}?action=add&luckyNo=${encodeURIComponent(luckyNo)}`);
+    const result = await res.json();
+
+    if(result.status === "not_found") {
+      alert("Lucky Draw No. Not Found"); 
+      clearInput(); 
+    } else if(result.status === "duplicate") {
+      alert("Nombor bertuah ini sudah pun didaftarkan!");
+      clearInput(); 
+    } else if(result.status === "success") {
+      luckyNoInput.value = "";
+      toggleClearBtn();
+      
+      if(result.data) {
+        allData = allData.filter(item => String(item.row) !== String(result.data.row));
+        allData.push(result.data);
+        allData = sortData(allData);
+        renderTable();
+      } else {
+        await loadData();
       }
+    } else if(result.status === "error") {
+      alert(result.message); 
+      clearInput();
+    }
+  } catch (error) {
+    console.error("Ralat komunikasi API:", error);
+  } finally {
+    addBtn.disabled = false;
+    addBtn.innerText = "Add";
+  }
+}
+
+// Mengawal input supaya hanya menerima nombor & bergegar jika taip huruf
+document.getElementById("luckyNo").addEventListener("input", function(e) {
+  const inputField = e.target;
+  
+  // Semak jika ada karakter selain nombor dimasukkan
+  if (/[^\d]/.test(inputField.value)) {
+    
+    // 1. Tambah class untuk cetuskan animasi gegar
+    inputField.classList.add("shake-input");
+    
+    // 2. Padam karakter bukan nombor tersebut serta-merta
+    inputField.value = inputField.value.replace(/[^\d]/g, '');
+    
+    // 3. Buang class gegar selepas 300ms supaya boleh bergegar semula pada input salah yang seterusnya
+    setTimeout(() => {
+      inputField.classList.remove("shake-input");
+    }, 300);
+  }
+});
 
       /* 5. URUSAN BUTANG X CLEAR INPUT */
       function toggleClearBtn() {
