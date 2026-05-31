@@ -5,11 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Event System - Pink Award</title>
 
-<!-- Memanggil fail CSS luaran -->
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="pink.css">
 </head>
-
 <body>
 
 <!-- ===== HEADER NAV START ===== -->
@@ -25,9 +23,15 @@
 <!-- ===== CONTENT START ===== -->
 <div class="content-container">
   
-  <!-- Bahagian Carian dan Penapisan Kategori -->
+  <!-- Tajuk Utama Bertema Gelap & Glow -->
+  <div class="theme-header-container">
+    <h1 class="main-title">TROPICAL DINNER 2026</h1>
+    <h2 class="sub-title">Pink Award System</h2>
+  </div>
+
+  <!-- Bahagian Carian Tanpa Layout Dropdown -->
   <div class="search-wrapper">
-    <input type="text" id="searchBar" placeholder="Search Employee Name">
+    <input type="text" id="searchBar" placeholder="Cari nama pekerja (Column B)...">
     
     <select id="categoryDropdown">
       <option value="All Company">All Company</option>
@@ -39,18 +43,12 @@
     </select>
   </div>
 
-  <div class="action-footer">
-    <button class="popup-btn" id="openPopupBtn">Fullscreen Picture</button>
-  </div>
-  
   <!-- Ruangan Utama Galeri Gambar Grid -->
-  <div id="mainGalleryArea">
-    <!-- Gambar akan dibina secara automatik di sini melalui pink.js -->
-  </div>
+  <div id="mainGalleryArea"></div>
 
   <!-- Butang Pop-up di bahagian bawah sekali -->
   <div class="action-footer">
-    <button class="popup-btn" id="openPopupBtn">Fullscreen Picture</button>
+    <button class="popup-btn" id="openPopupBtn">Show All Selected in Pop-up Window</button>
   </div>
 
 </div>
@@ -62,9 +60,6 @@
 <script src="app.js"></script>
 <script src="api.js"></script>
 <script src="include.js"></script>
-
-<!-- Fail logik JavaScript khas untuk halaman Pink Award -->
 <script src="pink.js"></script>
-
 </body>
 </html>
