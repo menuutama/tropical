@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event System - Long Service</title>
 
-<title>Event System</title>
-
+<!-- Memanggil fail CSS luaran -->
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="service.css">
 </head>
 
 <body>
@@ -21,22 +22,48 @@
 </div>
 <!-- ===== HEADER NAV END ===== -->
 
-
 <!-- ===== CONTENT START ===== -->
+<div class="content-container">
+  
+  <!-- Bahagian Carian Nama/Syarikat dan Penapisan Kategori Tahun -->
+  <div class="search-wrapper">
+    <input type="text" id="searchBar" placeholder="Cari nama (Col B) atau syarikat (Col C)...">
+    
+    <select id="categoryDropdown">
+      <option value="All Category">All Category</option>
+      <option value="10 Years">10 Years</option>
+      <option value="15 Years">15 Years</option>
+      <option value="20 Years">20 Years</option>
+      <option value="25 Years">25 Years</option>
+      <option value="30 Years">30 Years</option>
+      <option value="35 Years">35 Years</option>
+      <option value="40 Years">40 Years</option>
+      <option value="55 Years">55 Years</option>
+    </select>
+  </div>
 
+  <!-- Ruangan Utama Galeri Gambar Grid -->
+  <div id="mainGalleryArea">
+    <!-- Gambar akan dibina secara automatik di sini melalui service.js -->
+  </div>
 
+  <!-- Butang Pop-up di bahagian bawah sekali -->
+  <div class="action-footer">
+    <button class="popup-btn" id="openPopupBtn">Show All Selected in Pop-up Window</button>
+  </div>
 
+</div>
 <!-- ===== CONTENT END ===== -->
 
 <!-- ===== FOOTER JS START ===== -->
-
 <script src="config.js"></script>
 <script src="ui.js"></script>
 <script src="app.js"></script>
 <script src="api.js"></script>
 <script src="include.js"></script>
 
+<!-- Fail logik JavaScript khas untuk halaman Long Service Award -->
+<script src="service.js"></script>
+
 </body>
 </html>
-
-<!-- ===== FOOTER JS END ===== -->
