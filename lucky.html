@@ -306,7 +306,7 @@ document.getElementById("luckyNo").addEventListener("input", function(e) {
         }
       }
 
-/* 7. EDIT DATA BARIS (Kemas Kini Tempatan - Kekal Popup Jika Salah) */
+/* 7. EDIT DATA BARIS (Kemas Kini Tempatan - Kekal Popup Jika Salah + Fungsi Enter) */
 async function editRow(row) {
   let modal = document.getElementById("custom-edit-modal");
   if (!modal) {
@@ -330,7 +330,7 @@ async function editRow(row) {
   const btnSubmit = document.getElementById("modal-submit");
   const btnCancel = document.getElementById("modal-cancel");
 
-  // Cari data sedia ada berdasarkan row
+  // Cari data sedia ada berdasarkan row untuk diletakkan dalam input
   const currentItem = allData.find(item => String(item.row) === String(row));
   inputField.value = currentItem ? currentItem.luckyNo : "";
   modal.style.display = "flex";
@@ -363,7 +363,8 @@ async function editRow(row) {
   };
 
   return new Promise((resolve) => {
-    btnSubmit.onclick = async () => {
+    // Fungsi utama untuk hantar dan simpan data
+    const saveData = async () => {
       const newNo = inputField.value.trim();
       
       if (!newNo) {
@@ -380,12 +381,12 @@ async function editRow(row) {
         const res = await fetch(`${API_URL}?action=edit&row=${row}&luckyNo=${encodeURIComponent(newNo)}`);
         const result = await res.json();
 
-        // JIKA RESPOND SALAH: Popup KEKAL, hanya naik alert, bergegar, dan highlight text
+        // JIKA RESPOND SALAH: Popup KEKAL, naik alert, bergegar, dan highlight text
         if (result.status === "not_in_winner_table") {
           triggerModalShake();
           alert("Nombor ini tidak tersenarai dalam winnerTable B2:B!");
           inputField.focus();
-          inputField.select(); // Highlight nombor salah supaya senang dipadam
+          inputField.select(); 
         } 
         else if (result.status === "not_found") {
           triggerModalShake();
@@ -405,10 +406,11 @@ async function editRow(row) {
           inputField.focus();
           inputField.select();
         } 
-        // JIKA BERJAYA: Baru tutup popup
+        // JIKA BERJAYA: Baru tutup popup dan kemas kini UI
         else if (result.status === "success") {
           modal.style.display = "none"; // Tutup popup di sini sahaja
           
+          // RE-FIX: Mentakrifkan semula 'index' yang hilang sebelum ini
           const index = allData.findIndex(item => String(item.row) === String(row));
           if (index !== -1) {
             if (result.data) {
@@ -429,13 +431,25 @@ async function editRow(row) {
       }
     };
 
+    // Trigger simpan bila klik butang simpan
+    btnSubmit.onclick = saveData;
+
+    // BARU: Trigger simpan bila tekan kekunci 'Enter' pada keyboard
+    inputField.onkeydown = function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault(); // Elak browser submit form secara default
+        saveData();
+      }
+    };
+
+    // Butang Batal
     btnCancel.onclick = () => {
       modal.style.display = "none";
       resolve();
     };
   });
 }
-      
+   
       /* MULAKAN PROSES */
       loadData();
     </script>
