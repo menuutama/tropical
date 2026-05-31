@@ -10,7 +10,7 @@ const targetCategories = [
 
 async function fetchServiceAwardData() {
   const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
+  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar dari Google Sheets (serviceAward)...</p>';
 
   try {
     const response = await fetch(`${GAS_WEB_APP_URL}?page=service`);
@@ -57,7 +57,8 @@ function initializeGallery(data) {
 
     const gridDiv = document.getElementById(`grid-${cat.replace(/\s+/g, '')}`);
     
-        companyItems.forEach(item => {
+    // === DI SINI TELAH DIBETULKAN: Menggunakan categoryItems, bukan companyItems ===
+    categoryItems.forEach(item => {
       const card = document.createElement('div');
       card.className = 'banner-card';
       
@@ -67,16 +68,16 @@ function initializeGallery(data) {
 
       card.setAttribute('data-name', empName.toLowerCase());
       card.setAttribute('data-company', compName.toLowerCase());
+      card.setAttribute('data-category', item.category);
       card.setAttribute('data-url', bannerUrl);
 
-      // Ditambah bahagian .card-footer untuk memaparkan nama pekerja
       card.innerHTML = `
-        <input type="checkbox" class="item-checkbox" data-company="${company}">
+        <input type="checkbox" class="item-checkbox" data-category="${cat}">
         <div class="image-wrapper">
           <img src="${bannerUrl}" alt="Banner" onerror="this.src='https://placehold.co'">
         </div>
         <div class="card-footer">
-          <div class="emp-label-name">${empName}</div>
+          <div class="emp-label-name">${empName} - ${compName}</div>
         </div>
       `;
       gridDiv.appendChild(card);
