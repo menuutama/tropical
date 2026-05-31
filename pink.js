@@ -29,7 +29,7 @@ async function fetchPinkAwardData() {
     initializeGallery(data); 
   } catch (error) {
     console.error("Gagal dapatkan data:", error);
-    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data. Sila semak deployment GAS anda atau ralat CORS.</p>';
+    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.</p>';
   }
 }
 
