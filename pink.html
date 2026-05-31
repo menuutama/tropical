@@ -100,7 +100,7 @@ async function fetchPinkAwardData() {
   try {
     // Sila gantikan URL ini dengan endpoint API / Apps Script anda yang memulangkan data sheet pinkAward
     // Pastikan data dipulangkan mengikut susunan baris asal Google Sheets
-    const response = await fetch('https://script.google.com/macros/s/AKfycbxErjGTwRsgTU7SpwhgOhdDJM4Ir8xGxFZenvV02JynjIEZ0YH95jNnTQSf8OvZeTFO/exec'); 
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxKNKr_MZa774gBu9kf5uVrwCgZA_UJ1yKuFsvGu8YgDbCJwHrj7kDQxzZAgQZpKUCn/exec'); 
     const data = await response.json();
     
     pinkAwardData = data; // Simpan data dalam array global
