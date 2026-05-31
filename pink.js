@@ -151,6 +151,7 @@ function filterData() {
 }
 
 // Fungsi Membuka Tetingkap Pop-up Browser bagi Gambar yang Dipilih
+// 4. Fungsi Membuka Gambar Dipilih ke dalam Sesi Browser Pop-up Window (Fullscreen Background Style)
 function openSelectedInPopup() {
   const checkboxes = document.querySelectorAll('.item-checkbox:checked');
   
@@ -159,45 +160,117 @@ function openSelectedInPopup() {
     return;
   }
 
-  const popupWindow = window.open("", "PinkAwardPopup", "width=900,height=700,scrollbars=yes,resizable=yes");
+  // Kumpul semua data gambar yang ditandakan
+  const selectedImages = [];
+  checkboxes.forEach(cb => {
+    const card = cb.closest('.banner-card');
+    selectedImages.push({
+      url: card.getAttribute('data-url'),
+      company: card.getAttribute('data-company')
+    });
+  });
+
+  // Buka tetingkap kosong baru di browser
+  const popupWindow = window.open("", "PinkAwardPopup", "width=1000,height=800,scrollbars=no,resizable=yes");
   
+  // Bina kandungan HTML slideshow penuh skrin dengan elemen visual disembunyikan
   let popupContent = `
     <html>
     <head>
-      <title>Selected Pink Award Banners</title>
+      <title>Pink Award - Fullscreen Background Slideshow</title>
       <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #fff; padding: 20px; text-align: center; }
-        .popup-title { margin-bottom: 25px; font-size: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; color: #0078d4; }
-        .popup-gallery { display: flex; flex-direction: column; gap: 30px; align-items: center; }
-        .popup-item { background: #252526; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.6); max-width: 90%; border: 1px solid #333; }
-        .popup-item img { max-width: 100%; height: auto; border-radius: 4px; display: block; }
-        .popup-meta { margin-top: 10px; font-size: 14px; color: #aaa; font-weight: bold; }
+        * { box-sizing: border-box; }
+        body { 
+          background: #000; 
+          margin: 0; 
+          padding: 0; 
+          overflow: hidden; 
+          height: 100vh;
+          width: 100vw;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        
+        /* Container Utama Slideshow */
+        .slideshow-container {
+          width: 100vw;
+          height: 100vh;
+          position: relative;
+        }
+
+        /* Mengawal gambar supaya menjadi BACKGROUND FULL SCREEN 100% tanpa bar hitam di tepi */
+        .image-wrapper {
+          width: 100%;
+          height: 100%;
+        }
+        .image-wrapper img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover; /* Memenuhkan gambar ke skrin 100% tanpa ruang kosong hitam */
+          display: block;
+        }
+
+        /* 
+          Semua elemen visual seperti butang navigasi dan teks info 
+          telah dibuang/dihilangkan dari kod HTML ini bagi memenuhi permintaan anda.
+        */
       </style>
     </head>
     <body>
-      <div class="popup-title">Senarai Gambar Banner Yang Dipilih (${checkboxes.length} Item)</div>
-      <div class="popup-gallery">
-  `;
 
-  checkboxes.forEach(cb => {
-    const card = cb.closest('.banner-card');
-    const url = card.getAttribute('data-url');
-    const company = card.getAttribute('data-company');
-    
-    popupContent += `
-      <div class="popup-item">
-        <img src="${url}" onerror="this.src='https://placehold.co'">
-        <div class="popup-meta">Syarikat: ${company}</div>
+      <div class="slideshow-container">
+        <!-- Tempat Gambar Dipaparkan Penuh Skrin -->
+        <div class="image-wrapper">
+          <img id="displayImage" src="" onerror="this.src='https://placehold.co'">
+        </div>
       </div>
-    `;
-  });
 
-  popupContent += `
-      </div>
+      <script>
+        // Data gambar yang dihantar dari tetingkap utama
+        const images = ${JSON.stringify(selectedImages)};
+        let currentIndex = 0;
+
+        // Fungsi memaparkan imej berdasarkan index semasa
+        function showSlide(index) {
+          if (images.length === 0) return;
+          
+          const imgElement = document.getElementById('displayImage');
+          imgElement.src = images[index].url;
+        }
+
+        // Fungsi menukar slide (Tambah atau tolak index)
+        function changeSlide(direction) {
+          currentIndex += direction;
+          
+          // Logik pusingan (Looping)
+          if (currentIndex >= images.length) {
+            currentIndex = 0;
+          } else if (currentIndex < 0) {
+            currentIndex = images.length - 1;
+          }
+          
+          showSlide(currentIndex);
+        }
+
+        // 🚀 FUNGSI KUNCI KEKAL BERFUNGSI: Pengesanan Keyboard (Anak Panah Kiri & Kanan)
+        document.addEventListener('keydown', function(event) {
+          if (event.key === "ArrowLeft") {
+            changeSlide(-1); // Anak panah kiri -> Gambar sebelum
+          } else if (event.key === "ArrowRight") {
+            changeSlide(1);  // Anak panah kanan -> Gambar seterus
+          }
+        });
+
+        // Jalankan papar gambar pertama sebaik sahaja pop-up dimuatkan
+        showSlide(currentIndex);
+      </script>
+
     </body>
     </html>
   `;
 
+  // Tulis kod ke dalam tetingkap baru dan tutup stream penulisan
   popupWindow.document.write(popupContent);
   popupWindow.document.close();
 }
