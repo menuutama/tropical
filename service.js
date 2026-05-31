@@ -12,7 +12,7 @@ const targetCategories = [
 // Ambil data dari GAS khusus untuk halaman Service
 async function fetchServiceAwardData() {
   const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar.</p>';
+  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
 
   try {
     // Kita tambah parameter ?page=service di hujung URL supaya GAS tahu nak baca sheet serviceAward
