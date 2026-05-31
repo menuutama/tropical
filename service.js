@@ -3,19 +3,16 @@ const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJawF_ozZUj6IU
 
 let serviceAwardData = []; 
 
-// Kategori utama berdasarkan susunan tahun perkhidmatan (Column D)
 const targetCategories = [
   "10 Years", "15 Years", "20 Years", "25 Years", 
   "30 Years", "35 Years", "40 Years", "55 Years"
 ];
 
-// Ambil data dari GAS khusus untuk halaman Service
 async function fetchServiceAwardData() {
   const mainArea = document.getElementById('mainGalleryArea');
   mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
 
   try {
-    // Kita tambah parameter ?page=service di hujung URL supaya GAS tahu nak baca sheet serviceAward
     const response = await fetch(`${GAS_WEB_APP_URL}?page=service`);
     const data = await response.json();
     
@@ -27,11 +24,10 @@ async function fetchServiceAwardData() {
     initializeGallery(data); 
   } catch (error) {
     console.error("Gagal dapatkan data:", error);
-    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.anda.</p>';
+    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.</p>';
   }
 }
 
-// Membina struktur galeri tersusun mengikut tahun perkhidmatan
 function initializeGallery(data) {
   const mainArea = document.getElementById('mainGalleryArea');
   mainArea.innerHTML = ''; 
@@ -39,7 +35,6 @@ function initializeGallery(data) {
   serviceAwardData = data;
 
   targetCategories.forEach(cat => {
-    // Tapis data mengikut kategori tahun semasa
     const categoryItems = serviceAwardData.filter(item => item.category === cat || item.category === cat.replace(/\s+/g, ''));
     
     if (categoryItems.length === 0) return; 
@@ -70,7 +65,6 @@ function initializeGallery(data) {
       const compName = item.company ? item.company.toLowerCase() : '';
       const bannerUrl = item.bannerUrl ? item.bannerUrl : '';
 
-      // Simpan atribut penting untuk tapisan carian
       card.setAttribute('data-name', empName);
       card.setAttribute('data-company', compName);
       card.setAttribute('data-category', item.category);
@@ -89,7 +83,6 @@ function initializeGallery(data) {
   setupCheckboxListeners();
 }
 
-// Kawalan Fungsi Checkbox 'Select All' mengikut Kumpulan Kategori Tahun
 function setupCheckboxListeners() {
   const selectAllCheckboxes = document.querySelectorAll('.company-select-all');
   
@@ -111,7 +104,6 @@ function setupCheckboxListeners() {
   });
 }
 
-// Fungsi Tapis Carian (Boleh search Nama di Col B ATAU Company Name di Col C)
 function filterData() {
   const searchText = document.getElementById('searchBar').value.toLowerCase();
   const selectedCategory = document.getElementById('categoryDropdown').value;
@@ -128,10 +120,7 @@ function filterData() {
       const cardCompany = card.getAttribute('data-company');
       const cardCategory = card.getAttribute('data-category');
 
-      // Tapis berdasarkan dropdown kategori tahun (Col D)
       const matchesCategory = (selectedCategory === "All Category" || cardCategory === selectedCategory || cardCategory === selectedCategory.replace(/\s+/g, ''));
-      
-      // Tapis berdasarkan teks input sama ada sepadan dengan nama pekerja (Col B) ATAU nama company (Col C)
       const matchesSearch = cardName.includes(searchText) || cardCompany.includes(searchText);
 
       if (matchesCategory && matchesSearch) {
@@ -152,7 +141,6 @@ function filterData() {
   });
 }
 
-// Fungsi Pop-up Fullscreen Background 100% dengan fungsi keyboard anak panah kiri/kanan
 function openSelectedInPopup() {
   const checkboxes = document.querySelectorAll('.item-checkbox:checked');
   
@@ -183,7 +171,7 @@ function openSelectedInPopup() {
     <body>
       <div class="slideshow-container">
         <div class="image-wrapper">
-          <img id="displayImage" src="" onerror="this.src='https://placehold.co'">
+          <img id="displayImage" src="">
         </div>
       </div>
       <script>
@@ -208,7 +196,7 @@ function openSelectedInPopup() {
         });
 
         showSlide(currentIndex);
-      </script>
+      <\/script>
     </body>
     </html>
   `;
@@ -217,7 +205,6 @@ function openSelectedInPopup() {
   popupWindow.document.close();
 }
 
-// Jalankan sistem Long Service apabila halaman sedia
 document.addEventListener('DOMContentLoaded', () => {
   fetchServiceAwardData(); 
 
