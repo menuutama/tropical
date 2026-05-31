@@ -1,5 +1,5 @@
 // ⚠️ GANTIKAN URL DI BAWAH DENGAN URL WEB APP GAS ANDA YANG SEBENAR
-const GAS_WEB_APP_URL = "MASUKKAN_URL_WEB_APP_GAS_ANDA_DI_SINI";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0Bzn8_Z9vVjwZNGKwWb33-P0sZWOIbIYjHa-VT5ml6hBRoFbc2EHCiNx2Gbc-QQNm/exec";
 
 let pinkAwardData = []; 
 
