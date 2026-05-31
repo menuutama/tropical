@@ -5,11 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Event System - Long Service</title>
 
-<!-- Memanggil fail CSS luaran -->
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="service.css">
 </head>
-
 <body>
 
 <!-- ===== HEADER NAV START ===== -->
@@ -25,9 +23,15 @@
 <!-- ===== CONTENT START ===== -->
 <div class="content-container">
   
-  <!-- Bahagian Carian Nama/Syarikat dan Penapisan Kategori Tahun -->
+  <!-- Tajuk Utama Bertema Gelap & Glow -->
+  <div class="theme-header-container">
+    <h1 class="main-title">TROPICAL DINNER 2026</h1>
+    <h2 class="sub-title">Long Service Award</h2>
+  </div>
+
+  <!-- Bahagian Carian Tanpa Layout Dropdown -->
   <div class="search-wrapper">
-    <input type="text" id="searchBar" placeholder="Search Employee Name / Company Name">
+    <input type="text" id="searchBar" placeholder="Search Employee Name / Compony Name">
     
     <select id="categoryDropdown">
       <option value="All Category">All Category</option>
@@ -41,13 +45,13 @@
       <option value="55 Years">55 Years</option>
     </select>
   </div>
-  <div class="action-footer">
+
+    <div class="action-footer">
     <button class="popup-btn" id="openPopupBtn">Fullscreen Picture</button>
   </div>
+  
   <!-- Ruangan Utama Galeri Gambar Grid -->
-  <div id="mainGalleryArea">
-    <!-- Gambar akan dibina secara automatik di sini melalui service.js -->
-  </div>
+  <div id="mainGalleryArea"></div>
 
   <!-- Butang Pop-up di bahagian bawah sekali -->
   <div class="action-footer">
@@ -63,9 +67,6 @@
 <script src="app.js"></script>
 <script src="api.js"></script>
 <script src="include.js"></script>
-
-<!-- Fail logik JavaScript khas untuk halaman Long Service Award -->
 <script src="service.js"></script>
-
 </body>
 </html>
