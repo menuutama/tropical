@@ -10,7 +10,7 @@ const targetCategories = [
 
 async function fetchServiceAwardData() {
   const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar dari Google Sheets (serviceAward)...</p>';
+  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
 
   try {
     const response = await fetch(`${GAS_WEB_APP_URL}?page=service`);
