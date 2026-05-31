@@ -151,6 +151,7 @@ function filterData() {
 }
 
 // Fungsi Membuka Tetingkap Pop-up Browser bagi Gambar yang Dipilih
+// 4. Fungsi Membuka Gambar Dipilih ke dalam Sesi Browser Pop-up Window (Slideshow Style)
 function openSelectedInPopup() {
   const checkboxes = document.querySelectorAll('.item-checkbox:checked');
   
@@ -159,45 +160,175 @@ function openSelectedInPopup() {
     return;
   }
 
-  const popupWindow = window.open("", "PinkAwardPopup", "width=900,height=700,scrollbars=yes,resizable=yes");
+  // Kumpul semua data gambar yang ditandakan
+  const selectedImages = [];
+  checkboxes.forEach(cb => {
+    const card = cb.closest('.banner-card');
+    selectedImages.push({
+      url: card.getAttribute('data-url'),
+      company: card.getAttribute('data-company')
+    });
+  });
+
+  // Buka tetingkap kosong baru di browser
+  const popupWindow = window.open("", "PinkAwardPopup", "width=1000,height=800,scrollbars=no,resizable=yes");
   
+  // Bina kandungan HTML slideshow penuh skrin dengan kawalan keyboard
   let popupContent = `
     <html>
     <head>
-      <title>Selected Pink Award Banners</title>
+      <title>Pink Award - Fullscreen Slideshow</title>
       <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #fff; padding: 20px; text-align: center; }
-        .popup-title { margin-bottom: 25px; font-size: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; color: #0078d4; }
-        .popup-gallery { display: flex; flex-direction: column; gap: 30px; align-items: center; }
-        .popup-item { background: #252526; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.6); max-width: 90%; border: 1px solid #333; }
-        .popup-item img { max-width: 100%; height: auto; border-radius: 4px; display: block; }
-        .popup-meta { margin-top: 10px; font-size: 14px; color: #aaa; font-weight: bold; }
+        * { box-sizing: border-box; }
+        body { 
+          font-family: sans-serif; 
+          background: #111; 
+          color: #fff; 
+          margin: 0; 
+          padding: 0; 
+          overflow: hidden; 
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          width: 100vw;
+        }
+        
+        /* Container Utama Slideshow */
+        .slideshow-container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        }
+
+        /* Mengawal gambar supaya FIT TO SCREEN sepenuhnya tanpa pecah */
+        .image-wrapper {
+          width: 90vw;
+          height: 80vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .image-wrapper img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+          border-radius: 4px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+
+        /* Maklumat Syarikat dan Kaunter di Bawah Gambar */
+        .meta-info {
+          margin-top: 20px;
+          text-align: center;
+          background: rgba(0, 0, 0, 0.6);
+          padding: 10px 20px;
+          border-radius: 20px;
+        }
+        .company-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #0078d4;
+          margin-bottom: 5px;
+        }
+        .counter {
+          font-size: 14px;
+          color: #aaa;
+        }
+
+        /* Butang Sentuh Kiri Kanan (Sebagai Alternatif Skrin Sentuh) */
+        .nav-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background: rgba(255,255,255,0.1);
+          color: white;
+          border: none;
+          font-size: 30px;
+          padding: 15px 20px;
+          cursor: pointer;
+          border-radius: 5px;
+          user-select: none;
+          transition: background 0.2s;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.3); }
+        .prev-btn { left: 20px; }
+        .next-btn { right: 20px; }
       </style>
     </head>
     <body>
-      <div class="popup-title">Senarai Gambar Banner Yang Dipilih (${checkboxes.length} Item)</div>
-      <div class="popup-gallery">
-  `;
 
-  checkboxes.forEach(cb => {
-    const card = cb.closest('.banner-card');
-    const url = card.getAttribute('data-url');
-    const company = card.getAttribute('data-company');
-    
-    popupContent += `
-      <div class="popup-item">
-        <img src="${url}" onerror="this.src='https://placehold.co'">
-        <div class="popup-meta">Syarikat: ${company}</div>
-      </div>
-    `;
-  });
+      <div class="slideshow-container">
+        <!-- Butang Navigasi Kiri Kanan -->
+        <button class="nav-btn prev-btn" onclick="changeSlide(-1)">&#10094;</button>
+        <button class="nav-btn next-btn" onclick="changeSlide(1)">&#10095;</button>
 
-  popupContent += `
+        <!-- Tempat Gambar Dipaparkan -->
+        <div class="image-wrapper">
+          <img id="displayImage" src="" onerror="this.src='https://placehold.co'">
+        </div>
+
+        <!-- Ruangan Maklumat Teks -->
+        <div class="meta-info">
+          <div id="displayCompany" class="company-title"></div>
+          <div id="displayCounter" class="counter"></div>
+        </div>
       </div>
+
+      <script>
+        // Data gambar yang dihantar dari tetingkap utama
+        const images = ${JSON.stringify(selectedImages)};
+        let currentIndex = 0;
+
+        // Fungsi memaparkan maklumat gambar berdasarkan index semasa
+        function showSlide(index) {
+          if (images.length === 0) return;
+          
+          const imgElement = document.getElementById('displayImage');
+          const companyElement = document.getElementById('displayCompany');
+          const counterElement = document.getElementById('displayCounter');
+
+          imgElement.src = images[index].url;
+          companyElement.innerText = "Syarikat: " + images[index].company;
+          counterElement.innerText = (index + 1) + " / " + images.length;
+        }
+
+        // Fungsi menukar slide (Tambah atau tolak index)
+        function changeSlide(direction) {
+          currentIndex += direction;
+          
+          // Logik pusingan (Looping): Jika habis, kembali ke gambar pertama/terakhir
+          if (currentIndex >= images.length) {
+            currentIndex = 0;
+          } else if (currentIndex < 0) {
+            currentIndex = images.length - 1;
+          }
+          
+          showSlide(currentIndex);
+        }
+
+        // 🚀 LOGIK PENGESANAN KEYBOARD (Anak Panah Kiri & Kanan)
+        document.addEventListener('keydown', function(event) {
+          if (event.key === "ArrowLeft") {
+            changeSlide(-1); // Anak panah kiri -> Gambar sebelum
+          } else if (event.key === "ArrowRight") {
+            changeSlide(1);  // Anak panah kanan -> Gambar seterus
+          }
+        });
+
+        // Jalankan papar slide pertama sebaik sahaja pop-up dimuatkan
+        showSlide(currentIndex);
+      </script>
+
     </body>
     </html>
   `;
 
+  // Tulis kod ke dalam tetingkap baru dan tutup stream penulisan
   popupWindow.document.write(popupContent);
   popupWindow.document.close();
 }
