@@ -14,7 +14,7 @@ const targetCompanies = [
 // Fungsi Ambil Data dari Google Sheets melalui GAS
 async function fetchPinkAwardData() {
   const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar dari Google Sheets...</p>';
+  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
 
   try {
     const response = await fetch(GAS_WEB_APP_URL);
@@ -29,7 +29,7 @@ async function fetchPinkAwardData() {
     initializeGallery(data); 
   } catch (error) {
     console.error("Gagal dapatkan data:", error);
-    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data. Sila semak deployment GAS anda atau ralat CORS.</p>';
+    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.</p>';
   }
 }
 
@@ -151,7 +151,6 @@ function filterData() {
 }
 
 // Fungsi Membuka Tetingkap Pop-up Browser bagi Gambar yang Dipilih
-// 4. Fungsi Membuka Gambar Dipilih ke dalam Sesi Browser Pop-up Window (Fullscreen Background Style)
 function openSelectedInPopup() {
   const checkboxes = document.querySelectorAll('.item-checkbox:checked');
   
