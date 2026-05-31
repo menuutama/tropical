@@ -151,7 +151,7 @@ function filterData() {
 }
 
 // Fungsi Membuka Tetingkap Pop-up Browser bagi Gambar yang Dipilih
-// 4. Fungsi Membuka Gambar Dipilih ke dalam Sesi Browser Pop-up Window (Slideshow Style)
+// 4. Fungsi Membuka Gambar Dipilih ke dalam Sesi Browser Pop-up Window (Fullscreen Background Style)
 function openSelectedInPopup() {
   const checkboxes = document.querySelectorAll('.item-checkbox:checked');
   
@@ -173,109 +173,56 @@ function openSelectedInPopup() {
   // Buka tetingkap kosong baru di browser
   const popupWindow = window.open("", "PinkAwardPopup", "width=1000,height=800,scrollbars=no,resizable=yes");
   
-  // Bina kandungan HTML slideshow penuh skrin dengan kawalan keyboard
+  // Bina kandungan HTML slideshow penuh skrin dengan elemen visual disembunyikan
   let popupContent = `
     <html>
     <head>
-      <title>Pink Award - Fullscreen Slideshow</title>
+      <title>Pink Award - Fullscreen Background Slideshow</title>
       <style>
         * { box-sizing: border-box; }
         body { 
-          font-family: sans-serif; 
-          background: #111; 
-          color: #fff; 
+          background: #000; 
           margin: 0; 
           padding: 0; 
           overflow: hidden; 
+          height: 100vh;
+          width: 100vw;
           display: flex;
           justify-content: center;
           align-items: center;
-          height: 100vh;
-          width: 100vw;
         }
         
         /* Container Utama Slideshow */
         .slideshow-container {
+          width: 100vw;
+          height: 100vh;
           position: relative;
+        }
+
+        /* Mengawal gambar supaya menjadi BACKGROUND FULL SCREEN 100% tanpa bar hitam di tepi */
+        .image-wrapper {
           width: 100%;
           height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-        }
-
-        /* Mengawal gambar supaya FIT TO SCREEN sepenuhnya tanpa pecah */
-        .image-wrapper {
-          width: 90vw;
-          height: 80vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
         }
         .image-wrapper img {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
-          border-radius: 4px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+          width: 100%;
+          height: 100%;
+          object-fit: cover; /* Memenuhkan gambar ke skrin 100% tanpa ruang kosong hitam */
+          display: block;
         }
 
-        /* Maklumat Syarikat dan Kaunter di Bawah Gambar */
-        .meta-info {
-          margin-top: 20px;
-          text-align: center;
-          background: rgba(0, 0, 0, 0.6);
-          padding: 10px 20px;
-          border-radius: 20px;
-        }
-        .company-title {
-          font-size: 18px;
-          font-weight: bold;
-          color: #0078d4;
-          margin-bottom: 5px;
-        }
-        .counter {
-          font-size: 14px;
-          color: #aaa;
-        }
-
-        /* Butang Sentuh Kiri Kanan (Sebagai Alternatif Skrin Sentuh) */
-        .nav-btn {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          background: rgba(255,255,255,0.1);
-          color: white;
-          border: none;
-          font-size: 30px;
-          padding: 15px 20px;
-          cursor: pointer;
-          border-radius: 5px;
-          user-select: none;
-          transition: background 0.2s;
-        }
-        .nav-btn:hover { background: rgba(255,255,255,0.3); }
-        .prev-btn { left: 20px; }
-        .next-btn { right: 20px; }
+        /* 
+          Semua elemen visual seperti butang navigasi dan teks info 
+          telah dibuang/dihilangkan dari kod HTML ini bagi memenuhi permintaan anda.
+        */
       </style>
     </head>
     <body>
 
       <div class="slideshow-container">
-        <!-- Butang Navigasi Kiri Kanan -->
-        <button class="nav-btn prev-btn" onclick="changeSlide(-1)">&#10094;</button>
-        <button class="nav-btn next-btn" onclick="changeSlide(1)">&#10095;</button>
-
-        <!-- Tempat Gambar Dipaparkan -->
+        <!-- Tempat Gambar Dipaparkan Penuh Skrin -->
         <div class="image-wrapper">
           <img id="displayImage" src="" onerror="this.src='https://placehold.co'">
-        </div>
-
-        <!-- Ruangan Maklumat Teks -->
-        <div class="meta-info">
-          <div id="displayCompany" class="company-title"></div>
-          <div id="displayCounter" class="counter"></div>
         </div>
       </div>
 
@@ -284,24 +231,19 @@ function openSelectedInPopup() {
         const images = ${JSON.stringify(selectedImages)};
         let currentIndex = 0;
 
-        // Fungsi memaparkan maklumat gambar berdasarkan index semasa
+        // Fungsi memaparkan imej berdasarkan index semasa
         function showSlide(index) {
           if (images.length === 0) return;
           
           const imgElement = document.getElementById('displayImage');
-          const companyElement = document.getElementById('displayCompany');
-          const counterElement = document.getElementById('displayCounter');
-
           imgElement.src = images[index].url;
-          companyElement.innerText = "Syarikat: " + images[index].company;
-          counterElement.innerText = (index + 1) + " / " + images.length;
         }
 
         // Fungsi menukar slide (Tambah atau tolak index)
         function changeSlide(direction) {
           currentIndex += direction;
           
-          // Logik pusingan (Looping): Jika habis, kembali ke gambar pertama/terakhir
+          // Logik pusingan (Looping)
           if (currentIndex >= images.length) {
             currentIndex = 0;
           } else if (currentIndex < 0) {
@@ -311,7 +253,7 @@ function openSelectedInPopup() {
           showSlide(currentIndex);
         }
 
-        // 🚀 LOGIK PENGESANAN KEYBOARD (Anak Panah Kiri & Kanan)
+        // 🚀 FUNGSI KUNCI KEKAL BERFUNGSI: Pengesanan Keyboard (Anak Panah Kiri & Kanan)
         document.addEventListener('keydown', function(event) {
           if (event.key === "ArrowLeft") {
             changeSlide(-1); // Anak panah kiri -> Gambar sebelum
@@ -320,7 +262,7 @@ function openSelectedInPopup() {
           }
         });
 
-        // Jalankan papar slide pertama sebaik sahaja pop-up dimuatkan
+        // Jalankan papar gambar pertama sebaik sahaja pop-up dimuatkan
         showSlide(currentIndex);
       </script>
 
@@ -332,6 +274,7 @@ function openSelectedInPopup() {
   popupWindow.document.write(popupContent);
   popupWindow.document.close();
 }
+
 
 // Jalankan sistem apabila halaman sedia
 document.addEventListener('DOMContentLoaded', () => {
