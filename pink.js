@@ -38,7 +38,12 @@ function initializeGallery(data) {
   pinkAwardData = data;
 
   targetCompanies.forEach(company => {
-    const companyItems = pinkAwardData.filter(item => item.company === company);
+    // Penapisan awal menggunakan kaedah pembersihan teks (trim & lowercase) untuk mengelakkan ralat data Google Sheets
+    const companyItems = pinkAwardData.filter(item => {
+      const sheetCompany = item.company ? item.company.toString().trim().toLowerCase() : '';
+      const targetComp = company.trim().toLowerCase();
+      return sheetCompany === targetComp;
+    });
     
     if (companyItems.length === 0) return; 
 
@@ -60,7 +65,7 @@ function initializeGallery(data) {
 
     const gridDiv = document.getElementById(`grid-${company.replace(/\s+/g, '')}`);
     
-        companyItems.forEach(item => {
+    companyItems.forEach(item => {
       const card = document.createElement('div');
       card.className = 'banner-card';
       
@@ -68,11 +73,11 @@ function initializeGallery(data) {
       const compName = item.company ? item.company : '';
       const bannerUrl = item.bannerUrl ? item.bannerUrl : '';
 
-      card.setAttribute('data-name', empName.toLowerCase());
-      card.setAttribute('data-company', compName.toLowerCase());
+      // Kekalkan nilai asal dalam atribut untuk rujukan visual, tetapi lowercase untuk tapisan
+      card.setAttribute('data-name', empName.toLowerCase().trim());
+      card.setAttribute('data-company', compName.toLowerCase().trim());
       card.setAttribute('data-url', bannerUrl);
 
-      // Ditambah bahagian .card-footer untuk memaparkan nama pekerja
       card.innerHTML = `
         <input type="checkbox" class="item-checkbox" data-company="${company}">
         <div class="image-wrapper">
@@ -110,11 +115,13 @@ function setupCheckboxListeners() {
   });
 }
 
+// === DI SINI TELAH DIPERBAIKI: Fungsi Tapisan Kalis Ralat Huruf Besar/Kecil & Ruang Kosong ===
 function filterData() {
-  const searchText = document.getElementById('searchBar').value.toLowerCase();
-  const selectedCategory = document.getElementById('categoryDropdown').value;
+  const searchText = document.getElementById('searchBar').value.toLowerCase().trim();
+  const selectedCategory = document.getElementById('categoryDropdown').value.toLowerCase().trim();
   
   targetCompanies.forEach(company => {
+    const companyCleaned = company.toLowerCase().trim();
     const groupDiv = document.getElementById(`group-${company.replace(/\s+/g, '')}`);
     if (!groupDiv) return;
 
@@ -125,7 +132,10 @@ function filterData() {
       const cardName = card.getAttribute('data-name');
       const cardCompany = card.getAttribute('data-company');
 
-      const matchesCategory = (selectedCategory === "All Company" || cardCompany === selectedCategory);
+      // Semak padanan kategori dropdown (Sama ada pilih "all company" atau nama syarikat sepadan)
+      const matchesCategory = (selectedCategory === "all company" || cardCompany === selectedCategory);
+      
+      // Semak padanan carian teks nama pekerja
       const matchesSearch = cardName.includes(searchText);
 
       if (matchesCategory && matchesSearch) {
@@ -138,7 +148,9 @@ function filterData() {
       }
     });
 
-    if (visibleCardsInGroup === 0) {
+    // Sembunyikan atau paparkan keseluruhan seksyen kumpulan syarikat
+    // Jika dropdown memilih syarikat spesifik, pastikan seksyen syarikat lain disembunyikan terus
+    if (visibleCardsInGroup === 0 || (selectedCategory !== "all company" && companyCleaned !== selectedCategory)) {
       groupDiv.style.display = 'none';
     } else {
       groupDiv.style.display = 'block';
