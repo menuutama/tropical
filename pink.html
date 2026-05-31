@@ -4,154 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Event System - Pink Award</title>
+
+<!-- Memanggil fail CSS luaran -->
 <link rel="stylesheet" href="style.css">
-
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-  }
-  .content-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  .search-wrapper {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 25px;
-    justify-content: center;
-  }
-  .search-wrapper input, .search-wrapper select {
-    padding: 12px;
-    font-size: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    outline: none;
-  }
-  .search-wrapper input { width: 350px; }
-  .search-wrapper select { width: 220px; background-color: #fff; }
-
-  /* Gaya Paparan Kumpulan Mengikut Syarikat */
-  .company-group {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  }
-  .company-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-  }
-  .company-label {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-  }
-  .select-all-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    color: #666;
-    cursor: pointer;
-  }
-  .select-all-wrapper input {
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-  }
-
-  /* Reka Bentuk Grid Extra Large Icons (Windows Folder Style) */
-  .gallery-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 25px;
-  }
-  .banner-card {
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-    background: #ffffff;
-    padding: 10px;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
-    position: relative;
-  }
-  .banner-card:hover {
-    background-color: #e5f3ff; /* Warna hover iras Windows Explorer */
-    border-color: #99d1ff;
-  }
-  .image-wrapper {
-    width: 100%;
-    aspect-ratio: 1 / 1; /* Kekalkan bentuk kotak petak sekata */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background: #fafafa;
-    border-radius: 4px;
-    border: 1px solid #f0f0f0;
-  }
-  .banner-card img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* Memastikan banner penuh tidak terpotong */
-    display: block;
-  }
-  .item-checkbox {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    z-index: 10;
-  }
-
-  /* Bahagian Butang Pop-up di Bawah Sekali */
-  .action-footer {
-    display: flex;
-    justify-content: center;
-    margin: 40px 0;
-  }
-  .popup-btn {
-    background-color: #0078d4; /* Warna Biru Windows */
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    font-size: 16px;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    transition: background-color 0.2s;
-  }
-  .popup-btn:hover { background-color: #005a9e; }
-
-  .company-label {
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffffff; /* Ditukar daripada #333 ke #ffffff */
-}
-.select-all-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #ffffff; /* Ditukar daripada #666 ke #ffffff */
-  cursor: pointer;
-}
-
-</style>
+<link rel="stylesheet" href="pink.css">
 </head>
+
 <body>
 
 <!-- ===== HEADER NAV START ===== -->
@@ -167,8 +25,9 @@
 <!-- ===== CONTENT START ===== -->
 <div class="content-container">
   
+  <!-- Bahagian Carian dan Penapisan Kategori -->
   <div class="search-wrapper">
-    <input type="text" id="searchBar" placeholder="Cari nama pekerja...">
+    <input type="text" id="searchBar" placeholder="Cari nama pekerja (Column B)...">
     
     <select id="categoryDropdown">
       <option value="All Company">All Company</option>
@@ -180,12 +39,12 @@
     </select>
   </div>
 
-  <!-- Ruangan Utama Pemaparan Konten -->
+  <!-- Ruangan Utama Galeri Gambar Grid -->
   <div id="mainGalleryArea">
-    <!-- Kumpulan gambar mengikut syarikat akan di-generate di sini -->
+    <!-- Gambar akan dibina secara automatik di sini melalui pink.js -->
   </div>
 
-  <!-- Butang Aksi di Bawah Sekali -->
+  <!-- Butang Pop-up di bahagian bawah sekali -->
   <div class="action-footer">
     <button class="popup-btn" id="openPopupBtn">Show All Selected in Pop-up Window</button>
   </div>
@@ -194,6 +53,8 @@
 <!-- ===== CONTENT END ===== -->
 
 <!-- ===== FOOTER JS START ===== -->
+<!-- Fail logik JavaScript khas untuk halaman Pink Award -->
+<script src="pink.js"></script>
 
 </body>
 </html>
