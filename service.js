@@ -1,5 +1,5 @@
 // ⚠️ MASUKKAN URL WEB APP GAS ANDA YANG SEBENAR DI SINI (Sama seperti url di pink.js)
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJawF_ozZUj6IU-3zDJQzhJUns-YoAOyiUiKsyvn6c5jg2PCTdGK5mEe_YXhAcxpCV/exec";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzjZWDv678_ioJc65wJ_XGUYQaTDYdfFX2U65RxYmPgsz7oKdoFcbwCKPhf7dB86T-t/exec";
 
 let serviceAwardData = []; 
 
