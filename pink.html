@@ -3,14 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Event System - Pink Award</title>
-
 <link rel="stylesheet" href="style.css">
-<!-- CSS Tambahan untuk susunan Layout (Boleh dipindahkan ke style.css) -->
 
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+  }
+  .content-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .search-wrapper {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    justify-content: center;
+  }
+  .search-wrapper input, .search-wrapper select {
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+  }
+  .search-wrapper input { width: 350px; }
+  .search-wrapper select { width: 220px; background-color: #fff; }
+
+  /* Gaya Paparan Kumpulan Mengikut Syarikat */
+  .company-group {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+  .company-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  .company-label {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  .select-all-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+  }
+  .select-all-wrapper input {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Reka Bentuk Grid Extra Large Icons (Windows Folder Style) */
+  .gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+  }
+  .banner-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    background: #ffffff;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .banner-card:hover {
+    background-color: #e5f3ff; /* Warna hover iras Windows Explorer */
+    border-color: #99d1ff;
+  }
+  .image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Kekalkan bentuk kotak petak sekata */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #fafafa;
+    border-radius: 4px;
+    border: 1px solid #f0f0f0;
+  }
+  .banner-card img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Memastikan banner penuh tidak terpotong */
+    display: block;
+  }
+  .item-checkbox {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  /* Bahagian Butang Pop-up di Bawah Sekali */
+  .action-footer {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+  }
+  .popup-btn {
+    background-color: #0078d4; /* Warna Biru Windows */
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: background-color 0.2s;
+  }
+  .popup-btn:hover { background-color: #005a9e; }
+</style>
 </head>
-
 <body>
 
 <!-- ===== HEADER NAV START ===== -->
@@ -23,13 +149,11 @@
 </div>
 <!-- ===== HEADER NAV END ===== -->
 
-
 <!-- ===== CONTENT START ===== -->
 <div class="content-container">
   
-  <!-- Carian dan Pilihan Kategori -->
   <div class="search-wrapper">
-    <input type="text" id="searchBar" placeholder="Cari nama atau detail...">
+    <input type="text" id="searchBar" placeholder="Cari nama pekerja...">
     
     <select id="categoryDropdown">
       <option value="All Company">All Company</option>
@@ -41,97 +165,24 @@
     </select>
   </div>
 
-  <!-- Ruangan untuk memaparkan gambar banner -->
-  <div id="gallery" class="gallery-container">
-    <!-- Gambar akan keluar di sini secara automatik via JavaScript -->
+  <!-- Ruangan Utama Pemaparan Konten -->
+  <div id="mainGalleryArea">
+    <!-- Kumpulan gambar mengikut syarikat akan di-generate di sini -->
+  </div>
+
+  <!-- Butang Aksi di Bawah Sekali -->
+  <div class="action-footer">
+    <button class="popup-btn" id="openPopupBtn">Show All Selected in Pop-up Window</button>
   </div>
 
 </div>
 <!-- ===== CONTENT END ===== -->
 
 <!-- ===== FOOTER JS START ===== -->
-
-<script>
-  // Contoh data yang terhasil/di-fetch dari Google Sheets 'pinkAward'
-// Column C = company, Column D = bannerUrl. (Ditambah lajur 'name' jika ada untuk carian)
-let pinkAwardData = []; 
-
-// 1. Fungsi untuk dapatkan data dari Google Sheet (Suaikan dengan fungsi sedia ada dalam api.js anda)
-async function fetchPinkAwardData() {
-  try {
-    // Sila gantikan URL ini dengan endpoint API / Apps Script anda yang memulangkan data sheet pinkAward
-    // Pastikan data dipulangkan mengikut susunan baris asal Google Sheets
-    const response = await fetch('https://script.google.com/macros/s/AKfycbxKNKr_MZa774gBu9kf5uVrwCgZA_UJ1yKuFsvGu8YgDbCJwHrj7kDQxzZAgQZpKUCn/exec'); 
-    const data = await response.json();
-    
-    pinkAwardData = data; // Simpan data dalam array global
-    renderGallery(pinkAwardData); // Papar semua gambar pada permulaan (tanpa search)
-  } catch (error) {
-    console.error("Gagal mengambil data dari Google Sheets:", error);
-  }
-}
-
-//2. Fungsi untuk memaparkan kotak gambar banner (Urutan asal dikekalkan)
-function renderGallery(dataToDisplay) {
-  const gallery = document.getElementById('gallery');
-  gallery.innerHTML = ''; // Kosongkan galeri sebelum render baru
-
-  // Jika tiada hasil padanan selepas search
-  if (dataToDisplay.length === 0) {
-    gallery.innerHTML = '<p style="text-align:center; width:100%; color:#666;">Tiada banner ditemui.</p>';
-    return;
-  }
-
-  // Paparkan setiap data pautan dari Column D4:D ke dalam kotak
-  dataToDisplay.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'banner-card';
-    
-    // Memaparkan elemen gambar sahaja di dalam kotak berdasarkan Column D
-    // Jika link rosak atau tiada, imej gantian (placeholder) akan dipaparkan
-    card.innerHTML = `
-      <img src="${item.bannerUrl || ''}" alt="Banner ${item.name}" onerror="this.src='https://placehold.co'">
-    `;
-    gallery.appendChild(card);
-  });
-}
-
-//3. Fungsi Carian Nama Pekerja (Column B) & Penapisan Syarikat (Column C)
-function filterData() {
-  const searchText = document.getElementById('searchBar').value.toLowerCase();
-  const selectedCategory = document.getElementById('categoryDropdown').value;
-
-  // Menapis data tanpa mengubah urutan/sorting asal baris Google Sheets
-  const filtered = pinkAwardData.filter(item => {
-    // 1. Semak padanan kategori dropdown dengan data syarikat (Column C)
-    const matchesCategory = (selectedCategory === "All Company" || item.company === selectedCategory);
-    
-    // 2. Semak padanan teks search bar dengan nama pekerja (Column B)
-    const matchesSearch = item.name.toLowerCase().includes(searchText); 
-
-    return matchesCategory && matchesSearch;
-  });
-
-  // Paparkan semula kotak gambar yang menepati syarat carian
-  renderGallery(filtered);
-}
-
-
-// 4. Set Event Listeners selepas halaman selesai dimuatkan
-document.addEventListener('DOMContentLoaded', () => {
-  // Jalankan fetch data Google Sheets
-  fetchPinkAwardData();
-
-  // Dengar perubahan pada search bar (bila ditaip)
-  document.getElementById('searchBar').addEventListener('input', filterData);
-  
-  // Dengar perubahan pada dropdown kategori (bila dipilih)
-  document.getElementById('categoryDropdown').addEventListener('change', filterData);
-});
-
-</script>
-
-
+<script src="config.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
+<script src="api.js"></script>
+<script src="include.js"></script>
 </body>
 </html>
-<!-- ===== FOOTER JS END ===== -->
