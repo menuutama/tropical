@@ -4,9 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Event System</title>
+<title>Event System - Pink Award</title>
 
 <link rel="stylesheet" href="style.css">
+<!-- CSS Tambahan untuk susunan Layout (Boleh dipindahkan ke style.css) -->
+<style>
+  .search-wrapper {
+    display: flex;
+    gap: 10px;
+    margin: 20px;
+    justify-content: center;
+  }
+  .search-wrapper input, .search-wrapper select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .search-wrapper input {
+    width: 300px;
+  }
+  .gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  .banner-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    background: #fff;
+  }
+  .banner-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .banner-info {
+    padding: 10px;
+    font-weight: bold;
+  }
+</style>
 </head>
 
 <body>
@@ -23,133 +64,28 @@
 
 
 <!-- ===== CONTENT START ===== -->
-<div id="startScreen">
+<div class="content-container">
+  
+  <!-- Carian dan Pilihan Kategori -->
+  <div class="search-wrapper">
+    <input type="text" id="searchBar" placeholder="Cari nama atau detail...">
+    
+    <select id="categoryDropdown">
+      <option value="All Company">All Company</option>
+      <option value="Tropical Consolidated">Tropical Consolidated</option>
+      <option value="Tropical Canning">Tropical Canning</option>
+      <option value="TC Boy">TC Boy</option>
+      <option value="NamHeng Brothers">NamHeng Brothers</option>
+      <option value="TC Venture">TC Venture</option>
+    </select>
+  </div>
 
-  <h1 id="h1">GOOGLE SLIDE DISPLAY</h1>
-
-  <p>Tap button below to launch fullscreen presentation</p>
-
-  <button onclick="startPresentation()">
-    START PRESENTATION
-  </button>
+  <!-- Ruangan untuk memaparkan gambar banner -->
+  <div id="gallery" class="gallery-container">
+    <!-- Gambar akan keluar di sini secara automatik via JavaScript -->
+  </div>
 
 </div>
-
-
-<iframe
-  id="slideFrame"
-  allowfullscreen
-  allow="fullscreen"
-  src="https://youtu.be/Y57RDv9ayXQ?si=9_DMDwPGwXxYTpYN">
-</iframe>
-
-<!-- ===== CONTENT END ===== -->
-
-
-
-<script>
-
-// =============================
-// PASTE GOOGLE SLIDE LINK HERE
-// =============================
-const slideURL =
-"https://docs.google.com/presentation/d/18CpKJ0VSDSW6dzHUzSnfucn2eEfq0B-h-g1fvg3tT8E/edit?usp=sharing";
-
-// AUTO REFRESH EVERY 5 MINUTES
-const autoRefreshMinutes = 5;
-
-function startPresentation(){
-
-  // hide start screen
-  document.getElementById("startScreen").style.display = "none";
-
-  // load slide
-  document.getElementById("slideFrame").src = slideURL;
-
-  // request fullscreen
-  openFullscreen();
-
-  // hide mouse cursor
-  autoHideCursor();
-
-}
-
-
-// FULLSCREEN
-function openFullscreen(){
-
-  const elem = document.documentElement;
-
-  if(elem.requestFullscreen){
-    elem.requestFullscreen();
-  }
-  else if(elem.webkitRequestFullscreen){
-    elem.webkitRequestFullscreen();
-  }
-  else if(elem.msRequestFullscreen){
-    elem.msRequestFullscreen();
-  }
-
-}
-
-
-// AUTO HIDE CURSOR
-function autoHideCursor(){
-
-  let timer;
-
-  document.onmousemove = function(){
-
-    clearTimeout(timer);
-
-    document.body.style.cursor = "default";
-
-    timer = setTimeout(() => {
-      document.body.style.cursor = "none";
-    }, 2000);
-
-  };
-
-}
-
-
-// AUTO REFRESH
-setInterval(() => {
-
-  const frame = document.getElementById("slideFrame");
-
-  if(frame.src){
-    frame.src = frame.src;
-  }
-
-}, autoRefreshMinutes * 60 * 1000);
-
-
-// BLOCK RIGHT CLICK
-document.addEventListener("contextmenu", e => e.preventDefault());
-
-
-// BLOCK SOME KEYS
-document.addEventListener("keydown", function(e){
-
-  // F12
-  if(e.key === "F12"){
-    e.preventDefault();
-  }
-
-  // CTRL+SHIFT+I
-  if(e.ctrlKey && e.shiftKey && e.key === "I"){
-    e.preventDefault();
-  }
-
-  // CTRL+U
-  if(e.ctrlKey && e.key === "u"){
-    e.preventDefault();
-  }
-
-});
-
-</script>
 <!-- ===== CONTENT END ===== -->
 
 <!-- ===== FOOTER JS START ===== -->
@@ -162,5 +98,4 @@ document.addEventListener("keydown", function(e){
 
 </body>
 </html>
-
 <!-- ===== FOOTER JS END ===== -->
