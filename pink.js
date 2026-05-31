@@ -14,7 +14,7 @@ const targetCompanies = [
 // Fungsi Ambil Data dari Google Sheets melalui GAS
 async function fetchPinkAwardData() {
   const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar dari Google Sheets...</p>';
+  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
 
   try {
     const response = await fetch(GAS_WEB_APP_URL);
