@@ -60,22 +60,26 @@ function initializeGallery(data) {
 
     const gridDiv = document.getElementById(`grid-${company.replace(/\s+/g, '')}`);
     
-    companyItems.forEach(item => {
+        companyItems.forEach(item => {
       const card = document.createElement('div');
       card.className = 'banner-card';
       
-      const empName = item.name ? item.name.toLowerCase() : '';
+      const empName = item.name ? item.name : '';
       const compName = item.company ? item.company : '';
       const bannerUrl = item.bannerUrl ? item.bannerUrl : '';
 
-      card.setAttribute('data-name', empName);
-      card.setAttribute('data-company', compName);
+      card.setAttribute('data-name', empName.toLowerCase());
+      card.setAttribute('data-company', compName.toLowerCase());
       card.setAttribute('data-url', bannerUrl);
 
+      // Ditambah bahagian .card-footer untuk memaparkan nama pekerja
       card.innerHTML = `
         <input type="checkbox" class="item-checkbox" data-company="${company}">
         <div class="image-wrapper">
           <img src="${bannerUrl}" alt="Banner" onerror="this.src='https://placehold.co'">
+        </div>
+        <div class="card-footer">
+          <div class="emp-label-name">${empName}</div>
         </div>
       `;
       gridDiv.appendChild(card);
