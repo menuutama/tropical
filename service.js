@@ -5,7 +5,7 @@ let serviceAwardData = [];
 
 const targetCategories = [
   "10 Years", "15 Years", "20 Years", "25 Years", 
-  "30 Years", "35 Years", "40 Years", "55 Years"
+  "30 Years", "35 Years", "50 Years", "55 Years"
 ];
 
 async function fetchServiceAwardData() {
