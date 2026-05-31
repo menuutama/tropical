@@ -27,7 +27,7 @@
   
   <!-- Bahagian Carian dan Penapisan Kategori -->
   <div class="search-wrapper">
-    <input type="text" id="searchBar" placeholder="Cari Nama Pekerja">
+    <input type="text" id="searchBar" placeholder="Cari nama pekerja (Column B)...">
     
     <select id="categoryDropdown">
       <option value="All Company">All Company</option>
@@ -37,23 +37,8 @@
       <option value="NamHeng Brothers">NamHeng Brothers</option>
       <option value="TC Venture">TC Venture</option>
     </select>
-
-    <!-- Tambah Dropdown View Layout di sini -->
-  <select id="layoutDropdown">
-      <option value="xs-icons">Extra Small Icons</option>
-      <option value="sm-icons">Small Icons</option>
-      <option value="md-icons">Medium Icons</option> 
-      <option value="lg-icons">Large Icons</option>
-      <option value="xl-icons">Extra Large Icons</option>
-      <option value="xxl-icons">Double Extra Large Icons</option
-
-  </select>
-</div>
-  
   </div>
-  <div class="action-footer">
-    <button class="popup-btn" id="openPopupBtn">Fullscreen Picture</button>
-  </div>
+
   <!-- Ruangan Utama Galeri Gambar Grid -->
   <div id="mainGalleryArea">
     <!-- Gambar akan dibina secara automatik di sini melalui pink.js -->
@@ -61,13 +46,19 @@
 
   <!-- Butang Pop-up di bahagian bawah sekali -->
   <div class="action-footer">
-    <button class="popup-btn" id="openPopupBtn">Fullscreen Picture</button>
+    <button class="popup-btn" id="openPopupBtn">Show All Selected in Pop-up Window</button>
   </div>
 
 </div>
 <!-- ===== CONTENT END ===== -->
 
 <!-- ===== FOOTER JS START ===== -->
+<script src="config.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
+<script src="api.js"></script>
+<script src="include.js"></script>
+
 <!-- Fail logik JavaScript khas untuk halaman Pink Award -->
 <script src="pink.js"></script>
 
