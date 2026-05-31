@@ -90,11 +90,84 @@
 
 <!-- ===== FOOTER JS START ===== -->
 
-<script src="config.js"></script>
-<script src="ui.js"></script>
-<script src="app.js"></script>
-<script src="api.js"></script>
-<script src="include.js"></script>
+<script>
+  // Contoh data yang terhasil/di-fetch dari Google Sheets 'pinkAward'
+// Column C = company, Column D = bannerUrl. (Ditambah lajur 'name' jika ada untuk carian)
+let pinkAwardData = []; 
+
+// 1. Fungsi untuk dapatkan data dari Google Sheet (Suaikan dengan fungsi sedia ada dalam api.js anda)
+async function fetchPinkAwardData() {
+  try {
+    // Sila gantikan URL ini dengan endpoint API / Apps Script anda yang memulangkan data sheet pinkAward
+    // Pastikan data dipulangkan mengikut susunan baris asal Google Sheets
+    const response = await fetch('URL_API_GOOGLE_SHEETS_ANDA'); 
+    const data = await response.json();
+    
+    pinkAwardData = data; // Simpan data dalam array global
+    renderGallery(pinkAwardData); // Papar semua gambar pada permulaan (tanpa search)
+  } catch (error) {
+    console.error("Gagal mengambil data dari Google Sheets:", error);
+  }
+}
+
+// 2. Fungsi untuk paparkan gambar dalam HTML (Mengekalkan sorting asal array)
+function renderGallery(dataToDisplay) {
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = ''; // Kosongkan gallery terlebih dahulu
+
+  if(dataToDisplay.length === 0) {
+    gallery.innerHTML = '<p style="text-align:center; width:100%;">Tiada data ditemui.</p>';
+    return;
+  }
+
+  dataToDisplay.forEach(item => {
+    // Reka kad gambar
+    const card = document.createElement('div');
+    card.className = 'banner-card';
+    
+    // Column D: Link Gambar (item.bannerUrl), Column C: Syarikat (item.company)
+    card.innerHTML = `
+      <img src="${item.bannerUrl || 'placeholder.jpg'}" alt="Banner" onerror="this.src='https://placehold.co'">
+      <div class="banner-info">${item.company}</div>
+    `;
+    gallery.appendChild(card);
+  });
+}
+
+// 3. Fungsi Filter & Search (Berjalan serentak setiap kali user menaip/memilih kategori)
+function filterData() {
+  const searchText = document.getElementById('searchBar').value.toLowerCase();
+  const selectedCategory = document.getElementById('categoryDropdown').value;
+
+  // Tapis data tanpa mengubah susunan asal (sorting kekal ikut urutan array sheets)
+  const filtered = pinkAwardData.filter(item => {
+    // Padanan Kategori (Column C)
+    const matchesCategory = (selectedCategory === "All Company" || item.company === selectedCategory);
+    
+    // Padanan Carian Teks (Boleh cari berdasarkan nama atau kriteria lain dalam sheet anda)
+    const matchesSearch = item.company.toLowerCase().includes(searchText) || 
+                          (item.name && item.name.toLowerCase().includes(searchText)); 
+
+    return matchesCategory && matchesSearch;
+  });
+
+  renderGallery(filtered);
+}
+
+// 4. Set Event Listeners selepas halaman selesai dimuatkan
+document.addEventListener('DOMContentLoaded', () => {
+  // Jalankan fetch data Google Sheets
+  fetchPinkAwardData();
+
+  // Dengar perubahan pada search bar (bila ditaip)
+  document.getElementById('searchBar').addEventListener('input', filterData);
+  
+  // Dengar perubahan pada dropdown kategori (bila dipilih)
+  document.getElementById('categoryDropdown').addEventListener('change', filterData);
+});
+
+</script>
+
 
 </body>
 </html>
