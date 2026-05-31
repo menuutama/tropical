@@ -169,3 +169,23 @@ body {
   background-color: #005a9e;
   box-shadow: 0 0 18px rgba(0, 120, 212, 0.7);
 }
+
+/* Gaya Maklumat Nama Di Bawah Gambar */
+.card-footer {
+  margin-top: 10px;
+  padding: 4px 5px;
+  text-align: center;
+}
+
+.emp-label-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0; /* Warna putih kelabu lembut */
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Hadkan teks maksimum 2 baris jika nama terlalu panjang */
+  -webkit-box-orient: vertical;
+}
