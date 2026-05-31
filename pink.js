@@ -1,5 +1,5 @@
 // ⚠️ GANTIKAN URL DI BAWAH DENGAN URL WEB APP GAS ANDA YANG SEBENAR
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0Bzn8_Z9vVjwZNGKwWb33-P0sZWOIbIYjHa-VT5ml6hBRoFbc2EHCiNx2Gbc-QQNm/exec";
+const GAS_WEB_APP_URL = "MASUKKAN_URL_WEB_APP_GAS_ANDA_DI_SINI";
 
 let pinkAwardData = []; 
 
@@ -14,7 +14,7 @@ const targetCompanies = [
 // Fungsi Ambil Data dari Google Sheets melalui GAS
 async function fetchPinkAwardData() {
   const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
+  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar dari Google Sheets...</p>';
 
   try {
     const response = await fetch(GAS_WEB_APP_URL);
@@ -29,12 +29,11 @@ async function fetchPinkAwardData() {
     initializeGallery(data); 
   } catch (error) {
     console.error("Gagal dapatkan data:", error);
-    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.</p>';
+    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data. Sila semak deployment GAS anda atau ralat CORS.</p>';
   }
 }
 
 // Fungsi Membina Struktur Galeri Gambar (Mengekalkan Sorting Baris Asal Sheets)
-// Gantikan fungsi initializeGallery sedia ada dalam pink.js kepada kod ini
 function initializeGallery(data) {
   const mainArea = document.getElementById('mainGalleryArea');
   mainArea.innerHTML = ''; 
@@ -42,6 +41,7 @@ function initializeGallery(data) {
   pinkAwardData = data;
 
   targetCompanies.forEach(company => {
+    // Tapis data mengikut syarikat secara tersusun
     const companyItems = pinkAwardData.filter(item => item.company === company);
     
     if (companyItems.length === 0) return; 
@@ -68,60 +68,26 @@ function initializeGallery(data) {
       const card = document.createElement('div');
       card.className = 'banner-card';
       
-      const empName = item.name ? item.name : '';
+      const empName = item.name ? item.name.toLowerCase() : '';
       const compName = item.company ? item.company : '';
       const bannerUrl = item.bannerUrl ? item.bannerUrl : '';
 
-      card.setAttribute('data-name', empName.toLowerCase());
-      card.setAttribute('data-company', compName.toLowerCase());
+      card.setAttribute('data-name', empName);
+      card.setAttribute('data-company', compName);
       card.setAttribute('data-url', bannerUrl);
 
-      // Ditambah elemen HTML .list-info di dalam kad
       card.innerHTML = `
         <input type="checkbox" class="item-checkbox" data-company="${company}">
         <div class="image-wrapper">
           <img src="${bannerUrl}" alt="Banner" onerror="this.src='https://placehold.co'">
-        </div>
-        <div class="list-info">
-          <div class="emp-name">${empName}</div>
-          <div class="comp-name">${compName}</div>
         </div>
       `;
       gridDiv.appendChild(card);
     });
   });
 
-  // Panggil fungsi tukar layout untuk set kedudukan awal
-  changeLayout();
   setupCheckboxListeners();
 }
-
-// 🚀 Tambah fungsi baharu ini di dalam fail pink.js
-function changeLayout() {
-  const selectedLayout = document.getElementById('layoutDropdown').value;
-  const containers = document.querySelectorAll('.gallery-container');
-
-  containers.forEach(container => {
-    if (selectedLayout === 'list-view') {
-      container.classList.add('list-view');
-    } else {
-      container.classList.remove('list-view');
-    }
-  });
-}
-
-// Kemaskini bahagian paling bawah sekali dalam fail pink.js anda
-document.addEventListener('DOMContentLoaded', () => {
-  fetchPinkAwardData(); 
-
-  document.getElementById('searchBar').addEventListener('input', filterData);
-  document.getElementById('categoryDropdown').addEventListener('change', filterData);
-  
-  // Tambah event listener untuk mengesan perubahan dropdown layout di pink.html
-  document.getElementById('layoutDropdown').addEventListener('change', changeLayout);
-  
-  document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
-});
 
 // Kawalan Fungsi Checkbox 'Select All' mengikut Kumpulan Syarikat
 function setupCheckboxListeners() {
@@ -185,7 +151,6 @@ function filterData() {
 }
 
 // Fungsi Membuka Tetingkap Pop-up Browser bagi Gambar yang Dipilih
-// 4. Fungsi Membuka Gambar Dipilih ke dalam Sesi Browser Pop-up Window (Fullscreen Background Style)
 function openSelectedInPopup() {
   const checkboxes = document.querySelectorAll('.item-checkbox:checked');
   
@@ -194,121 +159,48 @@ function openSelectedInPopup() {
     return;
   }
 
-  // Kumpul semua data gambar yang ditandakan
-  const selectedImages = [];
-  checkboxes.forEach(cb => {
-    const card = cb.closest('.banner-card');
-    selectedImages.push({
-      url: card.getAttribute('data-url'),
-      company: card.getAttribute('data-company')
-    });
-  });
-
-  // Buka tetingkap kosong baru di browser
-  const popupWindow = window.open("", "PinkAwardPopup", "width=1000,height=800,scrollbars=no,resizable=yes");
+  const popupWindow = window.open("", "PinkAwardPopup", "width=900,height=700,scrollbars=yes,resizable=yes");
   
-  // Bina kandungan HTML slideshow penuh skrin dengan elemen visual disembunyikan
   let popupContent = `
     <html>
     <head>
-      <title>Pink Award - Fullscreen Background Slideshow</title>
+      <title>Selected Pink Award Banners</title>
       <style>
-        * { box-sizing: border-box; }
-        body { 
-          background: #000; 
-          margin: 0; 
-          padding: 0; 
-          overflow: hidden; 
-          height: 100vh;
-          width: 100vw;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        
-        /* Container Utama Slideshow */
-        .slideshow-container {
-          width: 100vw;
-          height: 100vh;
-          position: relative;
-        }
-
-        /* Mengawal gambar supaya menjadi BACKGROUND FULL SCREEN 100% tanpa bar hitam di tepi */
-        .image-wrapper {
-          width: 100%;
-          height: 100%;
-        }
-        .image-wrapper img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover; /* Memenuhkan gambar ke skrin 100% tanpa ruang kosong hitam */
-          display: block;
-        }
-
-        /* 
-          Semua elemen visual seperti butang navigasi dan teks info 
-          telah dibuang/dihilangkan dari kod HTML ini bagi memenuhi permintaan anda.
-        */
+        body { font-family: sans-serif; background: #1a1a1a; color: #fff; padding: 20px; text-align: center; }
+        .popup-title { margin-bottom: 25px; font-size: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; color: #0078d4; }
+        .popup-gallery { display: flex; flex-direction: column; gap: 30px; align-items: center; }
+        .popup-item { background: #252526; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.6); max-width: 90%; border: 1px solid #333; }
+        .popup-item img { max-width: 100%; height: auto; border-radius: 4px; display: block; }
+        .popup-meta { margin-top: 10px; font-size: 14px; color: #aaa; font-weight: bold; }
       </style>
     </head>
     <body>
+      <div class="popup-title">Senarai Gambar Banner Yang Dipilih (${checkboxes.length} Item)</div>
+      <div class="popup-gallery">
+  `;
 
-      <div class="slideshow-container">
-        <!-- Tempat Gambar Dipaparkan Penuh Skrin -->
-        <div class="image-wrapper">
-          <img id="displayImage" src="" onerror="this.src='https://placehold.co'">
-        </div>
+  checkboxes.forEach(cb => {
+    const card = cb.closest('.banner-card');
+    const url = card.getAttribute('data-url');
+    const company = card.getAttribute('data-company');
+    
+    popupContent += `
+      <div class="popup-item">
+        <img src="${url}" onerror="this.src='https://placehold.co'">
+        <div class="popup-meta">Syarikat: ${company}</div>
       </div>
+    `;
+  });
 
-      <script>
-        // Data gambar yang dihantar dari tetingkap utama
-        const images = ${JSON.stringify(selectedImages)};
-        let currentIndex = 0;
-
-        // Fungsi memaparkan imej berdasarkan index semasa
-        function showSlide(index) {
-          if (images.length === 0) return;
-          
-          const imgElement = document.getElementById('displayImage');
-          imgElement.src = images[index].url;
-        }
-
-        // Fungsi menukar slide (Tambah atau tolak index)
-        function changeSlide(direction) {
-          currentIndex += direction;
-          
-          // Logik pusingan (Looping)
-          if (currentIndex >= images.length) {
-            currentIndex = 0;
-          } else if (currentIndex < 0) {
-            currentIndex = images.length - 1;
-          }
-          
-          showSlide(currentIndex);
-        }
-
-        // 🚀 FUNGSI KUNCI KEKAL BERFUNGSI: Pengesanan Keyboard (Anak Panah Kiri & Kanan)
-        document.addEventListener('keydown', function(event) {
-          if (event.key === "ArrowLeft") {
-            changeSlide(-1); // Anak panah kiri -> Gambar sebelum
-          } else if (event.key === "ArrowRight") {
-            changeSlide(1);  // Anak panah kanan -> Gambar seterus
-          }
-        });
-
-        // Jalankan papar gambar pertama sebaik sahaja pop-up dimuatkan
-        showSlide(currentIndex);
-      </script>
-
+  popupContent += `
+      </div>
     </body>
     </html>
   `;
 
-  // Tulis kod ke dalam tetingkap baru dan tutup stream penulisan
   popupWindow.document.write(popupContent);
   popupWindow.document.close();
 }
-
 
 // Jalankan sistem apabila halaman sedia
 document.addEventListener('DOMContentLoaded', () => {
@@ -316,32 +208,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('searchBar').addEventListener('input', filterData);
   document.getElementById('categoryDropdown').addEventListener('change', filterData);
-  document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
-});
-
-// 🚀 Tambah fungsi baharu ini di dalam fail pink.js
-function changeLayout() {
-  const selectedLayout = document.getElementById('layoutDropdown').value;
-  const containers = document.querySelectorAll('.gallery-container');
-
-  containers.forEach(container => {
-    if (selectedLayout === 'list-view') {
-      container.classList.add('list-view');
-    } else {
-      container.classList.remove('list-view');
-    }
-  });
-}
-
-// Kemaskini bahagian paling bawah sekali dalam fail pink.js anda
-document.addEventListener('DOMContentLoaded', () => {
-  fetchPinkAwardData(); 
-
-  document.getElementById('searchBar').addEventListener('input', filterData);
-  document.getElementById('categoryDropdown').addEventListener('change', filterData);
-  
-  // Tambah event listener untuk mengesan perubahan dropdown layout di pink.html
-  document.getElementById('layoutDropdown').addEventListener('change', changeLayout);
-  
   document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
 });
