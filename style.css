@@ -358,3 +358,53 @@ table button {
     height: 46px;
   }
 }
+
+/*--------------------- pinkAward.html ----------------------------------*/
+  .search-wrapper {
+    display: flex;
+    gap: 12px;
+    margin: 25px auto;
+    justify-content: center;
+    max-width: 600px;
+  }
+  .search-wrapper input, .search-wrapper select {
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+  }
+  .search-wrapper input {
+    flex: 2;
+  }
+  .search-wrapper select {
+    flex: 1;
+    background-color: #fff;
+  }
+  .gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .banner-card {
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    background: #fff;
+    transition: transform 0.2s ease;
+  }
+  /* Efek sedikit timbul apabila tetikus diletakkan di atas kotak gambar*/
+  .banner-card:hover {
+    transform: translateY(-5px);
+  }
+  .banner-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
