@@ -34,6 +34,7 @@ async function fetchPinkAwardData() {
 }
 
 // Fungsi Membina Struktur Galeri Gambar (Mengekalkan Sorting Baris Asal Sheets)
+// Gantikan fungsi initializeGallery sedia ada dalam pink.js kepada kod ini
 function initializeGallery(data) {
   const mainArea = document.getElementById('mainGalleryArea');
   mainArea.innerHTML = ''; 
@@ -41,7 +42,6 @@ function initializeGallery(data) {
   pinkAwardData = data;
 
   targetCompanies.forEach(company => {
-    // Tapis data mengikut syarikat secara tersusun
     const companyItems = pinkAwardData.filter(item => item.company === company);
     
     if (companyItems.length === 0) return; 
@@ -68,26 +68,60 @@ function initializeGallery(data) {
       const card = document.createElement('div');
       card.className = 'banner-card';
       
-      const empName = item.name ? item.name.toLowerCase() : '';
+      const empName = item.name ? item.name : '';
       const compName = item.company ? item.company : '';
       const bannerUrl = item.bannerUrl ? item.bannerUrl : '';
 
-      card.setAttribute('data-name', empName);
-      card.setAttribute('data-company', compName);
+      card.setAttribute('data-name', empName.toLowerCase());
+      card.setAttribute('data-company', compName.toLowerCase());
       card.setAttribute('data-url', bannerUrl);
 
+      // Ditambah elemen HTML .list-info di dalam kad
       card.innerHTML = `
         <input type="checkbox" class="item-checkbox" data-company="${company}">
         <div class="image-wrapper">
           <img src="${bannerUrl}" alt="Banner" onerror="this.src='https://placehold.co'">
+        </div>
+        <div class="list-info">
+          <div class="emp-name">${empName}</div>
+          <div class="comp-name">${compName}</div>
         </div>
       `;
       gridDiv.appendChild(card);
     });
   });
 
+  // Panggil fungsi tukar layout untuk set kedudukan awal
+  changeLayout();
   setupCheckboxListeners();
 }
+
+// 🚀 Tambah fungsi baharu ini di dalam fail pink.js
+function changeLayout() {
+  const selectedLayout = document.getElementById('layoutDropdown').value;
+  const containers = document.querySelectorAll('.gallery-container');
+
+  containers.forEach(container => {
+    if (selectedLayout === 'list-view') {
+      container.classList.add('list-view');
+    } else {
+      container.classList.remove('list-view');
+    }
+  });
+}
+
+// Kemaskini bahagian paling bawah sekali dalam fail pink.js anda
+document.addEventListener('DOMContentLoaded', () => {
+  fetchPinkAwardData(); 
+
+  document.getElementById('searchBar').addEventListener('input', filterData);
+  document.getElementById('categoryDropdown').addEventListener('change', filterData);
+  
+  // Tambah event listener untuk mengesan perubahan dropdown layout di pink.html
+  document.getElementById('layoutDropdown').addEventListener('change', changeLayout);
+  
+  document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
+});
 
 // Kawalan Fungsi Checkbox 'Select All' mengikut Kumpulan Syarikat
 function setupCheckboxListeners() {
@@ -282,5 +316,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('searchBar').addEventListener('input', filterData);
   document.getElementById('categoryDropdown').addEventListener('change', filterData);
+  document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
+});
+
+// 🚀 Tambah fungsi baharu ini di dalam fail pink.js
+function changeLayout() {
+  const selectedLayout = document.getElementById('layoutDropdown').value;
+  const containers = document.querySelectorAll('.gallery-container');
+
+  containers.forEach(container => {
+    if (selectedLayout === 'list-view') {
+      container.classList.add('list-view');
+    } else {
+      container.classList.remove('list-view');
+    }
+  });
+}
+
+// Kemaskini bahagian paling bawah sekali dalam fail pink.js anda
+document.addEventListener('DOMContentLoaded', () => {
+  fetchPinkAwardData(); 
+
+  document.getElementById('searchBar').addEventListener('input', filterData);
+  document.getElementById('categoryDropdown').addEventListener('change', filterData);
+  
+  // Tambah event listener untuk mengesan perubahan dropdown layout di pink.html
+  document.getElementById('layoutDropdown').addEventListener('change', changeLayout);
+  
   document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
 });
