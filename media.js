@@ -47,14 +47,49 @@ window.addEventListener("load", init);
 async function init() {
   setupDropdown();
 
-  document
-    .getElementById("searchInput")
-    .addEventListener("input", renderMedia);
+document
+.getElementById("searchInput")
+.addEventListener(
+  "input",
+  function(){
 
+    renderMedia();
+
+    const btn =
+    document.getElementById(
+      "clearSearch"
+    );
+
+    btn.style.display =
+    this.value.trim()
+    ? "block"
+    : "none";
+
+  }
+);
   document
     .getElementById("typeFilter")
     .addEventListener("change", renderMedia);
+document
+.getElementById("clearSearch")
+.addEventListener(
+  "click",
+  function(){
 
+    document
+    .getElementById(
+      "searchInput"
+    )
+    .value = "";
+
+    this.style.display =
+    "none";
+
+    renderMedia();
+
+  }
+);
+   
   await loadMedia();
 }
 
