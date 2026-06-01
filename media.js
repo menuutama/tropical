@@ -324,11 +324,8 @@ function selectMedia(item) {
 ========================= */
 
 function updatePreview(item) {
-  const preview =
-    document.getElementById("previewArea");
-
-  const type =
-    normalizeType(item.type);
+  const preview = document.getElementById("previewArea");
+  const type = normalizeType(item.type);
 
   if (type === "image") {
     preview.innerHTML = `
@@ -338,42 +335,63 @@ function updatePreview(item) {
     `;
   }
 
-  else if (type === "youtube") {
-    const id =
-      extractYoutubeID(item.url);
-
+  else if (type === "video") {
     preview.innerHTML = `
-      <img
-        class="preview-image"
-        src="https://img.youtube.com/vi/${id}/maxresdefault.jpg">
+      <video
+        controls
+        preload="metadata"
+        style="width:100%; height:100%; object-fit:contain;">
+        <source src="${item.url}">
+      </video>
     `;
   }
 
-  else if (type === "video") {
+  else if (type === "youtube") {
+    const id = extractYoutubeID(item.url);
+
     preview.innerHTML = `
-      <div class="preview-video-icon">
-        🎬 VIDEO READY
-      </div>
+      <iframe
+        src="https://www.youtube.com/embed/${id}?controls=1&rel=0"
+        width="100%"
+        height="100%"
+        allowfullscreen>
+      </iframe>
     `;
   }
 
   else if (type === "youtubemusic") {
+    const id = extractYoutubeID(item.url);
+
     preview.innerHTML = `
-      <div class="preview-video-icon">
-        🎶 YOUTUBE MUSIC
-      </div>
+      <iframe
+        src="https://www.youtube.com/embed/${id}?autoplay=1&controls=1&rel=0"
+        width="100%"
+        height="100%"
+        allow="autoplay; encrypted-media"
+        allowfullscreen>
+      </iframe>
+    `;
+  }
+
+  else if (type === "music") {
+    preview.innerHTML = `
+      <audio
+        controls
+        autoplay
+        style="width:90%;">
+        <source src="${item.url}">
+      </audio>
     `;
   }
 
   else {
     preview.innerHTML = `
       <div class="preview-video-icon">
-        🎵 MUSIC
+        Unsupported Media
       </div>
     `;
   }
 }
-
 /* =========================
    POPUP IMAGE / VIDEO / YOUTUBE
 ========================= */
@@ -547,81 +565,6 @@ function openPopup(item) {
 
   popupWindow.document.close();
   popupWindow.focus();
-}
-
-/* =========================
-   MUSIC / YOUTUBE MUSIC IN PAGE
-========================= */
-
-function playInPage(item) {
-  const area =
-    document.getElementById("audioArea");
-
-  const type =
-    normalizeType(item.type);
-
-  if (type === "youtubemusic") {
-    const id =
-      extractYoutubeID(item.url);
-
-    area.innerHTML = `
-      <iframe
-        src="https://www.youtube.com/embed/${id}?autoplay=1&controls=1&rel=0"
-        width="100%"
-        height="352"
-        allow="autoplay; encrypted-media"
-        allowfullscreen>
-      </iframe>
-    `;
-  }
-
-  else {
-    area.innerHTML = `
-      <audio
-        controls
-        autoplay
-        style="width:100%;">
-
-        <source src="${item.url}">
-      </audio>
-    `;
-  }
-}
-
-/* =========================
-   YOUTUBE ID
-========================= */
-
-function extractYoutubeID(url) {
-  try {
-    const text =
-      String(url || "");
-
-    if (text.includes("youtu.be/")) {
-      return text
-        .split("youtu.be/")[1]
-        .split("?")[0]
-        .split("&")[0];
-    }
-
-    if (text.includes("v=")) {
-      return text
-        .split("v=")[1]
-        .split("&")[0]
-        .split("?")[0];
-    }
-
-    if (text.includes("/embed/")) {
-      return text
-        .split("/embed/")[1]
-        .split("?")[0]
-        .split("&")[0];
-    }
-
-    return "";
-  } catch (e) {
-    return "";
-  }
 }
 
 /* =========================
