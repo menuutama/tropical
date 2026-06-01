@@ -299,8 +299,7 @@ function getThumbnail(item) {
 function selectMedia(item) {
   updatePreview(item);
 
-  const type =
-    normalizeType(item.type);
+  const type = normalizeType(item.type);
 
   if (
     type === "image" ||
@@ -308,14 +307,6 @@ function selectMedia(item) {
     type === "youtube"
   ) {
     openPopup(item);
-    return;
-  }
-
-  if (
-    type === "music" ||
-    type === "youtubemusic"
-  ) {
-    playInPage(item);
   }
 }
 
