@@ -326,10 +326,10 @@ function selectMedia(item){
   }
 
   if(
-    type === "mp3"
-    ||
-    type === "spotify"
-  ){
+  type === "mp3"
+  ||
+  type === "youtubemusic"
+){
 
     playAudio(item);
 
