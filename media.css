@@ -322,3 +322,35 @@ body {
 .preview-screen audio {
   padding: 30px;
 }
+
+.search-box{
+  position:relative;
+  flex:2;
+}
+
+.search-box input{
+  width:100%;
+  padding-right:45px;
+}
+
+#clearSearch{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+
+  background:none;
+  border:none;
+
+  color:#ff4444;
+  font-size:24px;
+  font-weight:bold;
+
+  cursor:pointer;
+
+  display:none;
+}
+
+#clearSearch:hover{
+  color:#ff0000;
+}
