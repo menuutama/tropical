@@ -389,16 +389,16 @@ function updatePreview(item){
 
   }
 
-  else if(type === "spotify"){
+  else if(type === "youtube music"){
 
-    preview.innerHTML =
-    `
-    <div class="preview-video-icon">
-      🎧 SPOTIFY
-    </div>
-    `;
+  preview.innerHTML =
+  `
+  <div class="preview-video-icon">
+    🎶 YOUTUBE MUSIC
+  </div>
+  `;
 
-  }
+}
 
   else{
 
@@ -654,7 +654,25 @@ function playAudio(item){
   const type =
   item.type.toLowerCase();
 
-  if(type === "spotify"){
+  if(type === "youtube music"){
+
+    const id =
+    extractYoutubeID(item.url);
+
+    area.innerHTML =
+    `
+    <iframe
+      src="https://www.youtube.com/embed/${id}?autoplay=1&controls=1&rel=0"
+      width="100%"
+      height="352"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+    `;
+
+  }
+
+  else if(type === "spotify"){
 
     let embed =
     item.url.replace(
@@ -672,7 +690,9 @@ function playAudio(item){
     </iframe>
     `;
 
-  }else{
+  }
+
+  else{
 
     area.innerHTML =
     `
