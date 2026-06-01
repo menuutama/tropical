@@ -225,16 +225,16 @@ function openSelectedInPopup() {
 
 document.addEventListener('DOMContentLoaded', () => {
 const searchBar = document.getElementById('searchBar');
-const clearSearch = document.getElementById('clearSearch');
+const clearSearchBtn = document.getElementById('clearSearchBtn');
 
 searchBar.addEventListener('input', () => {
-  clearSearch.style.display = searchBar.value.trim() ? 'block' : 'none';
+  clearSearchBtn.style.display = searchBar.value.trim() ? 'block' : 'none';
   filterData();
 });
 
-clearSearch.addEventListener('click', () => {
+clearSearchBtn.addEventListener('click', () => {
   searchBar.value = '';
-  clearSearch.style.display = 'none';
+  clearSearchBtn.style.display = 'none';
   filterData();
   searchBar.focus();
 });
