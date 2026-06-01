@@ -147,21 +147,6 @@ function filterData() {
         if (cb) cb.checked = false; 
       }
     }
-      function(){
-
-    renderMedia();
-
-    const btn =
-    document.getElementById(
-      "clearSearch"
-    );
-
-    btn.style.display =
-    this.value.trim()
-    ? "block"
-    : "none";
-
-  }
   );
 
     // Sembunyikan atau paparkan keseluruhan seksyen kumpulan syarikat
