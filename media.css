@@ -121,3 +121,23 @@
   }
 
 }
+
+#audioArea{
+  max-width:800px;
+  margin:auto;
+}
+
+#audioArea iframe,
+#audioArea audio{
+  width:100%;
+}
+
+.banner-card{
+  cursor:pointer;
+}
+
+.banner-card:hover{
+  transform:
+  translateY(-3px)
+  scale(1.02);
+}
