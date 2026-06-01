@@ -310,3 +310,15 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
+
+.preview-screen iframe,
+.preview-screen video,
+.preview-screen audio {
+  max-width: 100%;
+  max-height: 100%;
+  border: none;
+}
+
+.preview-screen audio {
+  padding: 30px;
+}
