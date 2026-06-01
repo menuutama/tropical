@@ -570,3 +570,38 @@ function escapeHTML(text) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+/* =========================
+   YOUTUBE ID
+========================= */
+
+function extractYoutubeID(url) {
+  try {
+    const text = String(url || "");
+
+    if (text.includes("youtu.be/")) {
+      return text
+        .split("youtu.be/")[1]
+        .split("?")[0]
+        .split("&")[0];
+    }
+
+    if (text.includes("v=")) {
+      return text
+        .split("v=")[1]
+        .split("&")[0]
+        .split("?")[0];
+    }
+
+    if (text.includes("/embed/")) {
+      return text
+        .split("/embed/")[1]
+        .split("?")[0]
+        .split("&")[0];
+    }
+
+    return "";
+  } catch (e) {
+    return "";
+  }
+}
