@@ -334,23 +334,27 @@ body {
 }
 
 #clearSearch{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-
-  background:none;
-  border:none;
-
-  color:#ff4444;
-  font-size:24px;
-  font-weight:bold;
-
-  cursor:pointer;
-
-  display:none;
+  position: absolute;
+  right: 14px;
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  top: 50%;
+  transform: translateY(-50%) !important;
+  display: none;
+  z-index: 5;
+  transition: color 0.2s ease;
+  width: auto !important;
+  height: auto !important;
 }
 
 #clearSearch:hover{
-  color:#ff0000;
+  color: #ff3344 !important;
+  text-shadow: 0 0 10px rgba(255, 51, 68, 0.6);
 }
