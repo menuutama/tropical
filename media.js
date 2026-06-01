@@ -284,15 +284,15 @@ function getThumbnail(item){
 
   }
 
-  if(type === "spotify"){
+if(type === "youtubemusic"){
 
-    return `
-      <div class="media-icon">
-        🎧
-      </div>
-    `;
+  return `
+    <div class="media-icon">
+      🎵
+    </div>
+  `;
 
-  }
+}
 
   return `
     <div class="media-icon">
