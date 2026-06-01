@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Event Media Hub</title>
+<title>Event System - Media Hub</title>
 
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="media.css">
@@ -12,6 +12,7 @@
 
 <body>
 
+<!-- ===== HEADER NAV START ===== -->
 <div class="topnav">
   <a href="index.html">MENU</a>
   <a href="lucky.html">LUCKY DRAW</a>
@@ -19,88 +20,48 @@
   <a href="service.html">LONG SERVICE</a>
   <a href="media.html">VIDEO / IMAGE / SONG</a>
 </div>
+<!-- ===== HEADER NAV END ===== -->
 
+
+<!-- ===== CONTENT START ===== -->
 <div class="content-container">
-    
-  <div class="theme-header-container">
-  <!-- Tajuk Utama Bertema Gelap & Glow -->
+
   <div class="theme-header-container">
     <h1 class="main-title">TROPICAL DINNER 2026</h1>
-    <h2 class="sub-title">EVENT MEDIA HUB</h2>
-    <h2 class="sub-title">
-      Media Control Center
-    </h2>
-
+    <h2 class="sub-title">Event Media Hub</h2>
   </div>
 
-   <!-- SEARCH -->
-    <div class="search-wrapper">
+  <div class="search-wrapper">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search media name..."
+    >
 
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Cari media..."
-        >
+    <select id="typeFilter">
+      <option value="">All Type</option>
+      <option value="image">Image</option>
+      <option value="video">Video</option>
+      <option value="youtube">YouTube</option>
+      <option value="mp3">MP3</option>
+      <option value="spotify">Spotify</option>
+    </select>
+  </div>
 
-        <select id="typeFilter">
-
-            <option value="">
-                Semua Type
-            </option>
-
-            <option value="image">
-                Image
-            </option>
-
-            <option value="video">
-                Video
-            </option>
-
-            <option value="youtube">
-                YouTube
-            </option>
-
-            <option value="mp3">
-                MP3
-            </option>
-
-            <option value="spotify">
-                Spotify
-            </option>
-
-        </select>
-
+  <div class="preview-wrapper">
+    <div id="previewArea" class="preview-screen">
+      <div class="preview-placeholder">
+        Select media from the list below
+      </div>
     </div>
+  </div>
 
-    <!-- PREVIEW SCREEN -->
+  <div id="audioArea"></div>
 
-    <div class="preview-wrapper">
-
-        <div
-            id="previewArea"
-            class="preview-screen"
-        >
-
-            <div class="preview-placeholder">
-
-                Sila pilih media dari senarai di bawah
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- AUDIO PLAYER -->
-
-    <div id="audioArea"></div>
-
-    <!-- MEDIA LIST -->
-
-    <div id="mediaGridContainer"></div>
+  <div id="mediaGridContainer"></div>
 
 </div>
-
+<!-- ===== CONTENT END ===== -->
 
 <script src="media.js"></script>
 
