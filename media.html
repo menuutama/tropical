@@ -33,34 +33,75 @@
 
   </div>
 
-  <div class="search-wrapper">
+   <!-- SEARCH -->
+    <div class="search-wrapper">
 
-    <input
-      id="searchInput"
-      placeholder="Cari media..."
-    >
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Cari media..."
+        >
 
-    <select
-      id="typeFilter">
-      <option value="">
-        Semua
-      </option>
-    </select>
+        <select id="typeFilter">
 
-  </div>
+            <option value="">
+                Semua Type
+            </option>
 
-  <div
-    id="mediaGridContainer">
-  </div>
+            <option value="image">
+                Image
+            </option>
 
-  <div
-    id="audioArea"
-    style="
-    margin-top:30px;">
-  </div>
+            <option value="video">
+                Video
+            </option>
+
+            <option value="youtube">
+                YouTube
+            </option>
+
+            <option value="mp3">
+                MP3
+            </option>
+
+            <option value="spotify">
+                Spotify
+            </option>
+
+        </select>
+
+    </div>
+
+    <!-- PREVIEW SCREEN -->
+
+    <div class="preview-wrapper">
+
+        <div
+            id="previewArea"
+            class="preview-screen"
+        >
+
+            <div class="preview-placeholder">
+
+                Sila pilih media dari senarai di bawah
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- AUDIO PLAYER -->
+
+    <div id="audioArea"></div>
+
+    <!-- MEDIA LIST -->
+
+    <div id="mediaGridContainer"></div>
 
 </div>
-  
+
+
 <script src="media.js"></script>
 
 </body>
