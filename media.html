@@ -20,136 +20,49 @@
   <a href="media.html">VIDEO / IMAGE / SONG</a>
 </div>
 
-<div class="media-container">
+<div class="content-container">
 
-  <h2>Event Media Hub</h2>
+  <div class="theme-header-container">
 
-  <div class="search-filter-box">
+    <h1 class="main-title">
+      EVENT MEDIA HUB
+    </h1>
 
-    <select id="mediaTypeDropdown" onchange="tapisMedia()">
-      <option value="all">Semua Jenis</option>
-      <option value="video">Video 🎬</option>
-      <option value="gambar">Gambar 📸</option>
-      <option value="lagu">Lagu 🎵</option>
-    </select>
+    <h2 class="sub-title">
+      Media Control Center
+    </h2>
+
+  </div>
+
+  <div class="search-wrapper">
 
     <input
-      type="text"
-      id="mediaSearchInput"
-      placeholder="Cari nama fail..."
-      onkeyup="tapisMedia()"
+      id="searchInput"
+      placeholder="Cari media..."
     >
 
-    <button onclick="tapisMedia()">
-      Cari
-    </button>
+    <select
+      id="typeFilter">
+      <option value="">
+        Semua
+      </option>
+    </select>
 
   </div>
 
-  <div class="media-grid" id="mediaGridContainer">
-
-    <div
-      class="media-item"
-      data-jenis="video"
-      data-nama="opening perasmian 1"
-      onclick="paparMedia('video','https://www.w3schools.com/html/mov_bbb.mp4')">
-
-      <div class="media-icon">🎬</div>
-      <div class="media-title">
-        Opening - Perasmian 1
-      </div>
-
-    </div>
-
-    <div
-      class="media-item"
-      data-jenis="gambar"
-      data-nama="pink award background"
-      onclick="paparMedia('gambar','https://picsum.photos/1200/700')">
-
-      <div class="media-icon">📸</div>
-      <div class="media-title">
-        Pink Award Background
-      </div>
-
-    </div>
-
-    <div
-      class="media-item"
-      data-jenis="lagu"
-      data-nama="gimmick perasmian song"
-      onclick="paparMedia('lagu','https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">
-
-      <div class="media-icon">🎵</div>
-      <div class="media-title">
-        Gimmick Perasmian Song
-      </div>
-
-    </div>
-
+  <div
+    id="mediaGridContainer">
   </div>
 
-  <div class="media-display-wrapper">
-
-    <div class="media-display" id="mediaDisplayBox">
-
-      <p id="placeholderText">
-        Sila pilih media dari senarai di atas.
-      </p>
-
-      <img
-        id="outputImage"
-        src=""
-        alt=""
-        style="display:none;"
-      >
-
-      <video
-        id="outputVideo"
-        controls
-        style="display:none;"
-      >
-        <source
-          id="videoSource"
-          src=""
-          type="video/mp4">
-      </video>
-
-      <div
-        id="audioPlayerContainer"
-        style="display:none;"
-      >
-
-        <div class="audio-gimmick">
-          🎵 Sedang Dimainkan...
-        </div>
-
-        <audio id="outputAudio" controls>
-          <source
-            id="audioSource"
-            src=""
-            type="audio/mp3">
-        </audio>
-
-      </div>
-
-    </div>
-
-    <div class="note-skrin">
-      Tip: Tarik browser ke projector sebelum mainkan media.
-    </div>
-
+  <div
+    id="audioArea"
+    style="
+    margin-top:30px;">
   </div>
 
 </div>
-
+  
 <script src="media.js"></script>
-
-<script src="config.js"></script>
-<script src="ui.js"></script>
-<script src="app.js"></script>
-<script src="api.js"></script>
-<script src="include.js"></script>
 
 </body>
 </html>
