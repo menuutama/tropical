@@ -224,7 +224,7 @@ function openSelectedInPopup() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const searchBar = document.getElementById('searchBar');
+const searchBar = document.getElementById('searchBar');
 const clearSearch = document.getElementById('clearSearch');
 
 searchBar.addEventListener('input', () => {
@@ -237,7 +237,7 @@ clearSearch.addEventListener('click', () => {
   clearSearch.style.display = 'none';
   filterData();
   searchBar.focus();
-});; 
+});
 
   document.getElementById('searchBar').addEventListener('input', filterData);
   document.getElementById('categoryDropdown').addEventListener('change', filterData);
