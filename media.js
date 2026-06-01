@@ -141,12 +141,11 @@ function getDisplayType(type){
   const clean =
     normalizeType(type);
 
-  if(clean === "image") return "IMAGE";
-  if(clean === "video") return "VIDEO";
-  if(clean === "youtube") return "YOUTUBE";
-  if(clean === "youtubemusic") return "YOUTUBE MUSIC";
-  if(clean === "mp3") return "MP3";
-  if(clean === "spotify") return "SPOTIFY";
+  if(clean === "Image") return "IMAGE";
+  if(clean === "Video") return "VIDEO";
+  if(clean === "Youtube") return "YOUTUBE";
+  if(clean === "Youtube Musuc") return "YOUTUBE MUSIC";
+  if(clean === "Music") return "MP3";
 
   return String(type || "OTHER").toUpperCase();
 
@@ -232,7 +231,7 @@ function getThumbnail(item){
   const type =
     normalizeType(item.type);
 
-  if(type === "image"){
+  if(type === "Image"){
 
     return `
       <img
@@ -242,7 +241,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "youtube"){
+  if(type === "Youtube"){
 
     const id =
       extractYoutubeID(item.url);
@@ -255,7 +254,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "youtubemusic"){
+  if(type === "Youtube Music"){
 
     return `
       <div class="media-icon">
@@ -265,7 +264,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "video"){
+  if(type === "Video"){
 
     return `
       <div class="media-icon">
@@ -275,23 +274,6 @@ function getThumbnail(item){
 
   }
 
-  if(type === "spotify"){
-
-    return `
-      <div class="media-icon">
-        🎧
-      </div>
-    `;
-
-  }
-
-  return `
-    <div class="media-icon">
-      🎵
-    </div>
-  `;
-
-}
 
 /* =========================
    SELECT MEDIA
@@ -305,9 +287,9 @@ function selectMedia(item){
     normalizeType(item.type);
 
   if(
-    type === "image" ||
-    type === "video" ||
-    type === "youtube"
+    type === "Image" ||
+    type === "Video" ||
+    type === "Youtube"
   ){
 
     openPopup(item);
@@ -316,9 +298,8 @@ function selectMedia(item){
   }
 
   if(
-    type === "mp3" ||
-    type === "youtubemusic" ||
-    type === "spotify"
+    type === "Music" ||
+    type === "Youtube Music"
   ){
 
     playAudio(item);
@@ -340,7 +321,7 @@ function updatePreview(item){
   const type =
     normalizeType(item.type);
 
-  if(type === "image"){
+  if(type === "Image"){
 
     preview.innerHTML =
     `
@@ -351,7 +332,7 @@ function updatePreview(item){
 
   }
 
-  else if(type === "youtube"){
+  else if(type === "Youtube"){
 
     const id =
       extractYoutubeID(item.url);
@@ -365,7 +346,7 @@ function updatePreview(item){
 
   }
 
-  else if(type === "video"){
+  else if(type === "Video"){
 
     preview.innerHTML =
     `
@@ -376,7 +357,7 @@ function updatePreview(item){
 
   }
 
-  else if(type === "youtubemusic"){
+  else if(type === "Youtube Music"){
 
     preview.innerHTML =
 /* =========================
@@ -459,7 +440,7 @@ function getThumbnail(item){
   const type =
     normalizeType(item.type);
 
-  if(type === "image"){
+  if(type === "Image"){
 
     return `
       <img
@@ -469,7 +450,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "youtube"){
+  if(type === "Youtube"){
 
     const id =
       extractYoutubeID(item.url);
@@ -482,7 +463,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "youtubemusic"){
+  if(type === "Youtube Music"){
 
     return `
       <div class="media-icon">
@@ -492,7 +473,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "video"){
+  if(type === "Video"){
 
     return `
       <div class="media-icon">
@@ -502,15 +483,6 @@ function getThumbnail(item){
 
   }
 
-  if(type === "spotify"){
-
-    return `
-      <div class="media-icon">
-        🎧
-      </div>
-    `;
-
-  }
 
   return `
     <div class="media-icon">
@@ -532,9 +504,9 @@ function selectMedia(item){
     normalizeType(item.type);
 
   if(
-    type === "image" ||
-    type === "video" ||
-    type === "youtube"
+    type === "Image" ||
+    type === "Video" ||
+    type === "Youtube"
   ){
 
     openPopup(item);
@@ -543,9 +515,8 @@ function selectMedia(item){
   }
 
   if(
-    type === "mp3" ||
-    type === "youtubemusic" ||
-    type === "spotify"
+    type === "Music" ||
+    type === "Youtube Music"
   ){
 
     playAudio(item);
@@ -567,7 +538,7 @@ function updatePreview(item){
   const type =
     normalizeType(item.type);
 
-  if(type === "image"){
+  if(type === "Image"){
 
     preview.innerHTML =
     `
@@ -578,7 +549,7 @@ function updatePreview(item){
 
   }
 
-  else if(type === "youtube"){
+  else if(type === "Youtube"){
 
     const id =
       extractYoutubeID(item.url);
@@ -592,7 +563,7 @@ function updatePreview(item){
 
   }
 
-  else if(type === "video"){
+  else if(type === "Video"){
 
     preview.innerHTML =
     `
@@ -603,6 +574,6 @@ function updatePreview(item){
 
   }
 
-  else if(type === "youtubemusic"){
+  else if(type === "Youtube Music"){
 
     preview.innerHTML =
