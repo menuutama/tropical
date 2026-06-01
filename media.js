@@ -1,343 +1,613 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbw8TVGqTWkdddXa2C21rFt4cJzw1M5g_hfSijcyfp-A5S-dQ7o1MU2qrQ7x3y3m4y1T/exec";
 
-let mediaData = [];
+let allMedia = [];
+let popupWindow = null;
 
-/*---------- LOAD MEDIA --------------*/
-window.onload = async () => {
+/* =========================
+   LOAD DATA
+========================= */
 
-  const res =
-  await fetch(API_URL);
+window.addEventListener("load", () => {
 
-  mediaData =
-  await res.json();
+    loadMedia();
 
-  renderMedia();
+    document
+    .getElementById("searchInput")
+    .addEventListener("input", renderMedia);
 
-};
+    document
+    .getElementById("typeFilter")
+    .addEventListener("change", renderMedia);
 
-/*-------------- REDER MEDIA --------------*/
-function renderMedia() {
+});
 
-  const container =
-  document.getElementById(
-    "mediaGridContainer"
-  );
+async function loadMedia(){
 
-  container.innerHTML = "";
+    try{
 
-  const groups = {};
+        const response =
+        await fetch(API_URL);
 
-  mediaData.forEach(item => {
+        allMedia =
+        await response.json();
 
-    const type =
-    item.type;
+        renderMedia();
 
-    if(!groups[type])
-      groups[type] = [];
+    }catch(err){
 
-    groups[type].push(item);
+        console.error(err);
 
-  });
-
-  Object.keys(groups).forEach(type => {
-
-    const group =
-    document.createElement("div");
-
-    group.className =
-    "company-group";
-
-    group.innerHTML = `
-      <div class="company-header">
-        <div class="company-label">
-          ${type}
+        document
+        .getElementById("mediaGridContainer")
+        .innerHTML =
+        `
+        <div class="error-box">
+            Failed to load media data.
         </div>
-      </div>
+        `;
 
-      <div class="gallery-container">
-      ${groups[type]
-      .map(item=>`
-        <div
-        class="banner-card"
-        onclick="openMedia(
-        '${item.type}',
-        '${item.url}'
-        )">
-
-          <div
-          class="image-wrapper">
-
-          <div
-          style="
-          font-size:70px;">
-          ${getIcon(item.type)}
-          </div>
-
-          </div>
-
-          <div
-          class="card-footer">
-
-            <div
-            class="emp-label-name">
-              ${item.name}
-            </div>
-
-          </div>
-
-        </div>
-      `).join("")}
-      </div>
-    `;
-
-    container.appendChild(
-      group
-    );
-
-  });
+    }
 
 }
 
-/*------------- ICON ------------------*/
-function getIcon(type){
+/* =========================
+   RENDER
+========================= */
 
-  switch(
-    type.toLowerCase()
-  ){
+function renderMedia(){
 
-    case "image":
-      return "🖼️";
-
-    case "video":
-      return "🎬";
-
-    case "youtube":
-      return "▶️";
-
-    case "mp3":
-      return "🎵";
-
-    case "spotify":
-      return "🎧";
-
-    default:
-      return "📁";
-
-  }
-
-}
-
-/*---------------- POPUP FULLSCREEN -----------------------*/
-function openMedia(
-  type,
-  url
-){
-
-  type =
-  type.toLowerCase();
-
-  if(
-    type==="mp3" ||
-    type==="spotify"
-  ){
-
-    playAudio(
-      type,
-      url
+    const container =
+    document.getElementById(
+        "mediaGridContainer"
     );
 
-    return;
+    const keyword =
+    document
+    .getElementById("searchInput")
+    .value
+    .toLowerCase();
 
-  }
+    const filterType =
+    document
+    .getElementById("typeFilter")
+    .value
+    .toLowerCase();
 
-  const win =
-  window.open(
-    "",
-    "_blank"
-  );
+    container.innerHTML = "";
 
-  if(
-    type==="image"
-  ){
+    const filtered =
+    allMedia.filter(item=>{
 
-    win.document.write(`
-      <html>
-      <body style="
-      margin:0;
-      background:black;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;">
-      <img
-      src="${url}"
-      style="
-      max-width:100%;
-      max-height:100%;">
-      </body>
-      </html>
-    `);
+        const name =
+        item.name.toLowerCase();
 
-  }
+        const type =
+        item.type.toLowerCase();
 
-  else if(
-    type==="video"
-  ){
+        const matchName =
+        name.includes(keyword);
 
-    win.document.write(`
-      <html>
-      <body style="
-      margin:0;
-      background:black;">
+        const matchType =
+        filterType === ""
+        ||
+        type === filterType;
 
-      <video
-      id="v"
-      src="${url}"
-      style="
-      width:100vw;
-      height:100vh;
-      object-fit:contain;">
-      </video>
+        return matchName && matchType;
 
-      <script>
+    });
 
-      document.body.onclick=
-      ()=>toggle();
+    const grouped = {};
 
-      document.onkeydown=
-      e=>{
+    filtered.forEach(item=>{
 
-        if(
-          e.code==='Space' ||
-          e.code==='Enter'
-        ){
+        const type =
+        item.type.toUpperCase();
 
-          e.preventDefault();
+        if(!grouped[type]){
 
-          toggle();
+            grouped[type] = [];
 
         }
 
-      };
+        grouped[type].push(item);
 
-      function toggle(){
+    });
 
-        const v=
-        document.getElementById('v');
+    Object.keys(grouped).forEach(type=>{
 
-        if(v.paused)
-          v.play();
-        else
-          v.pause();
+        const section =
+        document.createElement("div");
 
-      }
+        section.className =
+        "company-group";
 
-      document.documentElement
-      .requestFullscreen();
+        section.innerHTML =
+        `
+        <div class="company-header">
+            <div class="company-label">
+                ${type}
+            </div>
+        </div>
 
-      </script>
+        <div
+            class="gallery-container"
+            id="group-${type}">
+        </div>
+        `;
 
-      </body>
-      </html>
-    `);
+        container.appendChild(section);
 
-  }
+        const groupContainer =
+        section.querySelector(
+            ".gallery-container"
+        );
 
-  else if(
-    type==="youtube"
-  ){
+        grouped[type].forEach(item=>{
 
-    const id =
-    extractYoutubeID(
-      url
+            const card =
+            createCard(item);
+
+            groupContainer
+            .appendChild(card);
+
+        });
+
+    });
+
+}
+
+/* =========================
+   CARD
+========================= */
+
+function createCard(item){
+
+    const card =
+    document.createElement("div");
+
+    card.className =
+    "banner-card";
+
+    let preview =
+    getPreview(item);
+
+    card.innerHTML =
+    `
+    <div class="image-wrapper">
+
+        ${preview}
+
+    </div>
+
+    <div class="card-footer">
+
+        <div class="emp-label-name">
+
+            ${item.name}
+
+        </div>
+
+    </div>
+    `;
+
+    card.onclick =
+    ()=>selectMedia(item);
+
+    return card;
+
+}
+
+/* =========================
+   PREVIEW
+========================= */
+
+function getPreview(item){
+
+    const type =
+    item.type.toLowerCase();
+
+    if(type === "image"){
+
+        return `
+        <img
+        src="${item.url}"
+        loading="lazy">
+        `;
+
+    }
+
+    if(type === "youtube"){
+
+        const id =
+        extractYoutubeID(
+            item.url
+        );
+
+        return `
+        <img
+        src="https://img.youtube.com/vi/${id}/hqdefault.jpg">
+        `;
+
+    }
+
+    if(type === "video"){
+
+        return `
+        <div class="media-icon">
+            🎬
+        </div>
+        `;
+
+    }
+
+    if(type === "spotify"){
+
+        return `
+        <div class="media-icon">
+            🎧
+        </div>
+        `;
+
+    }
+
+    return `
+    <div class="media-icon">
+        🎵
+    </div>
+    `;
+
+}
+
+/* =========================
+   SELECT
+========================= */
+
+function selectMedia(item){
+
+    updatePreview(item);
+
+    const type =
+    item.type.toLowerCase();
+
+    if(
+        type === "image"
+        ||
+        type === "video"
+        ||
+        type === "youtube"
+    ){
+
+        openPopup(item);
+
+    }
+
+    if(
+        type === "mp3"
+        ||
+        type === "spotify"
+    ){
+
+        playAudio(item);
+
+    }
+
+}
+
+/* =========================
+   PREVIEW AREA
+========================= */
+
+function updatePreview(item){
+
+    const preview =
+    document.getElementById(
+        "previewArea"
     );
 
-    win.document.write(`
-      <html>
-      <body style="
-      margin:0;
-      background:black;">
+    const type =
+    item.type.toLowerCase();
 
-      <iframe
-      width="100%"
-      height="100%"
-      src="https://www.youtube.com/embed/${id}"
-      frameborder="0"
-      allowfullscreen
-      style="
-      position:fixed;
-      inset:0;">
-      </iframe>
+    if(type === "image"){
 
-      <script>
-      document.documentElement
-      .requestFullscreen();
-      </script>
+        preview.innerHTML =
+        `
+        <img
+        src="${item.url}"
+        class="preview-image">
+        `;
 
-      </body>
-      </html>
-    `);
+    }
 
-  }
+    else if(type === "youtube"){
+
+        const id =
+        extractYoutubeID(
+            item.url
+        );
+
+        preview.innerHTML =
+        `
+        <iframe
+        src="https://www.youtube.com/embed/${id}"
+        allowfullscreen>
+        </iframe>
+        `;
+
+    }
+
+    else if(type === "video"){
+
+        preview.innerHTML =
+        `
+        <video
+        controls
+        preload="metadata">
+
+            <source
+            src="${item.url}">
+
+        </video>
+        `;
+
+    }
+
+    else{
+
+        preview.innerHTML =
+        `
+        <div class="preview-audio">
+
+            ${item.name}
+
+        </div>
+        `;
+
+    }
 
 }
 
-/*------------------ YOUTUBE ID ----------------*/
-function extractYoutubeID(
-  url
-){
+/* =========================
+   POPUP
+========================= */
 
-  const reg =
-  /(?:v=|\/)([0-9A-Za-z_-]{11})/;
+function openPopup(item){
 
-  const match =
-  url.match(reg);
+    if(
+        !popupWindow
+        ||
+        popupWindow.closed
+    ){
 
-  return match
-    ? match[1]
-    : "";
+        popupWindow =
+        window.open(
+            "",
+            "MediaPopup",
+            "width=1600,height=900"
+        );
+
+    }
+
+    const type =
+    item.type.toLowerCase();
+
+    let html = "";
+
+    if(type === "image"){
+
+        html =
+        `
+        <img
+        src="${item.url}"
+        style="
+        width:100vw;
+        height:100vh;
+        object-fit:contain;">
+        `;
+
+    }
+
+    else if(type === "youtube"){
+
+        const id =
+        extractYoutubeID(
+            item.url
+        );
+
+        html =
+        `
+        <iframe
+        src="https://www.youtube.com/embed/${id}"
+        style="
+        width:100vw;
+        height:100vh;
+        border:none;"
+        allowfullscreen>
+        </iframe>
+        `;
+
+    }
+
+    else if(type === "video"){
+
+        html =
+        `
+        <video
+        id="popupVideo"
+        style="
+        width:100vw;
+        height:100vh;
+        object-fit:contain;">
+
+            <source
+            src="${item.url}">
+        </video>
+
+        <script>
+
+        document
+        .addEventListener(
+            'keydown',
+            function(e){
+
+                if(
+                    e.code === 'Space'
+                    ||
+                    e.code === 'Enter'
+                ){
+
+                    e.preventDefault();
+
+                    const v =
+                    document
+                    .getElementById(
+                    'popupVideo'
+                    );
+
+                    if(v.paused){
+
+                        v.play();
+
+                    }else{
+
+                        v.pause();
+
+                    }
+
+                }
+
+            }
+        );
+
+        <\/script>
+        `;
+
+    }
+
+    popupWindow.document.open();
+
+    popupWindow.document.write(
+    `
+    <html>
+
+    <head>
+
+    <title>
+    Media Display
+    </title>
+
+    <style>
+
+    body{
+        margin:0;
+        background:black;
+        overflow:hidden;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    iframe{
+        border:none;
+    }
+
+    </style>
+
+    </head>
+
+    <body>
+
+    ${html}
+
+    <script>
+
+    document.documentElement
+    .requestFullscreen();
+
+    <\/script>
+
+    </body>
+
+    </html>
+    `
+    );
+
+    popupWindow.document.close();
 
 }
 
-/*------------------ AUDIO PLAYER ----------------*/
-function playAudio(
-  type,
-  url
-){
+/* =========================
+   AUDIO
+========================= */
 
-  const area =
-  document.getElementById(
-    "audioArea"
-  );
+function playAudio(item){
 
-  if(
-    type==="spotify"
-  ){
+    const area =
+    document.getElementById(
+        "audioArea"
+    );
 
-    area.innerHTML = `
-      <iframe
-      src="${url.replace(
-      'open.spotify.com/',
-      'open.spotify.com/embed/'
-      )}"
-      width="100%"
-      height="352"
-      frameborder="0">
-      </iframe>
-    `;
+    const type =
+    item.type.toLowerCase();
 
-  }else{
+    if(type === "spotify"){
 
-    area.innerHTML = `
-      <audio
-      controls
-      autoplay
-      style="width:100%;">
-        <source
-        src="${url}">
-      </audio>
-    `;
+        const embedUrl =
+        item.url.replace(
+            "open.spotify.com/",
+            "open.spotify.com/embed/"
+        );
 
-  }
+        area.innerHTML =
+        `
+        <iframe
+        src="${embedUrl}"
+        width="100%"
+        height="352"
+        loading="lazy">
+        </iframe>
+        `;
+
+    }else{
+
+        area.innerHTML =
+        `
+        <audio
+        controls
+        autoplay
+        style="width:100%;">
+
+            <source
+            src="${item.url}">
+
+        </audio>
+        `;
+
+    }
+
+}
+
+/* =========================
+   YOUTUBE ID
+========================= */
+
+function extractYoutubeID(url){
+
+    const regExp =
+    /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?v=))([^#\&\?]*).*/;
+
+    const match =
+    url.match(regExp);
+
+    if(
+        match
+        &&
+        match[7].length === 11
+    ){
+
+        return match[7];
+
+    }
+
+    return "";
 
 }
