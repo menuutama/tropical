@@ -1,160 +1,342 @@
-function tapisMedia(){
+const API_URL = "https://script.google.com/macros/s/AKfycbw8TVGqTWkdddXa2C21rFt4cJzw1M5g_hfSijcyfp-A5S-dQ7o1MU2qrQ7x3y3m4y1T/exec";
 
-  const dropdown =
-    document.getElementById(
-      "mediaTypeDropdown"
-    ).value;
+let mediaData = [];
 
-  const keyword =
-    document.getElementById(
-      "mediaSearchInput"
-    ).value.toLowerCase();
+/*---------- LOAD MEDIA --------------*/
+window.onload = async () => {
 
-  const items =
-    document.querySelectorAll(
-      ".media-item"
+  const res =
+  await fetch(API_URL);
+
+  mediaData =
+  await res.json();
+
+  renderMedia();
+
+};
+
+/*-------------- REDER MEDIA --------------*/
+function renderMedia() {
+
+  const container =
+  document.getElementById(
+    "mediaGridContainer"
+  );
+
+  container.innerHTML = "";
+
+  const groups = {};
+
+  mediaData.forEach(item => {
+
+    const type =
+    item.type;
+
+    if(!groups[type])
+      groups[type] = [];
+
+    groups[type].push(item);
+
+  });
+
+  Object.keys(groups).forEach(type => {
+
+    const group =
+    document.createElement("div");
+
+    group.className =
+    "company-group";
+
+    group.innerHTML = `
+      <div class="company-header">
+        <div class="company-label">
+          ${type}
+        </div>
+      </div>
+
+      <div class="gallery-container">
+      ${groups[type]
+      .map(item=>`
+        <div
+        class="banner-card"
+        onclick="openMedia(
+        '${item.type}',
+        '${item.url}'
+        )">
+
+          <div
+          class="image-wrapper">
+
+          <div
+          style="
+          font-size:70px;">
+          ${getIcon(item.type)}
+          </div>
+
+          </div>
+
+          <div
+          class="card-footer">
+
+            <div
+            class="emp-label-name">
+              ${item.name}
+            </div>
+
+          </div>
+
+        </div>
+      `).join("")}
+      </div>
+    `;
+
+    container.appendChild(
+      group
     );
-
-  items.forEach(item=>{
-
-    const jenis =
-      item.dataset.jenis;
-
-    const nama =
-      item.dataset.nama.toLowerCase();
-
-    const matchJenis =
-      dropdown==="all" ||
-      jenis===dropdown;
-
-    const matchNama =
-      nama.includes(keyword);
-
-    item.style.display =
-      (matchJenis && matchNama)
-      ? "block"
-      : "none";
 
   });
 
 }
 
-function paparMedia(jenis,url){
+/*------------- ICON ------------------*/
+function getIcon(type){
 
-  const image =
-    document.getElementById(
-      "outputImage"
-    );
+  switch(
+    type.toLowerCase()
+  ){
 
-  const video =
-    document.getElementById(
-      "outputVideo"
-    );
+    case "image":
+      return "🖼️";
 
-  const videoSource =
-    document.getElementById(
-      "videoSource"
-    );
+    case "video":
+      return "🎬";
 
-  const audio =
-    document.getElementById(
-      "outputAudio"
-    );
+    case "youtube":
+      return "▶️";
 
-  const audioSource =
-    document.getElementById(
-      "audioSource"
-    );
+    case "mp3":
+      return "🎵";
 
-  const audioBox =
-    document.getElementById(
-      "audioPlayerContainer"
-    );
+    case "spotify":
+      return "🎧";
 
-  const placeholder =
-    document.getElementById(
-      "placeholderText"
-    );
-
-  const display =
-    document.getElementById(
-      "mediaDisplayBox"
-    );
-
-  image.style.display="none";
-  video.style.display="none";
-  audioBox.style.display="none";
-
-  video.pause();
-  audio.pause();
-
-  placeholder.style.display="none";
-
-  if(jenis==="gambar"){
-
-    image.src=url;
-    image.style.display="block";
-
-    mintaFullscreen(display);
-
-  }
-
-  else if(jenis==="video"){
-
-    videoSource.src=url;
-
-    video.load();
-
-    video.style.display="block";
-
-    video.play();
-
-    mintaFullscreen(display);
-
-  }
-
-  else if(jenis==="lagu"){
-
-    audioSource.src=url;
-
-    audio.load();
-
-    audioBox.style.display="block";
-
-    audio.play();
+    default:
+      return "📁";
 
   }
 
 }
 
-function mintaFullscreen(element){
+/*---------------- POPUP FULLSCREEN -----------------------*/
+function openMedia(
+  type,
+  url
+){
 
-  if(element.requestFullscreen){
-    element.requestFullscreen();
+  type =
+  type.toLowerCase();
+
+  if(
+    type==="mp3" ||
+    type==="spotify"
+  ){
+
+    playAudio(
+      type,
+      url
+    );
+
+    return;
+
   }
-  else if(element.webkitRequestFullscreen){
-    element.webkitRequestFullscreen();
+
+  const win =
+  window.open(
+    "",
+    "_blank"
+  );
+
+  if(
+    type==="image"
+  ){
+
+    win.document.write(`
+      <html>
+      <body style="
+      margin:0;
+      background:black;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;">
+      <img
+      src="${url}"
+      style="
+      max-width:100%;
+      max-height:100%;">
+      </body>
+      </html>
+    `);
+
   }
-  else if(element.msRequestFullscreen){
-    element.msRequestFullscreen();
+
+  else if(
+    type==="video"
+  ){
+
+    win.document.write(`
+      <html>
+      <body style="
+      margin:0;
+      background:black;">
+
+      <video
+      id="v"
+      src="${url}"
+      style="
+      width:100vw;
+      height:100vh;
+      object-fit:contain;">
+      </video>
+
+      <script>
+
+      document.body.onclick=
+      ()=>toggle();
+
+      document.onkeydown=
+      e=>{
+
+        if(
+          e.code==='Space' ||
+          e.code==='Enter'
+        ){
+
+          e.preventDefault();
+
+          toggle();
+
+        }
+
+      };
+
+      function toggle(){
+
+        const v=
+        document.getElementById('v');
+
+        if(v.paused)
+          v.play();
+        else
+          v.pause();
+
+      }
+
+      document.documentElement
+      .requestFullscreen();
+
+      </script>
+
+      </body>
+      </html>
+    `);
+
+  }
+
+  else if(
+    type==="youtube"
+  ){
+
+    const id =
+    extractYoutubeID(
+      url
+    );
+
+    win.document.write(`
+      <html>
+      <body style="
+      margin:0;
+      background:black;">
+
+      <iframe
+      width="100%"
+      height="100%"
+      src="https://www.youtube.com/embed/${id}"
+      frameborder="0"
+      allowfullscreen
+      style="
+      position:fixed;
+      inset:0;">
+      </iframe>
+
+      <script>
+      document.documentElement
+      .requestFullscreen();
+      </script>
+
+      </body>
+      </html>
+    `);
+
   }
 
 }
 
-document.addEventListener(
-  "fullscreenchange",
-  keluarFullscreen
-);
+/*------------------ YOUTUBE ID ----------------*/
+function extractYoutubeID(
+  url
+){
 
-function keluarFullscreen(){
+  const reg =
+  /(?:v=|\/)([0-9A-Za-z_-]{11})/;
 
-  if(!document.fullscreenElement){
+  const match =
+  url.match(reg);
 
-    document
-      .getElementById(
-        "outputVideo"
-      )
-      .pause();
+  return match
+    ? match[1]
+    : "";
+
+}
+
+/*------------------ AUDIO PLAYER ----------------*/
+function playAudio(
+  type,
+  url
+){
+
+  const area =
+  document.getElementById(
+    "audioArea"
+  );
+
+  if(
+    type==="spotify"
+  ){
+
+    area.innerHTML = `
+      <iframe
+      src="${url.replace(
+      'open.spotify.com/',
+      'open.spotify.com/embed/'
+      )}"
+      width="100%"
+      height="352"
+      frameborder="0">
+      </iframe>
+    `;
+
+  }else{
+
+    area.innerHTML = `
+      <audio
+      controls
+      autoplay
+      style="width:100%;">
+        <source
+        src="${url}">
+      </audio>
+    `;
 
   }
 
