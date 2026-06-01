@@ -144,7 +144,7 @@ function getDisplayType(type){
   if(clean === "Image") return "IMAGE";
   if(clean === "Video") return "VIDEO";
   if(clean === "Youtube") return "YOUTUBE";
-  if(clean === "Youtube Musuc") return "YOUTUBE MUSIC";
+  if(clean === "YoutubeMusic") return "YOUTUBE MUSIC";
   if(clean === "Music") return "MP3";
 
   return String(type || "OTHER").toUpperCase();
@@ -254,7 +254,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "Youtube Music"){
+  if(type === "YoutubeMusic"){
 
     return `
       <div class="media-icon">
@@ -299,7 +299,7 @@ function selectMedia(item){
 
   if(
     type === "Music" ||
-    type === "Youtube Music"
+    type === "YoutubeMusic"
   ){
 
     playAudio(item);
@@ -357,7 +357,7 @@ function updatePreview(item){
 
   }
 
-  else if(type === "Youtube Music"){
+  else if(type === "YoutubeMusic"){
 
     preview.innerHTML =
 /* =========================
@@ -463,7 +463,7 @@ function getThumbnail(item){
 
   }
 
-  if(type === "Youtube Music"){
+  if(type === "YoutubeMusic"){
 
     return `
       <div class="media-icon">
@@ -516,7 +516,7 @@ function selectMedia(item){
 
   if(
     type === "Music" ||
-    type === "Youtube Music"
+    type === "YoutubeMusic"
   ){
 
     playAudio(item);
@@ -574,6 +574,6 @@ function updatePreview(item){
 
   }
 
-  else if(type === "Youtube Music"){
+  else if(type === "YoutubeMusic"){
 
     preview.innerHTML =
