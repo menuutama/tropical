@@ -224,7 +224,20 @@ function openSelectedInPopup() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetchPinkAwardData(); 
+  const searchBar = document.getElementById('searchBar');
+const clearSearch = document.getElementById('clearSearch');
+
+searchBar.addEventListener('input', () => {
+  clearSearch.style.display = searchBar.value.trim() ? 'block' : 'none';
+  filterData();
+});
+
+clearSearch.addEventListener('click', () => {
+  searchBar.value = '';
+  clearSearch.style.display = 'none';
+  filterData();
+  searchBar.focus();
+});; 
 
   document.getElementById('searchBar').addEventListener('input', filterData);
   document.getElementById('categoryDropdown').addEventListener('change', filterData);
