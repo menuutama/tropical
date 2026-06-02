@@ -531,3 +531,75 @@ table button {
   background:#73ff5f;
   box-shadow:0 0 12px #73ff5f;
 }
+
+/* =========================
+   UPDATE ICON - VERSION UPDATE
+========================= */
+
+.update-link{
+  margin-left:auto;
+
+  width:44px;
+  height:44px;
+
+  display:none;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  background:transparent;
+  text-decoration:none;
+
+  transition:.3s ease;
+}
+
+/* icon pusing ikut arah jam bila update available */
+.update-link.has-update img{
+  width:32px;
+  height:32px;
+  object-fit:contain;
+
+  animation:updateSpinClockwise 2.2s linear infinite;
+
+  filter:
+    drop-shadow(0 0 4px rgba(56,189,248,.55))
+    drop-shadow(0 0 8px rgba(56,189,248,.35));
+}
+
+/* bila hover/sentuh: glow biru muda + pusing lawan jam */
+.update-link.has-update:hover{
+  background:rgba(56,189,248,.12);
+
+  box-shadow:
+    0 0 10px rgba(56,189,248,.7),
+    0 0 22px rgba(56,189,248,.45),
+    inset 0 0 12px rgba(56,189,248,.18);
+}
+
+.update-link.has-update:hover img{
+  animation:updateSpinAntiClockwise 1.2s linear infinite;
+
+  filter:
+    drop-shadow(0 0 8px #7dd3fc)
+    drop-shadow(0 0 18px #38bdf8)
+    drop-shadow(0 0 28px #0ea5e9);
+}
+
+@keyframes updateSpinClockwise{
+  from{
+    transform:rotate(0deg);
+  }
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+@keyframes updateSpinAntiClockwise{
+  from{
+    transform:rotate(0deg);
+  }
+  to{
+    transform:rotate(-360deg);
+  }
+}
