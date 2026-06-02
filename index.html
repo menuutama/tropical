@@ -94,6 +94,65 @@ async function checkLocalhostStatus(){
 document.addEventListener("DOMContentLoaded", checkLocalhostStatus);
 setInterval(checkLocalhostStatus, 5000);
 </script>
+  <script>
+const LOCALHOST_URL = "http://localhost:3000";
+const OFFLINE_ZIP_URL =
+  "https://drive.google.com/uc?export=download&id=19z17vPRNHY0s9ET4KC-UpqH8qwum7PPW";
+
+async function checkLocalhostStatus(){
+  const toggle = document.getElementById("localhostToggle");
+  if(!toggle) return false;
+
+  try{
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 800);
+
+    const res = await fetch(`${LOCALHOST_URL}/api/status`, {
+      signal: controller.signal,
+      cache: "no-store"
+    });
+
+    clearTimeout(timeout);
+
+    if(res.ok){
+      toggle.classList.remove("offline");
+      toggle.classList.add("online");
+      return true;
+    }
+
+    toggle.classList.remove("online");
+    toggle.classList.add("offline");
+    return false;
+
+  }catch(e){
+    toggle.classList.remove("online");
+    toggle.classList.add("offline");
+    return false;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const btn = document.getElementById("localhostBtn");
+
+  await checkLocalhostStatus();
+
+  if(btn){
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const isOnline = await checkLocalhostStatus();
+
+      if(isOnline){
+        window.location.href = `${LOCALHOST_URL}/pink.html`;
+      }else{
+        window.open(OFFLINE_ZIP_URL, "_blank");
+      }
+    });
+  }
+});
+
+setInterval(checkLocalhostStatus, 5000);
+</script>
 </body>
 </html>
 
