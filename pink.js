@@ -24,14 +24,20 @@ async function fetchPinkAwardData() {
       return;
     }
     
-    initializeGallery(data); 
-  } catch (error) {
+    initializeGallery(pinkAwardData; 
+  if (!data || data.length === 0) {
+  mainArea.innerHTML = '<p style="text-align:center;color:#aaa;">Tiada data gambar dijumpai.</p>';
+  return;
+  }  
+  } 
+  
+  catch (error) {
     console.error("Gagal dapatkan data:", error);
     mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.</p>';
   }
 }
 
-function initializeGallery(data) {
+function initializeGallery(pinkAwardData) {
   const mainArea = document.getElementById('mainGalleryArea');
   mainArea.innerHTML = ''; 
 
