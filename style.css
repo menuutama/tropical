@@ -537,49 +537,42 @@ table button {
 ========================= */
 
 .update-link{
-  margin-left:auto;
-
-  width:44px;
-  height:44px;
-
+  margin-left:auto !important;
+  width:38px !important;
+  height:38px !important;
+  padding:0 !important;
   display:none;
   align-items:center;
   justify-content:center;
-
   border-radius:50%;
-
-  background:transparent;
-  text-decoration:none;
-
-  transition:.3s ease;
+  background:transparent !important;
+  box-shadow:none !important;
 }
 
-/* icon pusing ikut arah jam bila update available */
+.update-link img{
+  width:24px !important;
+  height:24px !important;
+  object-fit:contain !important;
+  display:block;
+}
+
 .update-link.has-update img{
-  width:32px;
-  height:32px;
-  object-fit:contain;
-
   animation:updateSpinClockwise 2.2s linear infinite;
-
   filter:
     drop-shadow(0 0 4px rgba(56,189,248,.55))
     drop-shadow(0 0 8px rgba(56,189,248,.35));
 }
 
-/* bila hover/sentuh: glow biru muda + pusing lawan jam */
 .update-link.has-update:hover{
-  background:rgba(56,189,248,.12);
-
+  background:rgba(56,189,248,.12) !important;
   box-shadow:
     0 0 10px rgba(56,189,248,.7),
     0 0 22px rgba(56,189,248,.45),
-    inset 0 0 12px rgba(56,189,248,.18);
+    inset 0 0 12px rgba(56,189,248,.18) !important;
 }
 
 .update-link.has-update:hover img{
   animation:updateSpinAntiClockwise 1.2s linear infinite;
-
   filter:
     drop-shadow(0 0 8px #7dd3fc)
     drop-shadow(0 0 18px #38bdf8)
@@ -587,19 +580,11 @@ table button {
 }
 
 @keyframes updateSpinClockwise{
-  from{
-    transform:rotate(0deg);
-  }
-  to{
-    transform:rotate(360deg);
-  }
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(360deg); }
 }
 
 @keyframes updateSpinAntiClockwise{
-  from{
-    transform:rotate(0deg);
-  }
-  to{
-    transform:rotate(-360deg);
-  }
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(-360deg); }
 }
