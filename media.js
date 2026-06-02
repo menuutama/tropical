@@ -332,7 +332,10 @@ function getThumbnail(item) {
 ========================= */
 
 function selectMedia(item) {
+
   updatePreview(item);
+
+  scrollToPreview();
 
   const type = normalizeType(item.type);
 
@@ -343,6 +346,22 @@ function selectMedia(item) {
   ) {
     openPopup(item);
   }
+
+}
+
+/* =========================
+  SCROLLING TO PREVIEW AREA
+========================= */
+function scrollToPreview(){
+
+  const preview =
+    document.getElementById("previewArea");
+
+  preview.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+
 }
 
 /* =========================
