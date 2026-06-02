@@ -396,17 +396,46 @@ table button {
   }
 
 /* =========================
-   ON LOCALHOST BUTTON
+   OFFLINE MEDIA SUPPORT
 ========================= */
 
-.download-btn{
-  background:linear-gradient(135deg,#00a651 0%,#008f45 100%) !important;
-  color:#ffffff !important;
+.media-icon-text{
+  margin-top:8px;
+  font-size:13px;
   font-weight:600;
+  color:#e2e8f0;
+  text-align:center;
+}
+
+.video-thumb{
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+.video-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* ON LOCALHOST BUTTON */
+
+.download-btn{
+  background-color:#0078d4;
+  color:#ffffff !important;
+  border-radius:6px;
+  font-weight:600;
+  text-decoration:none;
+  padding:10px 14px;
+  transition:0.2s;
 }
 
 .download-btn:hover{
-  background:linear-gradient(135deg,#00c25f 0%,#009e4d 100%) !important;
-  color:#ffffff !important;
-  box-shadow:0 0 15px rgba(0,194,95,0.45);
+  background-color:#005a9e;
+  box-shadow:0 0 18px rgba(0,120,212,0.7);
 }
