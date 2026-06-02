@@ -395,3 +395,18 @@ table button {
     object-fit: cover;
   }
 
+/* =========================
+   ON LOCALHOST BUTTON
+========================= */
+
+.download-btn{
+  background:linear-gradient(135deg,#00a651 0%,#008f45 100%) !important;
+  color:#ffffff !important;
+  font-weight:600;
+}
+
+.download-btn:hover{
+  background:linear-gradient(135deg,#00c25f 0%,#009e4d 100%) !important;
+  color:#ffffff !important;
+  box-shadow:0 0 15px rgba(0,194,95,0.45);
+}
