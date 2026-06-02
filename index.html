@@ -57,7 +57,43 @@
 <script src="app.js"></script>
 <script src="api.js"></script>
 <script src="include.js"></script>
+<script>
+async function checkLocalhostStatus(){
+  const toggle = document.getElementById("localhostToggle");
 
+  if(!toggle) return;
+
+  try{
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 800);
+
+    const res = await fetch("http://localhost:3000/api/status", {
+      signal: controller.signal,
+      cache: "no-store"
+    });
+
+    clearTimeout(timeout);
+
+    if(res.ok){
+      toggle.classList.remove("offline");
+      toggle.classList.add("online");
+    }else{
+      toggle.classList.remove("online");
+      toggle.classList.add("offline");
+    }
+
+  }catch(e){
+    toggle.classList.remove("online");
+    toggle.classList.add("offline");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", checkLocalhostStatus);
+setInterval(checkLocalhostStatus, 5000);
+</script>
 </body>
 </html>
 
