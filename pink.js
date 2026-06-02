@@ -1,7 +1,6 @@
-// ⚠️ GANTIKAN URL DI BAWAH DENGAN URL WEB APP GAS ANDA YANG SEBENAR
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzjZWDv678_ioJc65wJ_XGUYQaTDYdfFX2U65RxYmPgsz7oKdoFcbwCKPhf7dB86T-t/exec";
 
-let pinkAwardData = []; 
+let pinkAwardData = [];
 
 const targetCompanies = [
   "Tropical Consolidated",
@@ -18,40 +17,39 @@ async function fetchPinkAwardData() {
   try {
     const response = await fetch(GAS_WEB_APP_URL);
     const data = await response.json();
-    
+
     if (data.error) {
       mainArea.innerHTML = `<p style="color:red; text-align:center; width:100%;">${data.error}</p>`;
       return;
     }
-    
-    initializeGallery(pinkAwardData; 
-  if (!data || data.length === 0) {
-  mainArea.innerHTML = '<p style="text-align:center;color:#aaa;">Tiada data gambar dijumpai.</p>';
-  return;
-  }  
-  } 
-  
-  catch (error) {
+
+    if (!data || data.length === 0) {
+      mainArea.innerHTML = '<p style="text-align:center;color:#aaa;">Tiada data gambar dijumpai.</p>';
+      return;
+    }
+
+    initializeGallery(data);
+
+  } catch (error) {
     console.error("Gagal dapatkan data:", error);
     mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.</p>';
   }
 }
 
-function initializeGallery(pinkAwardData) {
+function initializeGallery(data) {
   const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = ''; 
+  mainArea.innerHTML = '';
 
   pinkAwardData = data;
 
   targetCompanies.forEach(company => {
-    // Penapisan awal menggunakan kaedah pembersihan teks (trim & lowercase) untuk mengelakkan ralat data Google Sheets
     const companyItems = pinkAwardData.filter(item => {
       const sheetCompany = item.company ? item.company.toString().trim().toLowerCase() : '';
       const targetComp = company.trim().toLowerCase();
       return sheetCompany === targetComp;
     });
-    
-    if (companyItems.length === 0) return; 
+
+    if (companyItems.length === 0) return;
 
     const groupDiv = document.createElement('div');
     groupDiv.className = 'company-group';
@@ -67,19 +65,19 @@ function initializeGallery(pinkAwardData) {
       </div>
       <div class="gallery-container" id="grid-${company.replace(/\s+/g, '')}"></div>
     `;
+
     mainArea.appendChild(groupDiv);
 
     const gridDiv = document.getElementById(`grid-${company.replace(/\s+/g, '')}`);
-    
+
     companyItems.forEach(item => {
       const card = document.createElement('div');
       card.className = 'banner-card';
-      
+
       const empName = item.name ? item.name : '';
       const compName = item.company ? item.company : '';
       const bannerUrl = item.bannerUrl ? item.bannerUrl : '';
 
-      // Kekalkan nilai asal dalam atribut untuk rujukan visual, tetapi lowercase untuk tapisan
       card.setAttribute('data-name', empName.toLowerCase().trim());
       card.setAttribute('data-company', compName.toLowerCase().trim());
       card.setAttribute('data-url', bannerUrl);
@@ -87,12 +85,13 @@ function initializeGallery(pinkAwardData) {
       card.innerHTML = `
         <input type="checkbox" class="item-checkbox" data-company="${company}">
         <div class="image-wrapper">
-          <img src="${bannerUrl}" alt="Banner" onerror="this.src='https://placehold.co'">
+          <img src="${bannerUrl}" alt="Banner" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
         </div>
         <div class="card-footer">
           <div class="emp-label-name">${empName}</div>
         </div>
       `;
+
       gridDiv.appendChild(card);
     });
   });
@@ -101,17 +100,13 @@ function initializeGallery(pinkAwardData) {
 }
 
 function setupCheckboxListeners() {
-  const selectAllCheckboxes = document.querySelectorAll('.company-select-all');
-  
-  selectAllCheckboxes.forEach(mainCheckbox => {
+  document.querySelectorAll('.company-select-all').forEach(mainCheckbox => {
     mainCheckbox.addEventListener('change', (e) => {
       const targetCompany = e.target.getAttribute('data-company');
       const groupDiv = document.getElementById(`group-${targetCompany.replace(/\s+/g, '')}`);
       if (!groupDiv) return;
 
-      const cards = groupDiv.querySelectorAll('.banner-card');
-      
-      cards.forEach(card => {
+      groupDiv.querySelectorAll('.banner-card').forEach(card => {
         if (card.style.display !== 'none') {
           const cb = card.querySelector('.item-checkbox');
           if (cb) cb.checked = e.target.checked;
@@ -121,11 +116,10 @@ function setupCheckboxListeners() {
   });
 }
 
-// === DI SINI TELAH DIPERBAIKI: Fungsi Tapisan Kalis Ralat Huruf Besar/Kecil & Ruang Kosong ===
 function filterData() {
   const searchText = document.getElementById('searchBar').value.toLowerCase().trim();
   const selectedCategory = document.getElementById('categoryDropdown').value.toLowerCase().trim();
-  
+
   targetCompanies.forEach(company => {
     const companyCleaned = company.toLowerCase().trim();
     const groupDiv = document.getElementById(`group-${company.replace(/\s+/g, '')}`);
@@ -138,25 +132,19 @@ function filterData() {
       const cardName = card.getAttribute('data-name');
       const cardCompany = card.getAttribute('data-company');
 
-      // Semak padanan kategori dropdown (Sama ada pilih "all company" atau nama syarikat sepadan)
-      const matchesCategory = (selectedCategory === "all company" || cardCompany === selectedCategory);
-      
-      // Semak padanan carian teks nama pekerja
+      const matchesCategory = selectedCategory === "all company" || cardCompany === selectedCategory;
       const matchesSearch = cardName.includes(searchText);
 
       if (matchesCategory && matchesSearch) {
-        card.style.display = 'block'; 
+        card.style.display = 'block';
         visibleCardsInGroup++;
       } else {
-        card.style.display = 'none';  
+        card.style.display = 'none';
         const cb = card.querySelector('.item-checkbox');
-        if (cb) cb.checked = false; 
+        if (cb) cb.checked = false;
       }
-    }
-  );
+    });
 
-    // Sembunyikan atau paparkan keseluruhan seksyen kumpulan syarikat
-    // Jika dropdown memilih syarikat spesifik, pastikan seksyen syarikat lain disembunyikan terus
     if (visibleCardsInGroup === 0 || (selectedCategory !== "all company" && companyCleaned !== selectedCategory)) {
       groupDiv.style.display = 'none';
     } else {
@@ -167,29 +155,30 @@ function filterData() {
 
 function openSelectedInPopup() {
   const checkboxes = document.querySelectorAll('.item-checkbox:checked');
-  
+
   if (checkboxes.length === 0) {
     alert("Sila pilih (tick) sekurang-kurangnya satu gambar terlebih dahulu!");
     return;
   }
 
   const selectedImages = [];
+
   checkboxes.forEach(cb => {
     const card = cb.closest('.banner-card');
     selectedImages.push({ url: card.getAttribute('data-url') });
   });
 
   const popupWindow = window.open("", "PinkAwardPopup", "width=1000,height=800,scrollbars=no,resizable=yes");
-  
+
   let popupContent = `
     <html>
     <head>
       <title>Pink Award - Fullscreen Background Slideshow</title>
       <style>
-        body { background: #000; margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
-        .slideshow-container { width: 100vw; height: 100vh; position: relative; }
-        .image-wrapper { width: 100%; height: 100%; }
-        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        body { background:#000; margin:0; padding:0; overflow:hidden; height:100vh; width:100vw; display:flex; justify-content:center; align-items:center; }
+        .slideshow-container { width:100vw; height:100vh; position:relative; }
+        .image-wrapper { width:100%; height:100%; }
+        .image-wrapper img { width:100%; height:100%; object-fit:cover; display:block; }
       </style>
     </head>
     <body>
@@ -252,9 +241,4 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.openPopupBtn').forEach(btn => {
     btn.addEventListener('click', openSelectedInPopup);
   });
-});
-
-  document.getElementById('searchBar').addEventListener('input', filterData);
-  document.getElementById('categoryDropdown').addEventListener('change', filterData);
-  document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
 });
