@@ -482,7 +482,7 @@ async function editRow(row) {
       /* MULAKAN PROSES */
       loadData();
 </script>
-    <script>
+   <script>
 const LOCALHOST_URL = "http://localhost:3000";
 const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
 
@@ -525,9 +525,11 @@ function compareVersion(localV, onlineV){
 
 async function checkUpdate(){
   const updateBtn = document.getElementById("updateBtn");
+
   if(!updateBtn) return;
 
   updateBtn.style.display = "none";
+  updateBtn.classList.remove("has-update");
 
   try{
     const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
@@ -549,18 +551,30 @@ async function checkUpdate(){
 
     if(needUpdate){
       updateBtn.style.display = "flex";
+      updateBtn.classList.add("has-update");
+
       updateBtn.onclick = function(e){
         e.preventDefault();
 
-        window.open(
-          onlineData.downloadUrl,
-          "UpdateInstallerPopup",
-          "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
-        );
+        const confirmUpdate =
+          confirm(
+            `New update available!\n\nCurrent Version: ${localData.currentVersion}\nLatest Version: ${onlineData.latestVersion}\n\nDownload update now?`
+          );
+
+        if(confirmUpdate){
+          window.open(
+            onlineData.downloadUrl,
+            "UpdateInstallerPopup",
+            "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+          );
+        }
       };
     }
 
-  }catch(e){}
+  }catch(e){
+    updateBtn.style.display = "none";
+    updateBtn.classList.remove("has-update");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function(){
