@@ -166,38 +166,49 @@ document.addEventListener("DOMContentLoaded", function(){
       const isOnline = await checkLocalhostStatus();
 
       if(isOnline){
-        const confirmOff = confirm("Turn OFF localhost?");
 
-        if(confirmOff){
-          try{
-            await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
-              method:"GET",
-              cache:"no-store"
-            });
-          }catch(e){}
+   const confirmOff = confirm("Turn OFF localhost?");
 
-          setTimeout(checkLocalhostStatus, 1200);
-        }
-
-      }else{
-        try{
-          const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+   if(confirmOff){
+      try{
+         await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
+            method:"GET",
             cache:"no-store"
-          });
+         });
+      }catch(e){}
 
-          const data = await res.json();
+      setTimeout(checkLocalhostStatus,1200);
+   }
 
-          window.open(
+}else{
+
+   const wantDownload = confirm(
+      "LOCALHOST is OFF.\n\nIf you already installed it, please open the shortcut: Tropical Dinner Localhost.\n\nClick OK to download installer.\nClick Cancel if already installed."
+   );
+
+   if(wantDownload){
+
+      try{
+
+         const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+            cache:"no-store"
+         });
+
+         const data = await res.json();
+
+         window.open(
             data.downloadUrl,
             "DownloadInstallerPopup",
             "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
-          );
+         );
 
-        }catch(e){
-          alert("Cannot get installer link. Please check internet connection.");
-        }
+      }catch(e){
+         alert("Cannot get installer link. Please check internet connection.");
       }
-    });
+
+   }
+
+});
   }
 });
 </script>
