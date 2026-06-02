@@ -1,106 +1,149 @@
-// ⚠️ MASUKKAN URL WEB APP GAS ANDA YANG SEBENAR DI SINI (Sama seperti url di pink.js)
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzjZWDv678_ioJc65wJ_XGUYQaTDYdfFX2U65RxYmPgsz7oKdoFcbwCKPhf7dB86T-t/exec";
 
-let serviceAwardData = []; 
+let serviceAwardData = [];
 
 const targetCategories = [
-  "10 Years", "15 Years", "20 Years", "25 Years", 
-  "30 Years", "35 Years", "50 Years", "55 Years"
+  "10 Years",
+  "15 Years",
+  "20 Years",
+  "25 Years",
+  "30 Years",
+  "35 Years",
+  "50 Years",
+  "55 Years"
 ];
 
 async function fetchServiceAwardData() {
-  const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = '<p style="text-align:center; width:100%; color:#aaa; font-size:16px;">Sedang memuatkan gambar...</p>';
+  const mainArea = document.getElementById("mainGalleryArea");
+
+  mainArea.innerHTML =
+    '<p style="text-align:center;width:100%;color:#aaa;font-size:16px;">Sedang memuatkan gambar...</p>';
 
   try {
     const response = await fetch(`${GAS_WEB_APP_URL}?page=service`);
     const data = await response.json();
-    
+
+    console.log("SERVICE DATA:", data);
+
     if (data.error) {
-      mainArea.innerHTML = `<p style="color:red; text-align:center; width:100%;">${data.error}</p>`;
+      mainArea.innerHTML =
+        `<p style="color:red;text-align:center;width:100%;">${data.error}</p>`;
       return;
     }
-    
-    initializeGallery(data); 
+
+    if (!Array.isArray(data) || data.length === 0) {
+      mainArea.innerHTML =
+        '<p style="text-align:center;color:#aaa;">Tiada data Long Service dijumpai.</p>';
+      return;
+    }
+
+    initializeGallery(data);
+
   } catch (error) {
-    console.error("Gagal dapatkan data:", error);
-    mainArea.innerHTML = '<p style="color:red; text-align:center; width:100%;">Gagal memuatkan data.</p>';
+    console.error("Gagal dapatkan data service:", error);
+    mainArea.innerHTML =
+      '<p style="color:red;text-align:center;width:100%;">Gagal memuatkan data Long Service.</p>';
   }
 }
 
+function cleanText(text) {
+  return text ? text.toString().trim().toLowerCase() : "";
+}
+
+function normalizeCategory(text) {
+  return cleanText(text).replace(/\s+/g, "");
+}
+
 function initializeGallery(data) {
-  const mainArea = document.getElementById('mainGalleryArea');
-  mainArea.innerHTML = ''; 
+  const mainArea = document.getElementById("mainGalleryArea");
+  mainArea.innerHTML = "";
 
   serviceAwardData = data;
+  let totalShown = 0;
 
-  targetCategories.forEach(cat => {
-    const categoryItems = serviceAwardData.filter(item => item.category === cat || item.category === cat.replace(/\s+/g, ''));
-    
-    if (categoryItems.length === 0) return; 
+  targetCategories.forEach(category => {
+    const categoryItems = serviceAwardData.filter(item => {
+      const sheetCategory = normalizeCategory(item.category);
+      const targetCategory = normalizeCategory(category);
+      return sheetCategory === targetCategory;
+    });
 
-    const groupDiv = document.createElement('div');
-    groupDiv.className = 'company-group';
-    groupDiv.id = `group-${cat.replace(/\s+/g, '')}`;
+    if (categoryItems.length === 0) return;
+
+    totalShown += categoryItems.length;
+
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "company-group";
+    groupDiv.id = `group-${category.replace(/\s+/g, "")}`;
 
     groupDiv.innerHTML = `
       <div class="company-header">
-        <span class="company-label">${cat}</span>
+        <span class="company-label">${category}</span>
         <label class="select-all-wrapper">
-          <input type="checkbox" class="company-select-all" data-category="${cat}">
+          <input type="checkbox" class="company-select-all" data-category="${category}">
           Select All
         </label>
       </div>
-      <div class="gallery-container" id="grid-${cat.replace(/\s+/g, '')}"></div>
+
+      <div class="gallery-container" id="grid-${category.replace(/\s+/g, "")}"></div>
     `;
+
     mainArea.appendChild(groupDiv);
 
-    const gridDiv = document.getElementById(`grid-${cat.replace(/\s+/g, '')}`);
-    
-    // === DI SINI TELAH DIBETULKAN: Menggunakan categoryItems, bukan companyItems ===
-    categoryItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'banner-card';
-      
-      const empName = item.name ? item.name : '';
-      const compName = item.company ? item.company : '';
-      const bannerUrl = item.bannerUrl ? item.bannerUrl : '';
+    const gridDiv = document.getElementById(`grid-${category.replace(/\s+/g, "")}`);
 
-      card.setAttribute('data-name', empName.toLowerCase());
-      card.setAttribute('data-company', compName.toLowerCase());
-      card.setAttribute('data-category', item.category);
-      card.setAttribute('data-url', bannerUrl);
+    categoryItems.forEach(item => {
+      const empName = item.name ? item.name : "";
+      const compName = item.company ? item.company : "";
+      const bannerUrl = item.bannerUrl ? item.bannerUrl : "";
+      const itemCategory = item.category ? item.category : category;
+
+      const card = document.createElement("div");
+      card.className = "banner-card";
+
+      card.setAttribute("data-name", cleanText(empName));
+      card.setAttribute("data-company", cleanText(compName));
+      card.setAttribute("data-category", normalizeCategory(itemCategory));
+      card.setAttribute("data-url", bannerUrl);
 
       card.innerHTML = `
-        <input type="checkbox" class="item-checkbox" data-category="${cat}">
+        <input type="checkbox" class="item-checkbox" data-category="${category}">
+
         <div class="image-wrapper">
-          <img src="${bannerUrl}" alt="Banner" onerror="this.src='https://placehold.co'">
+          <img 
+            src="${bannerUrl}" 
+            alt="Banner"
+            onerror="this.src='https://placehold.co/400x400?text=No+Image'">
         </div>
+
         <div class="card-footer">
           <div class="emp-label-name">${empName} - ${compName}</div>
         </div>
       `;
+
       gridDiv.appendChild(card);
     });
   });
+
+  if (totalShown === 0) {
+    mainArea.innerHTML =
+      '<p style="text-align:center;color:#aaa;">Data ada, tapi category dalam Google Sheet tak match dengan 10 Years / 15 Years / 20 Years dan seterusnya.</p>';
+  }
 
   setupCheckboxListeners();
 }
 
 function setupCheckboxListeners() {
-  const selectAllCheckboxes = document.querySelectorAll('.company-select-all');
-  
-  selectAllCheckboxes.forEach(mainCheckbox => {
-    mainCheckbox.addEventListener('change', (e) => {
-      const targetCat = e.target.getAttribute('data-category');
-      const groupDiv = document.getElementById(`group-${targetCat.replace(/\s+/g, '')}`);
+  document.querySelectorAll(".company-select-all").forEach(mainCheckbox => {
+    mainCheckbox.addEventListener("change", e => {
+      const targetCategory = e.target.getAttribute("data-category");
+      const groupDiv = document.getElementById(`group-${targetCategory.replace(/\s+/g, "")}`);
+
       if (!groupDiv) return;
 
-      const cards = groupDiv.querySelectorAll('.banner-card');
-      
-      cards.forEach(card => {
-        if (card.style.display !== 'none') {
-          const cb = card.querySelector('.item-checkbox');
+      groupDiv.querySelectorAll(".banner-card").forEach(card => {
+        if (card.style.display !== "none") {
+          const cb = card.querySelector(".item-checkbox");
           if (cb) cb.checked = e.target.checked;
         }
       });
@@ -109,94 +152,136 @@ function setupCheckboxListeners() {
 }
 
 function filterData() {
-  const searchText = document.getElementById('searchBar').value.toLowerCase();
-  const selectedCategory = document.getElementById('categoryDropdown').value;
-  
-  targetCategories.forEach(cat => {
-    const groupDiv = document.getElementById(`group-${cat.replace(/\s+/g, '')}`);
+  const searchText = cleanText(document.getElementById("searchBar").value);
+  const selectedCategory = document.getElementById("categoryDropdown").value;
+  const selectedCategoryClean = normalizeCategory(selectedCategory);
+
+  targetCategories.forEach(category => {
+    const groupDiv = document.getElementById(`group-${category.replace(/\s+/g, "")}`);
     if (!groupDiv) return;
 
-    const cards = groupDiv.querySelectorAll('.banner-card');
+    const cards = groupDiv.querySelectorAll(".banner-card");
     let visibleCardsInGroup = 0;
 
     cards.forEach(card => {
-      const cardName = card.getAttribute('data-name');
-      const cardCompany = card.getAttribute('data-company');
-      const cardCategory = card.getAttribute('data-category');
+      const cardName = card.getAttribute("data-name") || "";
+      const cardCompany = card.getAttribute("data-company") || "";
+      const cardCategory = card.getAttribute("data-category") || "";
 
-      const matchesCategory = (selectedCategory === "All Category" || cardCategory === selectedCategory || cardCategory === selectedCategory.replace(/\s+/g, ''));
-      const matchesSearch = cardName.includes(searchText) || cardCompany.includes(searchText);
+      const matchesCategory =
+        selectedCategory === "All Category" ||
+        cardCategory === selectedCategoryClean;
+
+      const matchesSearch =
+        cardName.includes(searchText) ||
+        cardCompany.includes(searchText);
 
       if (matchesCategory && matchesSearch) {
-        card.style.display = 'block'; 
+        card.style.display = "block";
         visibleCardsInGroup++;
       } else {
-        card.style.display = 'none';  
-        const cb = card.querySelector('.item-checkbox');
-        if (cb) cb.checked = false; 
+        card.style.display = "none";
+
+        const cb = card.querySelector(".item-checkbox");
+        if (cb) cb.checked = false;
       }
     });
 
-    if (visibleCardsInGroup === 0) {
-      groupDiv.style.display = 'none';
-    } else {
-      groupDiv.style.display = 'block';
-    }
+    groupDiv.style.display = visibleCardsInGroup > 0 ? "block" : "none";
   });
 }
 
 function openSelectedInPopup() {
-  const checkboxes = document.querySelectorAll('.item-checkbox:checked');
-  
+  const checkboxes = document.querySelectorAll(".item-checkbox:checked");
+
   if (checkboxes.length === 0) {
     alert("Sila pilih (tick) sekurang-kurangnya satu gambar terlebih dahulu!");
     return;
   }
 
   const selectedImages = [];
+
   checkboxes.forEach(cb => {
-    const card = cb.closest('.banner-card');
-    selectedImages.push({ url: card.getAttribute('data-url') });
+    const card = cb.closest(".banner-card");
+    selectedImages.push({
+      url: card.getAttribute("data-url")
+    });
   });
 
-  const popupWindow = window.open("", "ServiceAwardPopup", "width=1000,height=800,scrollbars=no,resizable=yes");
-  
-  let popupContent = `
+  const popupWindow = window.open(
+    "",
+    "ServiceAwardPopup",
+    "width=1000,height=800,scrollbars=no,resizable=yes"
+  );
+
+  const popupContent = `
     <html>
     <head>
-      <title>Long Service Award - Fullscreen Background</title>
+      <title>Long Service Award - Fullscreen Picture</title>
       <style>
-        body { background: #000; margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; }
-        .slideshow-container { width: 100vw; height: 100vh; position: relative; }
-        .image-wrapper { width: 100%; height: 100%; }
-        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        body{
+          background:#000;
+          margin:0;
+          padding:0;
+          overflow:hidden;
+          height:100vh;
+          width:100vw;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+        }
+
+        .slideshow-container{
+          width:100vw;
+          height:100vh;
+          position:relative;
+        }
+
+        .image-wrapper{
+          width:100%;
+          height:100%;
+        }
+
+        .image-wrapper img{
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          display:block;
+        }
       </style>
     </head>
+
     <body>
       <div class="slideshow-container">
         <div class="image-wrapper">
           <img id="displayImage" src="">
         </div>
       </div>
+
       <script>
         const images = ${JSON.stringify(selectedImages)};
         let currentIndex = 0;
 
-        function showSlide(index) {
-          if (images.length === 0) return;
-          document.getElementById('displayImage').src = images[index].url;
+        function showSlide(index){
+          if(images.length === 0) return;
+          document.getElementById("displayImage").src = images[index].url;
         }
 
-        function changeSlide(direction) {
+        function changeSlide(direction){
           currentIndex += direction;
-          if (currentIndex >= images.length) currentIndex = 0;
-          else if (currentIndex < 0) currentIndex = images.length - 1;
+
+          if(currentIndex >= images.length){
+            currentIndex = 0;
+          }else if(currentIndex < 0){
+            currentIndex = images.length - 1;
+          }
+
           showSlide(currentIndex);
         }
 
-        document.addEventListener('keydown', function(event) {
-          if (event.key === "ArrowLeft") changeSlide(-1);
-          else if (event.key === "ArrowRight") changeSlide(1);
+        document.addEventListener("keydown", function(event){
+          if(event.key === "ArrowLeft") changeSlide(-1);
+          if(event.key === "ArrowRight") changeSlide(1);
         });
 
         showSlide(currentIndex);
@@ -209,37 +294,27 @@ function openSelectedInPopup() {
   popupWindow.document.close();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   fetchServiceAwardData();
 
-  const searchBar = document.getElementById('searchBar');
-  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const searchBar = document.getElementById("searchBar");
+  const clearSearchBtn = document.getElementById("clearSearchBtn");
 
-  searchBar.addEventListener('input', () => {
-    clearSearchBtn.style.display =
-      searchBar.value.trim() ? 'block' : 'none';
-
+  searchBar.addEventListener("input", () => {
+    clearSearchBtn.style.display = searchBar.value.trim() ? "block" : "none";
     filterData();
   });
 
-  clearSearchBtn.addEventListener('click', () => {
-    searchBar.value = '';
-    clearSearchBtn.style.display = 'none';
-
+  clearSearchBtn.addEventListener("click", () => {
+    searchBar.value = "";
+    clearSearchBtn.style.display = "none";
     filterData();
     searchBar.focus();
   });
 
-  document.getElementById('categoryDropdown')
-    .addEventListener('change', filterData);
+  document.getElementById("categoryDropdown").addEventListener("change", filterData);
 
-  document.querySelectorAll('.openPopupBtn')
-    .forEach(btn => {
-      btn.addEventListener('click', openSelectedInPopup);
-    });
-});
-  
-  document.getElementById('searchBar').addEventListener('input', filterData);
-  document.getElementById('categoryDropdown').addEventListener('change', filterData);
-  document.getElementById('openPopupBtn').addEventListener('click', openSelectedInPopup);
+  document.querySelectorAll(".openPopupBtn").forEach(btn => {
+    btn.addEventListener("click", openSelectedInPopup);
+  });
 });
