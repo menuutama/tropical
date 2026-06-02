@@ -57,19 +57,16 @@
 <!-- ===== FOOTER JS START ===== -->
 <script>
 const LOCALHOST_URL = "http://localhost:3000";
-
-const OFFLINE_ZIP_URL =
-"https://drive.google.com/uc?export=download&id=17PHzeTr8N1rHeiR1WrT4c6XBXqAyiBPT";
+const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
 
 async function checkLocalhostStatus(){
   const toggle = document.getElementById("localhostToggle");
-
   if(!toggle) return false;
 
   try{
     const res = await fetch(`${LOCALHOST_URL}/api/status?time=${Date.now()}`, {
-      method: "GET",
-      cache: "no-store"
+      method:"GET",
+      cache:"no-store"
     });
 
     if(res.ok){
@@ -77,7 +74,6 @@ async function checkLocalhostStatus(){
       toggle.classList.add("online");
       return true;
     }
-
   }catch(e){}
 
   toggle.classList.remove("online");
@@ -85,12 +81,69 @@ async function checkLocalhostStatus(){
   return false;
 }
 
+function compareVersion(localV, onlineV){
+  const local = String(localV).split(".").map(Number);
+  const online = String(onlineV).split(".").map(Number);
+
+  for(let i = 0; i < Math.max(local.length, online.length); i++){
+    const a = local[i] || 0;
+    const b = online[i] || 0;
+
+    if(b > a) return true;
+    if(b < a) return false;
+  }
+
+  return false;
+}
+
+async function checkUpdate(){
+  const updateBtn = document.getElementById("updateBtn");
+  if(!updateBtn) return;
+
+  updateBtn.style.display = "none";
+
+  try{
+    const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const onlineData = await onlineRes.json();
+
+    const localRes = await fetch(`${LOCALHOST_URL}/api/version?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const localData = await localRes.json();
+
+    const needUpdate = compareVersion(
+      localData.currentVersion,
+      onlineData.latestVersion
+    );
+
+    if(needUpdate){
+      updateBtn.style.display = "flex";
+      updateBtn.onclick = function(e){
+        e.preventDefault();
+
+        window.open(
+          onlineData.downloadUrl,
+          "UpdateInstallerPopup",
+          "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+        );
+      };
+    }
+
+  }catch(e){}
+}
+
 document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("localhostBtn");
 
   checkLocalhostStatus();
+  checkUpdate();
 
   setInterval(checkLocalhostStatus, 3000);
+  setInterval(checkUpdate, 15000);
 
   if(btn){
     btn.addEventListener("click", async function(e){
@@ -104,8 +157,8 @@ document.addEventListener("DOMContentLoaded", function(){
         if(confirmOff){
           try{
             await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
-              method: "GET",
-              cache: "no-store"
+              method:"GET",
+              cache:"no-store"
             });
           }catch(e){}
 
@@ -113,16 +166,26 @@ document.addEventListener("DOMContentLoaded", function(){
         }
 
       }else{
-        window.open(
-          OFFLINE_ZIP_URL,
-          "DownloadOfflinePopup",
-          "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
-        );
+        try{
+          const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+            cache:"no-store"
+          });
+
+          const data = await res.json();
+
+          window.open(
+            data.downloadUrl,
+            "DownloadInstallerPopup",
+            "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+          );
+
+        }catch(e){
+          alert("Cannot get installer link. Please check internet connection.");
+        }
       }
     });
   }
 });
 </script>
-
 </body>
 </html>
