@@ -563,7 +563,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(isOnline){
         window.location.href = `${LOCALHOST_URL}/pink.html`;
       }else{
-        window.open(OFFLINE_ZIP_URL, "_blank");
+        window.open(
+  OFFLINE_ZIP_URL,
+  "DownloadOfflinePopup",
+  "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+);
       }
     });
   }
