@@ -483,3 +483,27 @@ table button {
 .localhost-text{
   font:inherit;
 }
+
+.localhost-toggle.offline{
+  border-color:#ff4d3d;
+  box-shadow:0 0 10px #ff4d3d, inset 0 0 10px rgba(255,77,61,.35);
+}
+
+.localhost-toggle.offline .localhost-knob{
+  left:2px;
+  right:auto;
+  background:#ff4d3d;
+  box-shadow:0 0 12px #ff4d3d;
+}
+
+.localhost-toggle.online{
+  border-color:#16d9ff;
+  box-shadow:0 0 10px #16d9ff, inset 0 0 10px rgba(22,217,255,.35);
+}
+
+.localhost-toggle.online .localhost-knob{
+  right:2px;
+  left:auto;
+  background:#73ff5f;
+  box-shadow:0 0 12px #73ff5f;
+}
