@@ -439,3 +439,47 @@ table button {
   background-color:#005a9e;
   box-shadow:0 0 18px rgba(0,120,212,0.7);
 }
+
+.localhost-link{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#b0c9f0 !important;
+  text-decoration:none;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:.5px;
+  padding:8px 14px;
+  border-radius:8px;
+}
+
+.localhost-link:hover{
+  color:#ffffff !important;
+  background:rgba(29,111,255,.2);
+  box-shadow:0 0 15px rgba(29,111,255,.4);
+}
+
+.localhost-toggle{
+  width:46px;
+  height:22px;
+  border-radius:20px;
+  border:2px solid #16d9ff;
+  background:#07152d;
+  box-shadow:0 0 10px #16d9ff, inset 0 0 10px rgba(22,217,255,.35);
+  position:relative;
+}
+
+.localhost-knob{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#73ff5f;
+  box-shadow:0 0 12px #73ff5f;
+  position:absolute;
+  right:2px;
+  top:1px;
+}
+
+.localhost-text{
+  font:inherit;
+}
