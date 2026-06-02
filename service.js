@@ -210,28 +210,33 @@ function openSelectedInPopup() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetchPinkAwardData();
+  fetchServiceAwardData();
 
   const searchBar = document.getElementById('searchBar');
   const clearSearchBtn = document.getElementById('clearSearchBtn');
 
   searchBar.addEventListener('input', () => {
-    clearSearchBtn.style.display = searchBar.value.trim() ? 'block' : 'none';
+    clearSearchBtn.style.display =
+      searchBar.value.trim() ? 'block' : 'none';
+
     filterData();
   });
 
   clearSearchBtn.addEventListener('click', () => {
     searchBar.value = '';
     clearSearchBtn.style.display = 'none';
+
     filterData();
     searchBar.focus();
   });
 
-  document.getElementById('categoryDropdown').addEventListener('change', filterData);
+  document.getElementById('categoryDropdown')
+    .addEventListener('change', filterData);
 
-  document.querySelectorAll('.openPopupBtn').forEach(btn => {
-    btn.addEventListener('click', openSelectedInPopup);
-  });
+  document.querySelectorAll('.openPopupBtn')
+    .forEach(btn => {
+      btn.addEventListener('click', openSelectedInPopup);
+    });
 });
   
   document.getElementById('searchBar').addEventListener('input', filterData);
