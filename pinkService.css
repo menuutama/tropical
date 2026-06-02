@@ -229,3 +229,137 @@ body {
   -webkit-line-clamp: 2; /* Hadkan teks maksimum 2 baris jika nama terlalu panjang */
   -webkit-box-orient: vertical;
 }
+
+/* =========================
+   RESPONSIVE SCALE VIEW
+   Phone / Tablet / Laptop / TV / Projector / LED
+========================= */
+
+/* PHONE */
+@media (max-width: 600px){
+  .content-container{
+    max-width:100%;
+    padding:22px 12px;
+  }
+
+  .search-wrapper{
+    flex-direction:column;
+    max-width:100%;
+    gap:10px;
+  }
+
+  .search-box,
+  .search-wrapper select{
+    width:100%;
+    flex:none;
+  }
+
+  .gallery-container{
+    grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));
+    gap:12px;
+  }
+
+  .company-group{
+    padding:15px;
+  }
+
+  .popup-btn{
+    width:100%;
+  }
+}
+
+/* TABLET */
+@media (min-width: 601px) and (max-width: 1024px){
+  .content-container{
+    max-width:960px;
+    padding:30px 18px;
+  }
+
+  .search-wrapper{
+    max-width:720px;
+  }
+
+  .gallery-container{
+    grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
+    gap:16px;
+  }
+}
+
+/* LAPTOP */
+@media (min-width: 1025px) and (max-width: 1440px){
+  .content-container{
+    max-width:1200px;
+  }
+
+  .gallery-container{
+    grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+/* TV / PROJECTOR */
+@media (min-width: 1441px) and (max-width: 2560px){
+  .content-container{
+    max-width:1800px;
+  }
+
+  .main-title{
+    font-size:48px;
+  }
+
+  .sub-title{
+    font-size:40px;
+  }
+
+  .gallery-container{
+    grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+    gap:24px;
+  }
+
+  .emp-label-name{
+    font-size:15px;
+  }
+}
+
+/* LED / VERY LARGE SCREEN */
+@media (min-width: 2561px){
+  .content-container{
+    max-width:2600px;
+    padding:60px 40px;
+  }
+
+  .main-title{
+    font-size:70px;
+  }
+
+  .sub-title{
+    font-size:55px;
+  }
+
+  .search-wrapper{
+    max-width:1000px;
+  }
+
+  .search-wrapper input,
+  .search-wrapper select{
+    font-size:22px;
+    padding:18px 22px;
+  }
+
+  .gallery-container{
+    grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+    gap:32px;
+  }
+
+  .company-label{
+    font-size:28px;
+  }
+
+  .emp-label-name{
+    font-size:20px;
+  }
+
+  .popup-btn{
+    font-size:24px;
+    padding:20px 46px;
+  }
+}
