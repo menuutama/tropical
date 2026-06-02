@@ -13,6 +13,7 @@
 
 <!-- ===== HEADER NAV START ===== -->
 <div class="topnav">
+
   <a href="https://menuutama.github.io/tropical/index.html">MENU</a>
 
   <a href="https://menuutama.github.io/tropical/lucky.html">
@@ -31,88 +32,48 @@
     VIDEO / IMAGE / SONG
   </a>
 
-<a href="#" class="localhost-link" id="localhostBtn">
-  <span class="localhost-toggle offline" id="localhostToggle">
-    <span class="localhost-knob"></span>
-  </span>
-  <span class="localhost-text">LOCALHOST</span>
-</a>
+  <a href="#" class="localhost-link" id="localhostBtn">
+    <span class="localhost-toggle offline" id="localhostToggle">
+      <span class="localhost-knob"></span>
+    </span>
+    <span class="localhost-text">LOCALHOST</span>
+  </a>
+
 </div>
 <!-- ===== HEADER NAV END ===== -->
 
 
 <!-- ===== CONTENT START ===== -->
-
-  <iframe 
-    src="https://menuutama.github.io/tropical-dinner/"
-    style="width:100%; height:100vh; border:none; position:fixed;">
-  </iframe>
-
+<iframe
+  src="https://menuutama.github.io/tropical-dinner/"
+  style="width:100%; height:100vh; border:none; position:fixed;">
+</iframe>
 <!-- ===== CONTENT END ===== -->
 
-<!-- ===== FOOTER JS START ===== -->
 
+<!-- ===== FOOTER JS START ===== -->
 <script src="config.js"></script>
 <script src="ui.js"></script>
 <script src="app.js"></script>
 <script src="api.js"></script>
 <script src="include.js"></script>
+
 <script>
-async function checkLocalhostStatus(){
-  const toggle = document.getElementById("localhostToggle");
-
-  if(!toggle) return;
-
-  try{
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, 800);
-
-    const res = await fetch("http://localhost:3000/api/status", {
-      signal: controller.signal,
-      cache: "no-store"
-    });
-
-    clearTimeout(timeout);
-
-    if(res.ok){
-      toggle.classList.remove("offline");
-      toggle.classList.add("online");
-    }else{
-      toggle.classList.remove("online");
-      toggle.classList.add("offline");
-    }
-
-  }catch(e){
-    toggle.classList.remove("online");
-    toggle.classList.add("offline");
-  }
-}
-
-document.addEventListener("DOMContentLoaded", checkLocalhostStatus);
-setInterval(checkLocalhostStatus, 5000);
-</script>
-  <script>
 const LOCALHOST_URL = "http://localhost:3000";
+
 const OFFLINE_ZIP_URL =
   "https://drive.google.com/uc?export=download&id=19z17vPRNHY0s9ET4KC-UpqH8qwum7PPW";
 
 async function checkLocalhostStatus(){
   const toggle = document.getElementById("localhostToggle");
+
   if(!toggle) return false;
 
   try{
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 800);
-
-    const res = await fetch(`${LOCALHOST_URL}/api/status`, {
-      signal: controller.signal,
+    const res = await fetch(`${LOCALHOST_URL}/api/status?time=${Date.now()}`, {
+      method: "GET",
       cache: "no-store"
     });
-
-    clearTimeout(timeout);
 
     if(res.ok){
       toggle.classList.remove("offline");
@@ -120,44 +81,51 @@ async function checkLocalhostStatus(){
       return true;
     }
 
-    toggle.classList.remove("online");
-    toggle.classList.add("offline");
-    return false;
+  }catch(e){}
 
-  }catch(e){
-    toggle.classList.remove("online");
-    toggle.classList.add("offline");
-    return false;
-  }
+  toggle.classList.remove("online");
+  toggle.classList.add("offline");
+  return false;
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("localhostBtn");
 
-  await checkLocalhostStatus();
+  checkLocalhostStatus();
+
+  setInterval(checkLocalhostStatus, 3000);
 
   if(btn){
-    btn.addEventListener("click", async (e) => {
+    btn.addEventListener("click", async function(e){
       e.preventDefault();
 
       const isOnline = await checkLocalhostStatus();
 
       if(isOnline){
-        window.location.href = `${LOCALHOST_URL}/pink.html`;
+        const confirmOff = confirm("Turn OFF localhost?");
+
+        if(confirmOff){
+          try{
+            await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
+              method: "GET",
+              cache: "no-store"
+            });
+          }catch(e){}
+
+          setTimeout(checkLocalhostStatus, 1200);
+        }
+
       }else{
         window.open(
-  OFFLINE_ZIP_URL,
-  "DownloadOfflinePopup",
-  "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
-);
+          OFFLINE_ZIP_URL,
+          "DownloadOfflinePopup",
+          "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+        );
       }
     });
   }
 });
-
-setInterval(checkLocalhostStatus, 5000);
 </script>
+
 </body>
 </html>
-
-<!-- ===== FOOTER JS END ===== -->
