@@ -12,11 +12,6 @@ body{
   color:#ffffff;
   min-height:100vh;
   overflow:hidden;
-  padding-bottom:30px !important;
-}
-
-.pagination-container{
-  margin-bottom:30px !important;
 }
 
 /* =========================
