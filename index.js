@@ -25,12 +25,20 @@ function closeSideMenu(){
   sideOverlay.classList.remove("show");
 }
 
-if(hamburgerBtn) hamburgerBtn.addEventListener("click", openSideMenu);
-if(sideClose) sideClose.addEventListener("click", closeSideMenu);
-if(sideOverlay) sideOverlay.addEventListener("click", closeSideMenu);
+if(hamburgerBtn){
+  hamburgerBtn.addEventListener("click", openSideMenu);
+}
+
+if(sideClose){
+  sideClose.addEventListener("click", closeSideMenu);
+}
+
+if(sideOverlay){
+  sideOverlay.addEventListener("click", closeSideMenu);
+}
 
 /* =========================
-   MENU ACTIVE
+   ACTIVE MENU
 ========================= */
 
 function setActiveMenu(url){
@@ -47,6 +55,14 @@ function isLocalhostPage(url){
   return String(url).startsWith(LOCALHOST_URL);
 }
 
+function loadFrame(url){
+  if(isLocalhostPage(url)){
+    mainFrame.src = `${url}?time=${Date.now()}`;
+  }else{
+    mainFrame.src = url;
+  }
+}
+
 /* =========================
    LOCALHOST UI
 ========================= */
@@ -60,11 +76,17 @@ function setLocalhostUI(isOnline){
   if(isOnline){
     toggle.classList.remove("offline");
     toggle.classList.add("online");
-    if(text) text.textContent = "LOCALHOST ON";
+
+    if(text){
+      text.textContent = "LOCALHOST ON";
+    }
   }else{
     toggle.classList.remove("online");
     toggle.classList.add("offline");
-    if(text) text.textContent = "LOCALHOST OFF";
+
+    if(text){
+      text.textContent = "LOCALHOST OFF";
+    }
   }
 }
 
@@ -86,14 +108,14 @@ async function checkLocalhostStatus(){
 }
 
 /* =========================
-   OPEN EXE + WAIT ONLINE
+   OPEN LOCALHOST EXE
 ========================= */
 
 function openLocalhostExe(){
   window.location.href = LOCALHOST_PROTOCOL;
 }
 
-async function waitLocalhostOnline(maxTry = 15){
+async function waitLocalhostOnline(maxTry = 20){
   for(let i = 0; i < maxTry; i++){
     const online = await checkLocalhostStatus();
 
@@ -124,11 +146,14 @@ async function loadPage(url){
 
       openLocalhostExe();
 
-      const started = await waitLocalhostOnline(15);
+      const started = await waitLocalhostOnline(20);
 
       if(started){
-        mainFrame.src = pendingLocalhostUrl;
-        pendingLocalhostUrl = null;
+        setTimeout(()=>{
+          loadFrame(pendingLocalhostUrl);
+          pendingLocalhostUrl = null;
+        }, 800);
+
         return;
       }
 
@@ -142,9 +167,12 @@ async function loadPage(url){
 
       return;
     }
+
+    loadFrame(url);
+    return;
   }
 
-  mainFrame.src = url;
+  loadFrame(url);
 }
 
 document.querySelectorAll(".nav-btn").forEach(btn=>{
@@ -176,14 +204,14 @@ async function shutdownLocalhost(){
     hideUpdateButton();
 
     if(isLocalhostPage(mainFrame.src)){
-      mainFrame.src = "https://menuutama.github.io/tropical-dinner/";
+      loadFrame("https://menuutama.github.io/tropical-dinner/");
       setActiveMenu("https://menuutama.github.io/tropical-dinner/");
     }
   }, 1200);
 }
 
 /* =========================
-   VERSION + UPDATE
+   VERSION COMPARE
 ========================= */
 
 function compareVersion(localV, onlineV){
@@ -200,6 +228,10 @@ function compareVersion(localV, onlineV){
 
   return false;
 }
+
+/* =========================
+   UPDATE BUTTON
+========================= */
 
 function hideUpdateButton(){
   const updateBtn = document.getElementById("updateBtn");
@@ -220,7 +252,9 @@ async function checkUpdate(){
 
   const isOnline = await checkLocalhostStatus();
 
-  if(!isOnline) return;
+  if(!isOnline){
+    return;
+  }
 
   try{
     const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
@@ -264,6 +298,10 @@ async function checkUpdate(){
   }
 }
 
+/* =========================
+   DOWNLOAD INSTALLER
+========================= */
+
 async function downloadInstaller(){
   try{
     const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
@@ -291,8 +329,11 @@ document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("localhostBtn");
 
   checkLocalhostStatus().then(isOnline=>{
-    if(isOnline) checkUpdate();
-    else hideUpdateButton();
+    if(isOnline){
+      checkUpdate();
+    }else{
+      hideUpdateButton();
+    }
   });
 
   setInterval(async ()=>{
@@ -302,8 +343,10 @@ document.addEventListener("DOMContentLoaded", function(){
       checkUpdate();
 
       if(pendingLocalhostUrl){
-        mainFrame.src = pendingLocalhostUrl;
-        pendingLocalhostUrl = null;
+        setTimeout(()=>{
+          loadFrame(pendingLocalhostUrl);
+          pendingLocalhostUrl = null;
+        }, 500);
       }
 
     }else{
@@ -324,14 +367,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
       openLocalhostExe();
 
-      const started = await waitLocalhostOnline(15);
+      const started = await waitLocalhostOnline(20);
 
       if(started){
         const activeBtn = document.querySelector(".nav-btn.active, .side-btn.active");
         const activeUrl = activeBtn ? activeBtn.dataset.url : null;
 
         if(activeUrl && isLocalhostPage(activeUrl)){
-          mainFrame.src = activeUrl;
+          setTimeout(()=>{
+            loadFrame(activeUrl);
+          }, 800);
         }
 
         return;
