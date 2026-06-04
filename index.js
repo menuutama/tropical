@@ -3,19 +3,72 @@ const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
 
 const mainFrame = document.getElementById("mainFrame");
 
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sideMenu = document.getElementById("sideMenu");
+const sideOverlay = document.getElementById("sideOverlay");
+const sideClose = document.getElementById("sideClose");
+
+/* =========================
+   SIDE MENU OPEN / CLOSE
+========================= */
+
+function openSideMenu(){
+  sideMenu.classList.add("show");
+  sideOverlay.classList.add("show");
+}
+
+function closeSideMenu(){
+  sideMenu.classList.remove("show");
+  sideOverlay.classList.remove("show");
+}
+
+if(hamburgerBtn){
+  hamburgerBtn.addEventListener("click", openSideMenu);
+}
+
+if(sideClose){
+  sideClose.addEventListener("click", closeSideMenu);
+}
+
+if(sideOverlay){
+  sideOverlay.addEventListener("click", closeSideMenu);
+}
+
+/* =========================
+   LOAD PAGE TO IFRAME
+========================= */
+
+function setActiveMenu(url){
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.url === url);
+  });
+
+  document.querySelectorAll(".side-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.url === url);
+  });
+}
+
+function loadPage(url){
+  mainFrame.src = url;
+  setActiveMenu(url);
+  closeSideMenu();
+}
+
 document.querySelectorAll(".nav-btn").forEach(btn=>{
   btn.addEventListener("click", function(){
-    const url = this.dataset.url;
-
-    mainFrame.src = url;
-
-    document.querySelectorAll(".nav-btn").forEach(b=>{
-      b.classList.remove("active");
-    });
-
-    this.classList.add("active");
+    loadPage(this.dataset.url);
   });
 });
+
+document.querySelectorAll(".side-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    loadPage(this.dataset.url);
+  });
+});
+
+/* =========================
+   LOCALHOST STATUS
+========================= */
 
 async function checkLocalhostStatus(){
   const toggle = document.getElementById("localhostToggle");
@@ -40,6 +93,10 @@ async function checkLocalhostStatus(){
   return false;
 }
 
+/* =========================
+   VERSION COMPARE
+========================= */
+
 function compareVersion(localV, onlineV){
   const local = String(localV).split(".").map(Number);
   const online = String(onlineV).split(".").map(Number);
@@ -54,6 +111,10 @@ function compareVersion(localV, onlineV){
 
   return false;
 }
+
+/* =========================
+   CHECK UPDATE
+========================= */
 
 async function checkUpdate(){
   const updateBtn = document.getElementById("updateBtn");
@@ -107,6 +168,10 @@ async function checkUpdate(){
     updateBtn.classList.remove("has-update");
   }
 }
+
+/* =========================
+   LOCALHOST BUTTON
+========================= */
 
 document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("localhostBtn");
