@@ -1,5 +1,6 @@
 const LOCALHOST_URL = "http://localhost:3000";
 const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
+const LOCALHOST_PROTOCOL = "tropical-localhost://open";
 
 const mainFrame = document.getElementById("mainFrame");
 
@@ -9,7 +10,7 @@ const sideOverlay = document.getElementById("sideOverlay");
 const sideClose = document.getElementById("sideClose");
 
 /* =========================
-   SIDE MENU OPEN / CLOSE
+   SIDE MENU
 ========================= */
 
 function openSideMenu(){
@@ -35,7 +36,7 @@ if(sideOverlay){
 }
 
 /* =========================
-   LOAD PAGE TO IFRAME
+   IFRAME MENU
 ========================= */
 
 function setActiveMenu(url){
@@ -67,14 +68,29 @@ document.querySelectorAll(".side-btn").forEach(btn=>{
 });
 
 /* =========================
-   LOCALHOST STATUS
+   LOCALHOST STATUS UI
 ========================= */
 
-async function checkLocalhostStatus(){
+function setLocalhostUI(isOnline){
   const toggle = document.getElementById("localhostToggle");
+  const text = document.querySelector(".localhost-text");
 
-  if(!toggle) return false;
+  if(!toggle) return;
 
+  if(isOnline){
+    toggle.classList.remove("offline");
+    toggle.classList.add("online");
+
+    if(text) text.textContent = "LOCALHOST ON";
+  }else{
+    toggle.classList.remove("online");
+    toggle.classList.add("offline");
+
+    if(text) text.textContent = "LOCALHOST OFF";
+  }
+}
+
+async function checkLocalhostStatus(){
   try{
     const res = await fetch(`${LOCALHOST_URL}/api/status?time=${Date.now()}`, {
       method:"GET",
@@ -82,24 +98,63 @@ async function checkLocalhostStatus(){
     });
 
     if(res.ok){
-      toggle.classList.remove("offline");
-      toggle.classList.add("online");
+      setLocalhostUI(true);
       return true;
     }
   }catch(e){}
 
-  toggle.classList.remove("online");
-  toggle.classList.add("offline");
+  setLocalhostUI(false);
   return false;
 }
 
 /* =========================
-   VERSION COMPARE
+   START LOCALHOST
+========================= */
+
+function openLocalhostExe(){
+  window.location.href = LOCALHOST_PROTOCOL;
+}
+
+async function waitLocalhostOnline(maxTry = 12){
+  for(let i = 0; i < maxTry; i++){
+    const online = await checkLocalhostStatus();
+
+    if(online){
+      await checkUpdate();
+      return true;
+    }
+
+    await new Promise(resolve=>setTimeout(resolve, 1000));
+  }
+
+  return false;
+}
+
+/* =========================
+   SHUTDOWN LOCALHOST
+========================= */
+
+async function shutdownLocalhost(){
+  try{
+    await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
+      method:"GET",
+      cache:"no-store"
+    });
+  }catch(e){}
+
+  setTimeout(async ()=>{
+    await checkLocalhostStatus();
+    hideUpdateButton();
+  }, 1200);
+}
+
+/* =========================
+   VERSION CHECK
 ========================= */
 
 function compareVersion(localV, onlineV){
-  const local = String(localV).split(".").map(Number);
-  const online = String(onlineV).split(".").map(Number);
+  const local = String(localV || "0.0.0").split(".").map(Number);
+  const online = String(onlineV || "0.0.0").split(".").map(Number);
 
   for(let i = 0; i < Math.max(local.length, online.length); i++){
     const a = local[i] || 0;
@@ -112,17 +167,28 @@ function compareVersion(localV, onlineV){
   return false;
 }
 
-/* =========================
-   CHECK UPDATE
-========================= */
-
-async function checkUpdate(){
+function hideUpdateButton(){
   const updateBtn = document.getElementById("updateBtn");
 
   if(!updateBtn) return;
 
   updateBtn.style.display = "none";
   updateBtn.classList.remove("has-update");
+  updateBtn.onclick = null;
+}
+
+async function checkUpdate(){
+  const updateBtn = document.getElementById("updateBtn");
+
+  if(!updateBtn) return;
+
+  hideUpdateButton();
+
+  const isOnline = await checkLocalhostStatus();
+
+  if(!isOnline){
+    return;
+  }
 
   try{
     const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
@@ -137,10 +203,10 @@ async function checkUpdate(){
 
     const localData = await localRes.json();
 
-    const needUpdate = compareVersion(
-      localData.currentVersion,
-      onlineData.latestVersion
-    );
+    const localVersion = localData.currentVersion;
+    const latestVersion = onlineData.latestVersion;
+
+    const needUpdate = compareVersion(localVersion, latestVersion);
 
     if(needUpdate){
       updateBtn.style.display = "flex";
@@ -150,7 +216,7 @@ async function checkUpdate(){
         e.preventDefault();
 
         const confirmUpdate = confirm(
-          `New update available!\n\nCurrent Version: ${localData.currentVersion}\nLatest Version: ${onlineData.latestVersion}\n\nDownload update now?`
+          `New update available!\n\nCurrent Version: ${localVersion}\nLatest Version: ${latestVersion}\n\nDownload update now?`
         );
 
         if(confirmUpdate){
@@ -164,23 +230,34 @@ async function checkUpdate(){
     }
 
   }catch(e){
-    updateBtn.style.display = "none";
-    updateBtn.classList.remove("has-update");
+    hideUpdateButton();
   }
 }
 
 /* =========================
-   LOCALHOST BUTTON
+   LOCALHOST TOGGLE FLOW
 ========================= */
 
 document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("localhostBtn");
 
-  checkLocalhostStatus();
-  checkUpdate();
+  checkLocalhostStatus().then(isOnline=>{
+    if(isOnline){
+      checkUpdate();
+    }else{
+      hideUpdateButton();
+    }
+  });
 
-  setInterval(checkLocalhostStatus, 3000);
-  setInterval(checkUpdate, 15000);
+  setInterval(async ()=>{
+    const online = await checkLocalhostStatus();
+
+    if(online){
+      checkUpdate();
+    }else{
+      hideUpdateButton();
+    }
+  }, 5000);
 
   if(btn){
     btn.addEventListener("click", async function(e){
@@ -189,22 +266,17 @@ document.addEventListener("DOMContentLoaded", function(){
       const isOnline = await checkLocalhostStatus();
 
       if(isOnline){
-        const confirmOff = confirm("Turn OFF localhost?");
+        await shutdownLocalhost();
+        return;
+      }
 
-        if(confirmOff){
-          try{
-            await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
-              method:"GET",
-              cache:"no-store"
-            });
-          }catch(e){}
+      openLocalhostExe();
 
-          setTimeout(checkLocalhostStatus, 1200);
-        }
+      const started = await waitLocalhostOnline(12);
 
-      }else{
+      if(!started){
         const wantDownload = confirm(
-          "LOCALHOST is OFF.\n\nIf you already installed it, please open the shortcut: Tropical Dinner Localhost.\n\nClick OK to download installer.\nClick Cancel if already installed."
+          "LOCALHOST is OFF.\n\nIf you already installed it, please open the shortcut: EventMediaOffline.\n\nClick OK to download installer.\nClick Cancel if already installed."
         );
 
         if(wantDownload){
