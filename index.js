@@ -9,7 +9,12 @@ const sideMenu = document.getElementById("sideMenu");
 const sideOverlay = document.getElementById("sideOverlay");
 const sideClose = document.getElementById("sideClose");
 
-/* SIDE MENU */
+let pendingLocalhostUrl = null;
+
+/* =========================
+   SIDE MENU
+========================= */
+
 function openSideMenu(){
   sideMenu.classList.add("show");
   sideOverlay.classList.add("show");
@@ -24,7 +29,10 @@ if(hamburgerBtn) hamburgerBtn.addEventListener("click", openSideMenu);
 if(sideClose) sideClose.addEventListener("click", closeSideMenu);
 if(sideOverlay) sideOverlay.addEventListener("click", closeSideMenu);
 
-/* IFRAME MENU */
+/* =========================
+   MENU ACTIVE
+========================= */
+
 function setActiveMenu(url){
   document.querySelectorAll(".nav-btn").forEach(btn=>{
     btn.classList.toggle("active", btn.dataset.url === url);
@@ -35,25 +43,14 @@ function setActiveMenu(url){
   });
 }
 
-function loadPage(url){
-  mainFrame.src = url;
-  setActiveMenu(url);
-  closeSideMenu();
+function isLocalhostPage(url){
+  return String(url).startsWith(LOCALHOST_URL);
 }
 
-document.querySelectorAll(".nav-btn").forEach(btn=>{
-  btn.addEventListener("click", function(){
-    loadPage(this.dataset.url);
-  });
-});
+/* =========================
+   LOCALHOST UI
+========================= */
 
-document.querySelectorAll(".side-btn").forEach(btn=>{
-  btn.addEventListener("click", function(){
-    loadPage(this.dataset.url);
-  });
-});
-
-/* LOCALHOST UI */
 function setLocalhostUI(isOnline){
   const toggle = document.getElementById("localhostToggle");
   const text = document.querySelector(".localhost-text");
@@ -88,7 +85,10 @@ async function checkLocalhostStatus(){
   return false;
 }
 
-/* OPEN EXE */
+/* =========================
+   OPEN EXE + WAIT ONLINE
+========================= */
+
 function openLocalhostExe(){
   window.location.href = LOCALHOST_PROTOCOL;
 }
@@ -108,7 +108,61 @@ async function waitLocalhostOnline(maxTry = 15){
   return false;
 }
 
-/* SHUTDOWN */
+/* =========================
+   LOAD PAGE
+========================= */
+
+async function loadPage(url){
+  closeSideMenu();
+  setActiveMenu(url);
+
+  if(isLocalhostPage(url)){
+    const online = await checkLocalhostStatus();
+
+    if(!online){
+      pendingLocalhostUrl = url;
+
+      openLocalhostExe();
+
+      const started = await waitLocalhostOnline(15);
+
+      if(started){
+        mainFrame.src = pendingLocalhostUrl;
+        pendingLocalhostUrl = null;
+        return;
+      }
+
+      const wantDownload = confirm(
+        "LOCALHOST is OFF.\n\nIf already installed, click Cancel then allow browser to open EventMediaOffline.\n\nClick OK to download installer."
+      );
+
+      if(wantDownload){
+        downloadInstaller();
+      }
+
+      return;
+    }
+  }
+
+  mainFrame.src = url;
+}
+
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    loadPage(this.dataset.url);
+  });
+});
+
+document.querySelectorAll(".side-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    loadPage(this.dataset.url);
+  });
+});
+
+/* =========================
+   SHUTDOWN LOCALHOST
+========================= */
+
 async function shutdownLocalhost(){
   try{
     await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
@@ -120,10 +174,18 @@ async function shutdownLocalhost(){
   setTimeout(async ()=>{
     await checkLocalhostStatus();
     hideUpdateButton();
+
+    if(isLocalhostPage(mainFrame.src)){
+      mainFrame.src = "https://menuutama.github.io/tropical-dinner/";
+      setActiveMenu("https://menuutama.github.io/tropical-dinner/");
+    }
   }, 1200);
 }
 
-/* VERSION COMPARE */
+/* =========================
+   VERSION + UPDATE
+========================= */
+
 function compareVersion(localV, onlineV){
   const local = String(localV || "0.0.0").split(".").map(Number);
   const online = String(onlineV || "0.0.0").split(".").map(Number);
@@ -139,7 +201,6 @@ function compareVersion(localV, onlineV){
   return false;
 }
 
-/* UPDATE BUTTON */
 function hideUpdateButton(){
   const updateBtn = document.getElementById("updateBtn");
 
@@ -203,7 +264,29 @@ async function checkUpdate(){
   }
 }
 
-/* TOGGLE LOCALHOST FLOW */
+async function downloadInstaller(){
+  try{
+    const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const data = await res.json();
+
+    window.open(
+      data.downloadUrl,
+      "DownloadInstallerPopup",
+      "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+    );
+
+  }catch(e){
+    alert("Cannot get installer link. Please check internet connection.");
+  }
+}
+
+/* =========================
+   LOCALHOST TOGGLE
+========================= */
+
 document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("localhostBtn");
 
@@ -215,8 +298,17 @@ document.addEventListener("DOMContentLoaded", function(){
   setInterval(async ()=>{
     const online = await checkLocalhostStatus();
 
-    if(online) checkUpdate();
-    else hideUpdateButton();
+    if(online){
+      checkUpdate();
+
+      if(pendingLocalhostUrl){
+        mainFrame.src = pendingLocalhostUrl;
+        pendingLocalhostUrl = null;
+      }
+
+    }else{
+      hideUpdateButton();
+    }
   }, 5000);
 
   if(btn){
@@ -234,29 +326,23 @@ document.addEventListener("DOMContentLoaded", function(){
 
       const started = await waitLocalhostOnline(15);
 
-      if(!started){
-        const wantDownload = confirm(
-          "LOCALHOST is OFF.\n\nIf already installed, click Cancel then allow browser to open EventMediaOffline.\n\nClick OK to download installer."
-        );
+      if(started){
+        const activeBtn = document.querySelector(".nav-btn.active, .side-btn.active");
+        const activeUrl = activeBtn ? activeBtn.dataset.url : null;
 
-        if(wantDownload){
-          try{
-            const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
-              cache:"no-store"
-            });
-
-            const data = await res.json();
-
-            window.open(
-              data.downloadUrl,
-              "DownloadInstallerPopup",
-              "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
-            );
-
-          }catch(e){
-            alert("Cannot get installer link. Please check internet connection.");
-          }
+        if(activeUrl && isLocalhostPage(activeUrl)){
+          mainFrame.src = activeUrl;
         }
+
+        return;
+      }
+
+      const wantDownload = confirm(
+        "LOCALHOST is OFF.\n\nIf already installed, click Cancel then allow browser to open EventMediaOffline.\n\nClick OK to download installer."
+      );
+
+      if(wantDownload){
+        downloadInstaller();
       }
     });
   }
