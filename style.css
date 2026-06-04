@@ -6,6 +6,10 @@
   box-sizing:border-box;
 }
 
+html{
+  background:radial-gradient(circle at center,#0c1f40 0%,#050d1a 100%);
+}
+
 body{
   font-family:'Poppins',Arial,sans-serif;
   background:radial-gradient(circle at center,#0c1f40 0%,#050d1a 100%);
@@ -298,7 +302,7 @@ body{
 }
 
 /* =========================
-   IFRAME
+   IFRAME DESKTOP
 ========================= */
 
 .iframe-wrap{
@@ -321,9 +325,24 @@ body{
 
 /* =========================
    PHONE / TABLET
+   PULL DOWN REFRESH ENABLE
 ========================= */
 
 @media(max-width:1200px){
+
+  html,
+  body{
+    height:auto;
+    min-height:120vh;
+    overflow-y:auto;
+    overflow-x:hidden;
+    overscroll-behavior-y:auto;
+  }
+
+  body{
+    padding-top:64px;
+  }
+
   .topnav{
     height:64px;
     grid-template-columns:60px 1fr auto;
@@ -351,12 +370,26 @@ body{
   }
 
   .iframe-wrap{
-    top:64px;
+    position:relative;
+    top:0;
+    left:0;
+    right:auto;
+    bottom:auto;
+    width:100%;
     height:calc(100vh - 64px);
+    padding-bottom:90px;
+    overflow:visible;
+  }
+
+  #mainFrame{
+    width:100%;
+    height:calc(100vh - 64px);
+    border:none;
   }
 }
 
 @media(max-width:480px){
+
   .update-link{
     width:34px !important;
     height:34px !important;
@@ -380,5 +413,8 @@ body{
   .localhost-toggle.online .localhost-knob{
     left:22px;
   }
-}
 
+  .iframe-wrap{
+    padding-bottom:110px;
+  }
+}
