@@ -13,66 +13,67 @@
 
 <div class="topnav">
 
-  <button class="nav-btn active" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/')">MENU</button>
+  <div class="nav-left"></div>
 
-  <button class="nav-btn" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/attend.html')">REGISTRATION</button>
+  <div class="nav-center">
 
-  <button class="nav-btn" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/input.html')">LUCKY DRAW</button>
+    <button class="nav-btn active" data-url="https://menuutama.github.io/tropical-dinner/">
+      MENU
+    </button>
 
-  <button class="nav-btn" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/collect.html')">COLLECT PRIZE</button>
+    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">
+      REGISTRATION
+    </button>
 
-  <button class="nav-btn" onclick="loadPage(this,'http://localhost:3000/pink.html')">PINK AWARD</button>
+    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">
+      LUCKY DRAW
+    </button>
 
-  <button class="nav-btn" onclick="loadPage(this,'http://localhost:3000/service.html')">LONG SERVICE</button>
+    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">
+      COLLECT PRIZE
+    </button>
 
-  <button class="nav-btn" onclick="loadPage(this,'http://localhost:3000/media.html')">MEDIA</button>
+    <button class="nav-btn" data-url="http://localhost:3000/pink.html">
+      PINK AWARD
+    </button>
 
-  <div class="localhost-link" onclick="toggleLocalhost()">
-    <div id="localhostToggle" class="localhost-toggle">
-      <div class="localhost-knob"></div>
-    </div>
-    <span id="localhostText">LOCALHOST OFF</span>
+    <button class="nav-btn" data-url="http://localhost:3000/service.html">
+      LONG SERVICE
+    </button>
+
+    <button class="nav-btn" data-url="http://localhost:3000/media.html">
+      MEDIA
+    </button>
+
   </div>
 
-  <button class="update-link has-update" onclick="checkUpdate()" title="Update">
-    <img src="https://cdn-icons-png.flaticon.com/512/61/61444.png" alt="Update">
-  </button>
+  <div class="nav-right">
+
+    <a href="#" class="localhost-link" id="localhostBtn">
+      <span class="localhost-toggle offline" id="localhostToggle">
+        <span class="localhost-knob"></span>
+      </span>
+      <span class="localhost-text">LOCALHOST</span>
+    </a>
+
+    <a href="#" class="update-link" id="updateBtn" style="display:none;">
+      <img
+        src="https://i.ibb.co/k6XJsJBT/989cb1c8-74d7-4e55-8d53-8481139cebb6.png"
+        alt="Update"
+      >
+    </a>
+
+  </div>
 
 </div>
 
-<div class="frame-wrapper">
-  <iframe id="mainFrame" src="https://menuutama.github.io/tropical-dinner/"></iframe>
+<div class="iframe-wrap">
+  <iframe
+    id="mainFrame"
+    src="https://menuutama.github.io/tropical-dinner/"
+  ></iframe>
 </div>
 
-<script>
-const mainFrame = document.getElementById("mainFrame");
-const localhostToggle = document.getElementById("localhostToggle");
-const localhostText = document.getElementById("localhostText");
-
-function loadPage(btn, url){
-  mainFrame.src = url;
-
-  document.querySelectorAll(".nav-btn").forEach(button=>{
-    button.classList.remove("active");
-  });
-
-  btn.classList.add("active");
-}
-
-function toggleLocalhost(){
-  localhostToggle.classList.toggle("online");
-
-  if(localhostToggle.classList.contains("online")){
-    localhostText.textContent = "LOCALHOST ON";
-  }else{
-    localhostText.textContent = "LOCALHOST OFF";
-  }
-}
-
-function checkUpdate(){
-  alert("Update button clicked.");
-}
-</script>
-
+<script src="index.js"></script>
 </body>
 </html>
