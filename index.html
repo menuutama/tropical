@@ -11,70 +11,162 @@
 
 <body>
 
-<div class="topnav">
+<!-- PASSWORD SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>TROPICAL DINNER 2026</h1>
+    <h2>Admin Panel Login</h2>
 
-  <div class="nav-left">
-    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <input
+      type="password"
+      id="passwordInput"
+      placeholder="Enter Password"
+      autocomplete="off"
+    >
+
+    <button id="loginBtn">LOGIN</button>
+
+    <p id="loginError"></p>
+  </div>
+</div>
+
+<!-- ADMIN SYSTEM -->
+<div id="adminSystem" style="display:none;">
+
+  <div class="topnav">
+
+    <div class="nav-left">
+      <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    </div>
+
+    <div class="nav-center">
+
+      <button class="nav-btn active" data-url="https://menuutama.github.io/tropical-dinner/">
+        MENU
+      </button>
+
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">
+        REGISTRATION
+      </button>
+
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">
+        LUCKY DRAW
+      </button>
+
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">
+        COLLECT PRIZE
+      </button>
+
+      <button class="nav-btn" data-url="http://localhost:3000/pink.html">
+        PINK AWARD
+      </button>
+
+      <button class="nav-btn" data-url="http://localhost:3000/service.html">
+        LONG SERVICE
+      </button>
+
+      <button class="nav-btn" data-url="http://localhost:3000/media.html">
+        MEDIA
+      </button>
+
+    </div>
+
+    <div class="nav-right">
+
+      <a href="#" class="localhost-link" id="localhostBtn">
+        <span class="localhost-toggle offline" id="localhostToggle">
+          <span class="localhost-knob"></span>
+        </span>
+        <span class="localhost-text">LOCALHOST OFF</span>
+      </a>
+
+      <a href="#" class="update-link" id="updateBtn" style="display:none;">
+        <img
+          src="https://i.ibb.co/k6XJsJBT/989cb1c8-74d7-4e55-8d53-8481139cebb6.png"
+          alt="Update"
+        >
+      </a>
+
+    </div>
+
   </div>
 
-  <div class="nav-center">
+  <div class="side-overlay" id="sideOverlay"></div>
 
-    <button class="nav-btn active" data-url="https://menuutama.github.io/tropical-dinner/">MENU</button>
-    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
-    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
-    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
-    <button class="nav-btn" data-url="http://localhost:3000/pink.html">PINK AWARD</button>
-    <button class="nav-btn" data-url="http://localhost:3000/service.html">LONG SERVICE</button>
-    <button class="nav-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
+  <div class="side-menu" id="sideMenu">
+
+    <div class="side-header">
+      <span>ADMIN MENU</span>
+      <button class="side-close" id="sideClose">×</button>
+    </div>
+
+    <button class="side-btn active" data-url="https://menuutama.github.io/tropical-dinner/">MENU</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
+    <button class="side-btn" data-url="http://localhost:3000/pink.html">PINK AWARD</button>
+    <button class="side-btn" data-url="http://localhost:3000/service.html">LONG SERVICE</button>
+    <button class="side-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
 
   </div>
 
-  <div class="nav-right">
-
-    <a href="#" class="localhost-link" id="localhostBtn">
-      <span class="localhost-toggle offline" id="localhostToggle">
-        <span class="localhost-knob"></span>
-      </span>
-      <span class="localhost-text">LOCALHOST</span>
-    </a>
-
-    <a href="#" class="update-link" id="updateBtn" style="display:none;">
-      <img
-        src="https://i.ibb.co/k6XJsJBT/989cb1c8-74d7-4e55-8d53-8481139cebb6.png"
-        alt="Update"
-      >
-    </a>
-
+  <div class="iframe-wrap">
+    <iframe
+      id="mainFrame"
+      src="https://menuutama.github.io/tropical-dinner/"
+    ></iframe>
   </div>
 
 </div>
 
-<div class="side-overlay" id="sideOverlay"></div>
+<script>
+const ADMIN_PASSWORD = "Admin-dinner123";
 
-<div class="side-menu" id="sideMenu">
+const loginScreen = document.getElementById("loginScreen");
+const adminSystem = document.getElementById("adminSystem");
+const passwordInput = document.getElementById("passwordInput");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
 
-  <div class="side-header">
-    <span>ADMIN MENU</span>
-    <button class="side-close" id="sideClose">×</button>
-  </div>
+function showAdmin(){
+  loginScreen.style.display = "none";
+  adminSystem.style.display = "block";
+}
 
-  <button class="side-btn active" data-url="https://menuutama.github.io/tropical-dinner/">MENU</button>
-  <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
-  <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
-  <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
-  <button class="side-btn" data-url="http://localhost:3000/pink.html">PINK AWARD</button>
-  <button class="side-btn" data-url="http://localhost:3000/service.html">LONG SERVICE</button>
-  <button class="side-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
+function showLogin(){
+  loginScreen.style.display = "flex";
+  adminSystem.style.display = "none";
+}
 
-</div>
+function login(){
+  const password = passwordInput.value.trim();
 
-<div class="iframe-wrap">
-  <iframe
-    id="mainFrame"
-    src="https://menuutama.github.io/tropical-dinner/"
-  ></iframe>
-</div>
+  if(password === ADMIN_PASSWORD){
+    sessionStorage.setItem("adminLogin", "yes");
+    showAdmin();
+  }else{
+    loginError.textContent = "Wrong password.";
+    passwordInput.value = "";
+    passwordInput.focus();
+  }
+}
+
+if(sessionStorage.getItem("adminLogin") === "yes"){
+  showAdmin();
+}else{
+  showLogin();
+}
+
+loginBtn.addEventListener("click", login);
+
+passwordInput.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    login();
+  }
+});
+</script>
 
 <script src="index.js"></script>
+
 </body>
 </html>
