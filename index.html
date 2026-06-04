@@ -4,213 +4,75 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Event System</title>
+<title>Tropical Dinner 2026 - Admin Panel</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- ===== HEADER NAV START ===== -->
 <div class="topnav">
 
-  <a href="https://menuutama.github.io/tropical/index.html">MENU</a>
+  <button class="nav-btn active" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/')">MENU</button>
 
-  <a href="https://menuutama.github.io/tropical/lucky.html">
-    LUCKY DRAW
-  </a>
+  <button class="nav-btn" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/attend.html')">REGISTRATION</button>
 
-  <a href="http://localhost:3000/pink.html">
-    PINK AWARD
-  </a>
+  <button class="nav-btn" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/input.html')">LUCKY DRAW</button>
 
-  <a href="http://localhost:3000/service.html">
-    LONG SERVICE
-  </a>
+  <button class="nav-btn" onclick="loadPage(this,'https://menuutama.github.io/tropical-dinner/collect.html')">COLLECT PRIZE</button>
 
-  <a href="http://localhost:3000/media.html">
-    VIDEO / IMAGE / SONG
-  </a>
+  <button class="nav-btn" onclick="loadPage(this,'http://localhost:3000/pink.html')">PINK AWARD</button>
 
-  <a href="#" class="localhost-link" id="localhostBtn">
-    <span class="localhost-toggle offline" id="localhostToggle">
-      <span class="localhost-knob"></span>
-    </span>
-    <span class="localhost-text">LOCALHOST</span>
-  </a>
-  <a href="#" class="update-link" id="updateBtn" style="display:none;">
-  <img
-    src="https://i.ibb.co/k6XJsJBT/989cb1c8-74d7-4e55-8d53-8481139cebb6.png"
-    alt="Update"
-  >
-</a>  
+  <button class="nav-btn" onclick="loadPage(this,'http://localhost:3000/service.html')">LONG SERVICE</button>
+
+  <button class="nav-btn" onclick="loadPage(this,'http://localhost:3000/media.html')">MEDIA</button>
+
+  <div class="localhost-link" onclick="toggleLocalhost()">
+    <div id="localhostToggle" class="localhost-toggle">
+      <div class="localhost-knob"></div>
+    </div>
+    <span id="localhostText">LOCALHOST OFF</span>
+  </div>
+
+  <button class="update-link has-update" onclick="checkUpdate()" title="Update">
+    <img src="https://cdn-icons-png.flaticon.com/512/61/61444.png" alt="Update">
+  </button>
+
 </div>
-<!-- ===== HEADER NAV END ===== -->
 
+<div class="frame-wrapper">
+  <iframe id="mainFrame" src="https://menuutama.github.io/tropical-dinner/"></iframe>
+</div>
 
-<!-- ===== CONTENT START ===== -->
-<iframe
-  src="https://menuutama.github.io/tropical-dinner/"
-  style="width:100%; height:100vh; border:none; position:fixed;">
-</iframe>
-<!-- ===== CONTENT END ===== -->
-
-
-<!-- ===== FOOTER JS START ===== -->
 <script>
-const LOCALHOST_URL = "http://localhost:3000";
-const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
+const mainFrame = document.getElementById("mainFrame");
+const localhostToggle = document.getElementById("localhostToggle");
+const localhostText = document.getElementById("localhostText");
 
-async function checkLocalhostStatus(){
-  const toggle = document.getElementById("localhostToggle");
-  if(!toggle) return false;
+function loadPage(btn, url){
+  mainFrame.src = url;
 
-  try{
-    const res = await fetch(`${LOCALHOST_URL}/api/status?time=${Date.now()}`, {
-      method:"GET",
-      cache:"no-store"
-    });
+  document.querySelectorAll(".nav-btn").forEach(button=>{
+    button.classList.remove("active");
+  });
 
-    if(res.ok){
-      toggle.classList.remove("offline");
-      toggle.classList.add("online");
-      return true;
-    }
-  }catch(e){}
-
-  toggle.classList.remove("online");
-  toggle.classList.add("offline");
-  return false;
+  btn.classList.add("active");
 }
 
-function compareVersion(localV, onlineV){
-  const local = String(localV).split(".").map(Number);
-  const online = String(onlineV).split(".").map(Number);
+function toggleLocalhost(){
+  localhostToggle.classList.toggle("online");
 
-  for(let i = 0; i < Math.max(local.length, online.length); i++){
-    const a = local[i] || 0;
-    const b = online[i] || 0;
-
-    if(b > a) return true;
-    if(b < a) return false;
-  }
-
-  return false;
-}
-
-async function checkUpdate(){
-  const updateBtn = document.getElementById("updateBtn");
-
-  if(!updateBtn) return;
-
-  updateBtn.style.display = "none";
-  updateBtn.classList.remove("has-update");
-
-  try{
-    const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
-      cache:"no-store"
-    });
-
-    const onlineData = await onlineRes.json();
-
-    const localRes = await fetch(`${LOCALHOST_URL}/api/version?time=${Date.now()}`, {
-      cache:"no-store"
-    });
-
-    const localData = await localRes.json();
-
-    const needUpdate = compareVersion(
-      localData.currentVersion,
-      onlineData.latestVersion
-    );
-
-    if(needUpdate){
-      updateBtn.style.display = "flex";
-      updateBtn.classList.add("has-update");
-
-      updateBtn.onclick = function(e){
-        e.preventDefault();
-
-        const confirmUpdate = confirm(
-          `New update available!\n\nCurrent Version: ${localData.currentVersion}\nLatest Version: ${onlineData.latestVersion}\n\nDownload update now?`
-        );
-
-        if(confirmUpdate){
-          window.open(
-            onlineData.downloadUrl,
-            "UpdateInstallerPopup",
-            "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
-          );
-        }
-      };
-    }
-
-  }catch(e){
-    updateBtn.style.display = "none";
-    updateBtn.classList.remove("has-update");
+  if(localhostToggle.classList.contains("online")){
+    localhostText.textContent = "LOCALHOST ON";
+  }else{
+    localhostText.textContent = "LOCALHOST OFF";
   }
 }
-document.addEventListener("DOMContentLoaded", function(){
-  const btn = document.getElementById("localhostBtn");
 
-  checkLocalhostStatus();
-  checkUpdate();
-
-  setInterval(checkLocalhostStatus, 3000);
-  setInterval(checkUpdate, 15000);
-
-  if(btn){
-    btn.addEventListener("click", async function(e){
-      e.preventDefault();
-
-      const isOnline = await checkLocalhostStatus();
-
-      if(isOnline){
-
-   const confirmOff = confirm("Turn OFF localhost?");
-
-   if(confirmOff){
-      try{
-         await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
-            method:"GET",
-            cache:"no-store"
-         });
-      }catch(e){}
-
-      setTimeout(checkLocalhostStatus,1200);
-   }
-
-}else{
-
-   const wantDownload = confirm(
-      "LOCALHOST is OFF.\n\nIf you already installed it, please open the shortcut: Tropical Dinner Localhost.\n\nClick OK to download installer.\nClick Cancel if already installed."
-   );
-
-   if(wantDownload){
-
-      try{
-
-         const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
-            cache:"no-store"
-         });
-
-         const data = await res.json();
-
-         window.open(
-            data.downloadUrl,
-            "DownloadInstallerPopup",
-            "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
-         );
-
-      }catch(e){
-         alert("Cannot get installer link. Please check internet connection.");
-      }
-
-   }
-
-});
-  }
-});
+function checkUpdate(){
+  alert("Update button clicked.");
+}
 </script>
+
 </body>
 </html>
