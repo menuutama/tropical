@@ -3,10 +3,6 @@ const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
 
 const mainFrame = document.getElementById("mainFrame");
 
-/* =========================
-   IFRAME MENU
-========================= */
-
 document.querySelectorAll(".nav-btn").forEach(btn=>{
   btn.addEventListener("click", function(){
     const url = this.dataset.url;
@@ -20,10 +16,6 @@ document.querySelectorAll(".nav-btn").forEach(btn=>{
     this.classList.add("active");
   });
 });
-
-/* =========================
-   CHECK LOCALHOST STATUS
-========================= */
 
 async function checkLocalhostStatus(){
   const toggle = document.getElementById("localhostToggle");
@@ -48,10 +40,6 @@ async function checkLocalhostStatus(){
   return false;
 }
 
-/* =========================
-   VERSION COMPARE
-========================= */
-
 function compareVersion(localV, onlineV){
   const local = String(localV).split(".").map(Number);
   const online = String(onlineV).split(".").map(Number);
@@ -66,10 +54,6 @@ function compareVersion(localV, onlineV){
 
   return false;
 }
-
-/* =========================
-   CHECK UPDATE
-========================= */
 
 async function checkUpdate(){
   const updateBtn = document.getElementById("updateBtn");
@@ -123,10 +107,6 @@ async function checkUpdate(){
     updateBtn.classList.remove("has-update");
   }
 }
-
-/* =========================
-   LOCALHOST BUTTON CLICK
-========================= */
 
 document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("localhostBtn");
