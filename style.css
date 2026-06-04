@@ -9,20 +9,16 @@
 body{
   font-family:'Poppins',Arial,sans-serif;
   background:radial-gradient(circle at center,#0c1f40 0%,#050d1a 100%);
-  color:#fff;
+  color:#ffffff;
   min-height:100vh;
   overflow:hidden;
 }
 
-/* =========================
-   TOP NAV
-========================= */
-
 .topnav{
   height:64px;
-  display:flex;
+  display:grid;
+  grid-template-columns:220px auto 220px;
   align-items:center;
-  gap:8px;
   padding:10px 18px;
   background:linear-gradient(90deg,rgba(6,20,46,.95),rgba(18,60,122,.95));
   backdrop-filter:blur(10px);
@@ -35,16 +31,34 @@ body{
   z-index:9999;
 }
 
+.nav-left{
+  min-width:220px;
+}
+
+.nav-center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.nav-right{
+  min-width:220px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+}
+
 .nav-btn{
   color:#b0c9f0;
   background:transparent;
   border:none;
-  text-decoration:none;
-  font-weight:500;
+  font-weight:600;
   font-size:13px;
   letter-spacing:.5px;
-  padding:8px 12px;
-  border-radius:8px;
+  padding:10px 14px;
+  border-radius:10px;
   cursor:pointer;
   transition:.3s;
   white-space:nowrap;
@@ -53,31 +67,27 @@ body{
 
 .nav-btn:hover,
 .nav-btn.active{
-  color:#fff;
-  background:rgba(29,111,255,.2);
-  box-shadow:0 0 15px rgba(29,111,255,.4);
+  color:#ffffff;
+  background:rgba(29,111,255,.22);
+  box-shadow:0 0 15px rgba(29,111,255,.45);
 }
-
-/* =========================
-   LOCALHOST TOGGLE
-========================= */
 
 .localhost-link{
   display:flex;
   align-items:center;
   gap:8px;
-  color:#b0c9f0;
-  font-weight:500;
+  color:#b0c9f0 !important;
+  text-decoration:none;
+  font-weight:600;
   font-size:13px;
   letter-spacing:.5px;
-  padding:8px 12px;
+  padding:8px 10px;
   border-radius:8px;
   white-space:nowrap;
-  cursor:pointer;
 }
 
 .localhost-link:hover{
-  color:#fff;
+  color:#ffffff !important;
   background:rgba(29,111,255,.2);
   box-shadow:0 0 15px rgba(29,111,255,.4);
 }
@@ -86,9 +96,7 @@ body{
   width:46px;
   height:22px;
   border-radius:20px;
-  border:2px solid #ff4d3d;
   background:#07152d;
-  box-shadow:0 0 10px #ff4d3d,inset 0 0 10px rgba(255,77,61,.35);
   position:relative;
 }
 
@@ -96,16 +104,24 @@ body{
   width:16px;
   height:16px;
   border-radius:50%;
-  background:#ff4d3d;
-  box-shadow:0 0 12px #ff4d3d;
   position:absolute;
-  left:2px;
   top:1px;
   transition:.3s;
 }
 
+.localhost-toggle.offline{
+  border:2px solid #ff4d3d;
+  box-shadow:0 0 10px #ff4d3d,inset 0 0 10px rgba(255,77,61,.35);
+}
+
+.localhost-toggle.offline .localhost-knob{
+  left:2px;
+  background:#ff4d3d;
+  box-shadow:0 0 12px #ff4d3d;
+}
+
 .localhost-toggle.online{
-  border-color:#16d9ff;
+  border:2px solid #16d9ff;
   box-shadow:0 0 10px #16d9ff,inset 0 0 10px rgba(22,217,255,.35);
 }
 
@@ -115,27 +131,23 @@ body{
   box-shadow:0 0 12px #73ff5f;
 }
 
-/* =========================
-   UPDATE ICON
-========================= */
-
 .update-link{
-  margin-left:auto;
-  width:38px;
-  height:38px;
-  border:none;
-  border-radius:50%;
-  background:transparent;
-  display:flex;
+  width:38px !important;
+  height:38px !important;
+  padding:0 !important;
   align-items:center;
   justify-content:center;
-  cursor:pointer;
+  border-radius:50%;
+  background:transparent !important;
+  box-shadow:none !important;
+  flex-shrink:0;
 }
 
 .update-link img{
-  width:24px;
-  height:24px;
-  object-fit:contain;
+  width:24px !important;
+  height:24px !important;
+  object-fit:contain !important;
+  display:block;
 }
 
 .update-link.has-update img{
@@ -146,11 +158,11 @@ body{
 }
 
 .update-link.has-update:hover{
-  background:rgba(56,189,248,.12);
+  background:rgba(56,189,248,.12) !important;
   box-shadow:
     0 0 10px rgba(56,189,248,.7),
     0 0 22px rgba(56,189,248,.45),
-    inset 0 0 12px rgba(56,189,248,.18);
+    inset 0 0 12px rgba(56,189,248,.18) !important;
 }
 
 .update-link.has-update:hover img{
@@ -158,28 +170,16 @@ body{
 }
 
 @keyframes updateSpinClockwise{
-  from{
-    transform:rotate(0deg);
-  }
-  to{
-    transform:rotate(360deg);
-  }
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
 }
 
 @keyframes updateSpinAntiClockwise{
-  from{
-    transform:rotate(0deg);
-  }
-  to{
-    transform:rotate(-360deg);
-  }
+  from{transform:rotate(0deg);}
+  to{transform:rotate(-360deg);}
 }
 
-/* =========================
-   IFRAME
-========================= */
-
-.frame-wrapper{
+.iframe-wrap{
   position:fixed;
   top:64px;
   left:0;
@@ -197,34 +197,28 @@ body{
   background:#050d1a;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media(max-width:900px){
-  body{
-    overflow:auto;
-  }
-
+@media(max-width:1200px){
   .topnav{
+    grid-template-columns:1fr;
     height:auto;
+    gap:8px;
+  }
+
+  .nav-left{
+    display:none;
+  }
+
+  .nav-center{
     flex-wrap:wrap;
-    position:relative;
   }
 
-  .update-link{
-    margin-left:0;
+  .nav-right{
+    min-width:100%;
+    justify-content:center;
   }
 
-  .frame-wrapper{
-    position:relative;
-    top:0;
-    height:calc(100vh - 120px);
-  }
-
-  .nav-btn,
-  .localhost-link{
-    font-size:12px;
-    padding:7px 9px;
+  .iframe-wrap{
+    top:112px;
+    height:calc(100vh - 112px);
   }
 }
