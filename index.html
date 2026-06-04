@@ -1,80 +1,303 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+const LOCALHOST_URL = "http://localhost:3000";
+const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
+const LOCALHOST_PROTOCOL = "tropical-localhost://open";
 
-<title>Tropical Dinner 2026 - Admin Panel</title>
+const mainFrame = document.getElementById("mainFrame");
 
-<link rel="stylesheet" href="style.css">
-</head>
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sideMenu = document.getElementById("sideMenu");
+const sideOverlay = document.getElementById("sideOverlay");
+const sideClose = document.getElementById("sideClose");
 
-<body>
+/* =========================
+   SIDE MENU
+========================= */
 
-<div class="topnav">
+function openSideMenu(){
+  sideMenu.classList.add("show");
+  sideOverlay.classList.add("show");
+}
 
-  <div class="nav-left">
-    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
-  </div>
+function closeSideMenu(){
+  sideMenu.classList.remove("show");
+  sideOverlay.classList.remove("show");
+}
 
-  <div class="nav-center">
+if(hamburgerBtn){
+  hamburgerBtn.addEventListener("click", openSideMenu);
+}
 
-    <button class="nav-btn active" data-url="https://menuutama.github.io/tropical-dinner/">MENU</button>
-    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
-    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
-    <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
-    <button class="nav-btn" data-url="http://localhost:3000/pink.html">PINK AWARD</button>
-    <button class="nav-btn" data-url="http://localhost:3000/service.html">LONG SERVICE</button>
-    <button class="nav-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
+if(sideClose){
+  sideClose.addEventListener("click", closeSideMenu);
+}
 
-  </div>
+if(sideOverlay){
+  sideOverlay.addEventListener("click", closeSideMenu);
+}
 
-  <div class="nav-right">
+/* =========================
+   IFRAME MENU
+========================= */
 
-    <a href="#" class="localhost-link" id="localhostBtn">
-      <span class="localhost-toggle offline" id="localhostToggle">
-        <span class="localhost-knob"></span>
-      </span>
-      <span class="localhost-text">LOCALHOST</span>
-    </a>
+function setActiveMenu(url){
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.url === url);
+  });
 
-    <a href="#" class="update-link" id="updateBtn" style="display:none;">
-      <img
-        src="https://i.ibb.co/k6XJsJBT/989cb1c8-74d7-4e55-8d53-8481139cebb6.png"
-        alt="Update"
-      >
-    </a>
+  document.querySelectorAll(".side-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.url === url);
+  });
+}
 
-  </div>
+function loadPage(url){
+  mainFrame.src = url;
+  setActiveMenu(url);
+  closeSideMenu();
+}
 
-</div>
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    loadPage(this.dataset.url);
+  });
+});
 
-<div class="side-overlay" id="sideOverlay"></div>
+document.querySelectorAll(".side-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    loadPage(this.dataset.url);
+  });
+});
 
-<div class="side-menu" id="sideMenu">
+/* =========================
+   LOCALHOST STATUS UI
+========================= */
 
-  <div class="side-header">
-    <span>ADMIN MENU</span>
-    <button class="side-close" id="sideClose">×</button>
-  </div>
+function setLocalhostUI(isOnline){
+  const toggle = document.getElementById("localhostToggle");
+  const text = document.querySelector(".localhost-text");
 
-  <button class="side-btn active" data-url="https://menuutama.github.io/tropical-dinner/">MENU</button>
-  <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
-  <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
-  <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
-  <button class="side-btn" data-url="http://localhost:3000/pink.html">PINK AWARD</button>
-  <button class="side-btn" data-url="http://localhost:3000/service.html">LONG SERVICE</button>
-  <button class="side-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
+  if(!toggle) return;
 
-</div>
+  if(isOnline){
+    toggle.classList.remove("offline");
+    toggle.classList.add("online");
 
-<div class="iframe-wrap">
-  <iframe
-    id="mainFrame"
-    src="https://menuutama.github.io/tropical-dinner/"
-  ></iframe>
-</div>
+    if(text) text.textContent = "LOCALHOST ON";
+  }else{
+    toggle.classList.remove("online");
+    toggle.classList.add("offline");
 
-<script src="index.js"></script>
-</body>
-</html>
+    if(text) text.textContent = "LOCALHOST OFF";
+  }
+}
+
+async function checkLocalhostStatus(){
+  try{
+    const res = await fetch(`${LOCALHOST_URL}/api/status?time=${Date.now()}`, {
+      method:"GET",
+      cache:"no-store"
+    });
+
+    if(res.ok){
+      setLocalhostUI(true);
+      return true;
+    }
+  }catch(e){}
+
+  setLocalhostUI(false);
+  return false;
+}
+
+/* =========================
+   START LOCALHOST
+========================= */
+
+function openLocalhostExe(){
+  window.location.href = LOCALHOST_PROTOCOL;
+}
+
+async function waitLocalhostOnline(maxTry = 12){
+  for(let i = 0; i < maxTry; i++){
+    const online = await checkLocalhostStatus();
+
+    if(online){
+      await checkUpdate();
+      return true;
+    }
+
+    await new Promise(resolve=>setTimeout(resolve, 1000));
+  }
+
+  return false;
+}
+
+/* =========================
+   SHUTDOWN LOCALHOST
+========================= */
+
+async function shutdownLocalhost(){
+  try{
+    await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
+      method:"GET",
+      cache:"no-store"
+    });
+  }catch(e){}
+
+  setTimeout(async ()=>{
+    await checkLocalhostStatus();
+    hideUpdateButton();
+  }, 1200);
+}
+
+/* =========================
+   VERSION CHECK
+========================= */
+
+function compareVersion(localV, onlineV){
+  const local = String(localV || "0.0.0").split(".").map(Number);
+  const online = String(onlineV || "0.0.0").split(".").map(Number);
+
+  for(let i = 0; i < Math.max(local.length, online.length); i++){
+    const a = local[i] || 0;
+    const b = online[i] || 0;
+
+    if(b > a) return true;
+    if(b < a) return false;
+  }
+
+  return false;
+}
+
+function hideUpdateButton(){
+  const updateBtn = document.getElementById("updateBtn");
+
+  if(!updateBtn) return;
+
+  updateBtn.style.display = "none";
+  updateBtn.classList.remove("has-update");
+  updateBtn.onclick = null;
+}
+
+async function checkUpdate(){
+  const updateBtn = document.getElementById("updateBtn");
+
+  if(!updateBtn) return;
+
+  hideUpdateButton();
+
+  const isOnline = await checkLocalhostStatus();
+
+  if(!isOnline){
+    return;
+  }
+
+  try{
+    const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const onlineData = await onlineRes.json();
+
+    const localRes = await fetch(`${LOCALHOST_URL}/api/version?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const localData = await localRes.json();
+
+    const localVersion = localData.currentVersion;
+    const latestVersion = onlineData.latestVersion;
+
+    const needUpdate = compareVersion(localVersion, latestVersion);
+
+    if(needUpdate){
+      updateBtn.style.display = "flex";
+      updateBtn.classList.add("has-update");
+
+      updateBtn.onclick = function(e){
+        e.preventDefault();
+
+        const confirmUpdate = confirm(
+          `New update available!\n\nCurrent Version: ${localVersion}\nLatest Version: ${latestVersion}\n\nDownload update now?`
+        );
+
+        if(confirmUpdate){
+          window.open(
+            onlineData.downloadUrl,
+            "UpdateInstallerPopup",
+            "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+          );
+        }
+      };
+    }
+
+  }catch(e){
+    hideUpdateButton();
+  }
+}
+
+/* =========================
+   LOCALHOST TOGGLE FLOW
+========================= */
+
+document.addEventListener("DOMContentLoaded", function(){
+  const btn = document.getElementById("localhostBtn");
+
+  checkLocalhostStatus().then(isOnline=>{
+    if(isOnline){
+      checkUpdate();
+    }else{
+      hideUpdateButton();
+    }
+  });
+
+  setInterval(async ()=>{
+    const online = await checkLocalhostStatus();
+
+    if(online){
+      checkUpdate();
+    }else{
+      hideUpdateButton();
+    }
+  }, 5000);
+
+  if(btn){
+    btn.addEventListener("click", async function(e){
+      e.preventDefault();
+
+      const isOnline = await checkLocalhostStatus();
+
+      if(isOnline){
+        await shutdownLocalhost();
+        return;
+      }
+
+      openLocalhostExe();
+
+      const started = await waitLocalhostOnline(12);
+
+      if(!started){
+        const wantDownload = confirm(
+          "LOCALHOST is OFF.\n\nIf you already installed it, please open the shortcut: EventMediaOffline.\n\nClick OK to download installer.\nClick Cancel if already installed."
+        );
+
+        if(wantDownload){
+          try{
+            const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+              cache:"no-store"
+            });
+
+            const data = await res.json();
+
+            window.open(
+              data.downloadUrl,
+              "DownloadInstallerPopup",
+              "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+            );
+
+          }catch(e){
+            alert("Cannot get installer link. Please check internet connection.");
+          }
+        }
+      }
+    });
+  }
+});
