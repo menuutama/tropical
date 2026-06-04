@@ -13,7 +13,10 @@ body{
   min-height:100vh;
   overflow:hidden;
   padding-bottom:30px !important;
+}
 
+.pagination-container{
+  margin-bottom:30px !important;
 }
 
 /* =========================
@@ -401,8 +404,4 @@ body{
     height:calc(100vh - 64px - 55px);
     padding-bottom:55px;
   }
-}
-
-.pagination-container{
-  margin-bottom:70px !important;
 }
