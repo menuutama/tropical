@@ -14,6 +14,10 @@ body{
   overflow:hidden;
 }
 
+/* =========================
+   TOP NAV
+========================= */
+
 .topnav{
   height:64px;
   display:grid;
@@ -33,6 +37,8 @@ body{
 
 .nav-left{
   min-width:220px;
+  display:flex;
+  justify-content:flex-start;
 }
 
 .nav-center{
@@ -71,6 +77,27 @@ body{
   background:rgba(29,111,255,.22);
   box-shadow:0 0 15px rgba(29,111,255,.45);
 }
+
+/* =========================
+   HAMBURGER
+========================= */
+
+.hamburger-btn{
+  display:none;
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:12px;
+  background:rgba(29,111,255,.18);
+  color:#ffffff;
+  font-size:25px;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(29,111,255,.25);
+}
+
+/* =========================
+   LOCALHOST
+========================= */
 
 .localhost-link{
   display:flex;
@@ -131,6 +158,10 @@ body{
   box-shadow:0 0 12px #73ff5f;
 }
 
+/* =========================
+   UPDATE ICON
+========================= */
+
 .update-link{
   width:38px !important;
   height:38px !important;
@@ -179,6 +210,97 @@ body{
   to{transform:rotate(-360deg);}
 }
 
+/* =========================
+   SIDE MENU
+========================= */
+
+.side-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(3px);
+  z-index:10000;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+}
+
+.side-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.side-menu{
+  position:fixed;
+  top:0;
+  left:-310px;
+  width:300px;
+  max-width:85vw;
+  height:100vh;
+  background:linear-gradient(180deg,#0b1f46,#050d1a);
+  border-right:1px solid rgba(77,163,255,.25);
+  box-shadow:8px 0 30px rgba(0,0,0,.55);
+  z-index:10001;
+  padding:18px;
+  transition:.3s;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.side-menu.show{
+  left:0;
+}
+
+.side-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(77,163,255,.25);
+  color:#8bc4ff;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.side-close{
+  width:34px;
+  height:34px;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,77,61,.18);
+  color:#ffffff;
+  font-size:25px;
+  cursor:pointer;
+}
+
+.side-btn{
+  width:100%;
+  border:none;
+  border-radius:12px;
+  padding:14px 16px;
+  text-align:left;
+  background:rgba(16,40,79,.55);
+  color:#b0c9f0;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.5px;
+  cursor:pointer;
+  font-family:'Poppins',Arial,sans-serif;
+}
+
+.side-btn:hover,
+.side-btn.active{
+  color:#ffffff;
+  background:rgba(29,111,255,.3);
+  box-shadow:0 0 15px rgba(29,111,255,.35);
+}
+
+/* =========================
+   IFRAME
+========================= */
+
 .iframe-wrap{
   position:fixed;
   top:64px;
@@ -197,28 +319,65 @@ body{
   background:#050d1a;
 }
 
+/* =========================
+   PHONE / TABLET
+========================= */
+
 @media(max-width:1200px){
   .topnav{
-    grid-template-columns:1fr;
-    height:auto;
-    gap:8px;
+    height:64px;
+    grid-template-columns:60px 1fr auto;
+    padding:10px 12px;
   }
 
   .nav-left{
-    display:none;
+    min-width:60px;
+  }
+
+  .hamburger-btn{
+    display:block;
   }
 
   .nav-center{
-    flex-wrap:wrap;
+    display:none;
   }
 
   .nav-right{
-    min-width:100%;
-    justify-content:center;
+    min-width:auto;
+  }
+
+  .localhost-text{
+    display:none;
   }
 
   .iframe-wrap{
-    top:112px;
-    height:calc(100vh - 112px);
+    top:64px;
+    height:calc(100vh - 64px);
+  }
+}
+
+@media(max-width:480px){
+  .update-link{
+    width:34px !important;
+    height:34px !important;
+  }
+
+  .update-link img{
+    width:22px !important;
+    height:22px !important;
+  }
+
+  .localhost-toggle{
+    width:42px;
+    height:21px;
+  }
+
+  .localhost-knob{
+    width:15px;
+    height:15px;
+  }
+
+  .localhost-toggle.online .localhost-knob{
+    left:22px;
   }
 }
