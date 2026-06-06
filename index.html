@@ -1,177 +1,511 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tropical Dinner 2026 - Live Lucky Draw</title>
+<title>Tropical Dinner 2026 - Admin Panel</title>
 
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-<div class="overlay"></div>
+<!-- PASSWORD SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>TROPICAL DINNER 2026</h1>
+    <h2>Admin Panel Login</h2>
 
-<div class="container">
-
-  <div class="header">
-
-    <div class="sub-title">
-      TROPICAL DINNER 2026
-    </div>
-
-    <div class="title">
-      LUCKY DRAW WINNERS
-    </div>
-
-    <div class="live-box">
-      <div class="dot"></div>
-      LIVE UPDATING
-    </div>
-
-    <!-- SEARCH -->
-    <div class="search-wrapper">
-
-      <div class="search-box">
-
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search Lucky No / Winner / Company"
-        >
-
-        <button
-          class="clear-btn"
-          id="clearBtn">
-          ×
-        </button>
-
-      </div>
-
-      <div class="click-note">
-        Click on your name to view your Lucky Draw prize.
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- TABLE -->
-  <div class="table-wrapper">
-
-    <table>
-
-      <thead>
-        <tr>
-          <th>PLACE</th>
-          <th>LUCKY NO.</th>
-          <th>WINNER</th>
-          <th>COMPANY</th>
-        </tr>
-      </thead>
-
-      <tbody id="winnerTable"></tbody>
-
-    </table>
-
-  </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-
-    <div
-      class="pagination"
-      id="pagination">
-    </div>
-
-    <div class="control-buttons">
-
-      <button onclick="playSlide()">
-        ▶ Play
-      </button>
-
-      <button onclick="pauseSlide()">
-        ⏸ Pause
-      </button>
-
-    </div>
-
-  </div>
-
-  <div class="notice">
-    Kindly collect your lucky draw prize at the Lucky Draw Counter behind the stage before leaving the event.
-  </div>
-
-</div>
-
-<!-- ===================================================
-     WINNER POPUP
-=================================================== -->
-
-<div
-  id="winnerModal"
-  class="winner-modal">
-
-  <div class="winner-modal-box">
-
-    <button
-      class="modal-close"
-      onclick="closeWinnerModal()">
-      ×
-    </button>
-
-    <!-- PLACE -->
-    <div
-      class="modal-place"
-      id="modalPlace">
-    </div>
-
-    <!-- WINNER -->
-    <div
-      class="modal-winner"
-      id="modalWinner">
-    </div>
-
-    <!-- LUCKY NO -->
-    <div
-      class="modal-info"
-      id="modalLuckyNo">
-    </div>
-
-    <!-- COMPANY -->
-    <div
-      class="modal-info"
-      id="modalCompany">
-    </div>
-
-    <!-- IMAGE -->
-    <img
-      id="modalImage"
-      class="modal-image"
-      src=""
-      alt="Prize Image"
+    <input
+      type="password"
+      id="passwordInput"
+      placeholder="Enter Password"
+      autocomplete="off"
     >
 
-    <!-- PRIZE -->
-    <div
-      class="modal-prize"
-      id="modalPrize">
+    <button id="loginBtn">LOGIN</button>
+    <p id="loginError"></p>
+  </div>
+</div>
+
+<!-- ADMIN SYSTEM -->
+<div id="adminSystem" style="display:none;">
+
+  <div class="topnav">
+
+    <div class="nav-left">
+      <button class="hamburger-btn" id="hamburgerBtn">☰</button>
     </div>
 
-    <!-- NOTE -->
-    <div class="modal-note">
-      **Image for display purposes only.<br>
-      (Gambar untuk tujuan paparan sahaja)
+    <div class="nav-center">
+
+      <button class="nav-btn active" data-url="https://menuutama.github.io/tropical-dinner/">
+        MENU
+      </button>
+
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">
+        REGISTRATION
+      </button>
+
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">
+        LUCKY DRAW
+      </button>
+
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">
+        COLLECT PRIZE
+      </button>
+
+      <button class="nav-btn" data-url="http://localhost:3000/pink.html">
+        PINK AWARD
+      </button>
+
+      <button class="nav-btn" data-url="http://localhost:3000/service.html">
+        LONG SERVICE
+      </button>
+
+      <button class="nav-btn" data-url="http://localhost:3000/media.html">
+        MEDIA
+      </button>
+
+    </div>
+
+    <div class="nav-right">
+
+      <a href="#" class="localhost-link" id="localhostBtn">
+        <span class="localhost-toggle offline" id="localhostToggle">
+          <span class="localhost-knob"></span>
+        </span>
+        <span class="localhost-text">LOCALHOST</span>
+      </a>
+
+      <a href="#" class="update-link" id="updateBtn" style="display:none;">
+        <img
+          src="https://i.ibb.co/k6XJsJBT/989cb1c8-74d7-4e55-8d53-8481139cebb6.png"
+          alt="Update"
+        >
+      </a>
+
     </div>
 
   </div>
 
+  <!-- SIDE MENU -->
+  <div class="side-overlay" id="sideOverlay"></div>
+
+  <div class="side-menu" id="sideMenu">
+
+    <div class="side-header">
+      <span>ADMIN MENU</span>
+      <button class="side-close" id="sideClose">×</button>
+    </div>
+
+    <button class="side-btn active" data-url="https://menuutama.github.io/tropical-dinner/">MENU</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
+    <button class="side-btn" data-url="http://localhost:3000/pink.html">PINK AWARD</button>
+    <button class="side-btn" data-url="http://localhost:3000/service.html">LONG SERVICE</button>
+    <button class="side-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
+
+  </div>
+
+  <!-- IFRAME -->
+  <div class="iframe-wrap">
+    <iframe
+      id="mainFrame"
+      src="https://menuutama.github.io/tropical-dinner/"
+    ></iframe>
+  </div>
+
 </div>
 
-<script src="script.js"></script>
+<script>
+/* =========================
+   PASSWORD LOGIN
+========================= */
+
+const ADMIN_PASSWORD = "Admin-dinner123";
+
+const loginScreen = document.getElementById("loginScreen");
+const adminSystem = document.getElementById("adminSystem");
+const passwordInput = document.getElementById("passwordInput");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
+
+function showAdmin(){
+  loginScreen.style.display = "none";
+  adminSystem.style.display = "block";
+}
+
+function showLogin(){
+  loginScreen.style.display = "flex";
+  adminSystem.style.display = "none";
+}
+
+function login(){
+  const password = passwordInput.value.trim();
+
+  if(password === ADMIN_PASSWORD){
+    sessionStorage.setItem("adminLogin", "yes");
+    showAdmin();
+  }else{
+    loginError.textContent = "Wrong password.";
+    passwordInput.value = "";
+    passwordInput.focus();
+  }
+}
+
+if(sessionStorage.getItem("adminLogin") === "yes"){
+  showAdmin();
+}else{
+  showLogin();
+}
+
+loginBtn.addEventListener("click", login);
+
+passwordInput.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    login();
+  }
+});
+
+
+/* =========================
+   ADMIN JS
+========================= */
+
+const LOCALHOST_URL = "http://localhost:3000";
+const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
+const LOCALHOST_PROTOCOL = "eventmedia://start";
+
+const mainFrame = document.getElementById("mainFrame");
+
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sideMenu = document.getElementById("sideMenu");
+const sideOverlay = document.getElementById("sideOverlay");
+const sideClose = document.getElementById("sideClose");
+
+let pendingLocalhostUrl = null;
+
+function isLocalhostPage(url){
+  return String(url).startsWith(LOCALHOST_URL);
+}
+
+function openSideMenu(){
+  sideMenu.classList.add("show");
+  sideOverlay.classList.add("show");
+}
+
+function closeSideMenu(){
+  sideMenu.classList.remove("show");
+  sideOverlay.classList.remove("show");
+}
+
+hamburgerBtn?.addEventListener("click", openSideMenu);
+sideClose?.addEventListener("click", closeSideMenu);
+sideOverlay?.addEventListener("click", closeSideMenu);
+
+function setActiveMenu(url){
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.url === url);
+  });
+
+  document.querySelectorAll(".side-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.url === url);
+  });
+}
+
+function loadFrame(url){
+  if(isLocalhostPage(url)){
+    mainFrame.src = `${url}?time=${Date.now()}`;
+  }else{
+    mainFrame.src = url;
+  }
+}
+
+function setLocalhostUI(isOnline){
+  const toggle = document.getElementById("localhostToggle");
+  const text = document.querySelector(".localhost-text");
+
+  if(!toggle) return;
+
+  if(isOnline){
+    toggle.classList.remove("offline");
+    toggle.classList.add("online");
+  }else{
+    toggle.classList.remove("online");
+    toggle.classList.add("offline");
+  }
+
+  if(text){
+    text.textContent = "LOCALHOST";
+  }
+}
+
+async function checkLocalhostStatus(){
+  try{
+    const res = await fetch(`${LOCALHOST_URL}/api/status?time=${Date.now()}`, {
+      method:"GET",
+      cache:"no-store"
+    });
+
+    if(res.ok){
+      setLocalhostUI(true);
+      return true;
+    }
+  }catch(e){}
+
+  setLocalhostUI(false);
+  return false;
+}
+
+function openLocalhostExe(){
+  window.location.href = LOCALHOST_PROTOCOL;
+}
+
+async function waitLocalhostOnline(maxTry = 20){
+  for(let i = 0; i < maxTry; i++){
+    const online = await checkLocalhostStatus();
+
+    if(online){
+      await checkUpdate();
+      return true;
+    }
+
+    await new Promise(resolve=>setTimeout(resolve, 1000));
+  }
+
+  return false;
+}
+
+async function loadPage(url){
+  closeSideMenu();
+  setActiveMenu(url);
+
+  if(isLocalhostPage(url)){
+    const online = await checkLocalhostStatus();
+
+    if(!online){
+      pendingLocalhostUrl = url;
+      openLocalhostExe();
+
+      const started = await waitLocalhostOnline(20);
+
+      if(started){
+        setTimeout(()=>{
+          loadFrame(pendingLocalhostUrl);
+          pendingLocalhostUrl = null;
+        }, 800);
+        return;
+      }
+
+      const wantDownload = confirm(
+        "LOCALHOST is OFF.\n\nIf already installed, click Cancel then allow browser to open EventMediaOffline.\n\nClick OK to download installer."
+      );
+
+      if(wantDownload){
+        downloadInstaller();
+      }
+
+      return;
+    }
+  }
+
+  loadFrame(url);
+}
+
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    loadPage(this.dataset.url);
+  });
+});
+
+document.querySelectorAll(".side-btn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    loadPage(this.dataset.url);
+  });
+});
+
+async function shutdownLocalhost(){
+  try{
+    await fetch(`${LOCALHOST_URL}/api/shutdown?time=${Date.now()}`, {
+      method:"GET",
+      cache:"no-store"
+    });
+  }catch(e){}
+
+  setTimeout(async ()=>{
+    await checkLocalhostStatus();
+    hideUpdateButton();
+
+    if(isLocalhostPage(mainFrame.src)){
+      const homeUrl = "https://menuutama.github.io/tropical-dinner/";
+      loadFrame(homeUrl);
+      setActiveMenu(homeUrl);
+    }
+  }, 1200);
+}
+
+function compareVersion(localV, onlineV){
+  const local = String(localV || "0.0.0").split(".").map(Number);
+  const online = String(onlineV || "0.0.0").split(".").map(Number);
+
+  for(let i = 0; i < Math.max(local.length, online.length); i++){
+    const a = local[i] || 0;
+    const b = online[i] || 0;
+
+    if(b > a) return true;
+    if(b < a) return false;
+  }
+
+  return false;
+}
+
+function hideUpdateButton(){
+  const updateBtn = document.getElementById("updateBtn");
+  if(!updateBtn) return;
+
+  updateBtn.style.display = "none";
+  updateBtn.classList.remove("has-update");
+  updateBtn.onclick = null;
+}
+
+async function checkUpdate(){
+  const updateBtn = document.getElementById("updateBtn");
+  if(!updateBtn) return;
+
+  hideUpdateButton();
+
+  try{
+    const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const onlineData = await onlineRes.json();
+
+    const localRes = await fetch(`${LOCALHOST_URL}/api/version?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const localData = await localRes.json();
+
+    const localVersion = localData.currentVersion;
+    const latestVersion = onlineData.latestVersion;
+
+    if(compareVersion(localVersion, latestVersion)){
+      updateBtn.style.display = "flex";
+      updateBtn.classList.add("has-update");
+
+      updateBtn.onclick = function(e){
+        e.preventDefault();
+
+        const yes = confirm(
+          `New update available!\n\nCurrent Version: ${localVersion}\nLatest Version: ${latestVersion}\n\nDownload update now?`
+        );
+
+        if(yes){
+          window.open(
+            onlineData.downloadUrl,
+            "UpdateInstallerPopup",
+            "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+          );
+        }
+      };
+    }
+
+  }catch(e){
+    hideUpdateButton();
+  }
+}
+
+async function downloadInstaller(){
+  try{
+    const res = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
+      cache:"no-store"
+    });
+
+    const data = await res.json();
+
+    window.open(
+      data.downloadUrl,
+      "DownloadInstallerPopup",
+      "width=700,height=600,left=300,top=120,resizable=yes,scrollbars=yes"
+    );
+
+  }catch(e){
+    alert("Cannot get installer link. Please check internet connection.");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  const btn = document.getElementById("localhostBtn");
+
+  checkLocalhostStatus().then(isOnline=>{
+    if(isOnline){
+      checkUpdate();
+    }else{
+      hideUpdateButton();
+    }
+  });
+
+  setInterval(async ()=>{
+    const online = await checkLocalhostStatus();
+
+    if(online){
+      checkUpdate();
+
+      if(pendingLocalhostUrl){
+        setTimeout(()=>{
+          loadFrame(pendingLocalhostUrl);
+          pendingLocalhostUrl = null;
+        }, 500);
+      }
+
+    }else{
+      hideUpdateButton();
+    }
+  }, 5000);
+
+  if(btn){
+    btn.addEventListener("click", async function(e){
+      e.preventDefault();
+
+      const isOnline = await checkLocalhostStatus();
+
+      if(isOnline){
+        await shutdownLocalhost();
+        return;
+      }
+
+      openLocalhostExe();
+
+      const started = await waitLocalhostOnline(20);
+
+      if(started){
+        const activeBtn = document.querySelector(".nav-btn.active, .side-btn.active");
+        const activeUrl = activeBtn ? activeBtn.dataset.url : null;
+
+        if(activeUrl && isLocalhostPage(activeUrl)){
+          setTimeout(()=>{
+            loadFrame(activeUrl);
+          }, 800);
+        }
+
+        return;
+      }
+
+      const wantDownload = confirm(
+        "LOCALHOST is OFF.\n\nIf already installed, click Cancel then allow browser to open EventMediaOffline.\n\nClick OK to download installer."
+      );
+
+      if(wantDownload){
+        downloadInstaller();
+      }
+    });
+  }
+});
+</script>
 
 </body>
 </html>
