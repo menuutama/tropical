@@ -12,6 +12,14 @@ const sideClose = document.getElementById("sideClose");
 let pendingLocalhostUrl = null;
 
 /* =========================
+   CHECK PAGE TYPE
+========================= */
+
+function isLocalhostPage(url){
+  return String(url).startsWith(LOCALHOST_URL);
+}
+
+/* =========================
    SIDE MENU
 ========================= */
 
@@ -25,17 +33,9 @@ function closeSideMenu(){
   sideOverlay.classList.remove("show");
 }
 
-if(hamburgerBtn){
-  hamburgerBtn.addEventListener("click", openSideMenu);
-}
-
-if(sideClose){
-  sideClose.addEventListener("click", closeSideMenu);
-}
-
-if(sideOverlay){
-  sideOverlay.addEventListener("click", closeSideMenu);
-}
+hamburgerBtn?.addEventListener("click", openSideMenu);
+sideClose?.addEventListener("click", closeSideMenu);
+sideOverlay?.addEventListener("click", closeSideMenu);
 
 /* =========================
    ACTIVE MENU
@@ -51,12 +51,12 @@ function setActiveMenu(url){
   });
 }
 
-function isPage(url){
-  return String(url).startsWith(_URL);
-}
+/* =========================
+   LOAD IFRAME
+========================= */
 
 function loadFrame(url){
-  if(isPage(url)){
+  if(isLocalhostPage(url)){
     mainFrame.src = `${url}?time=${Date.now()}`;
   }else{
     mainFrame.src = url;
@@ -64,29 +64,25 @@ function loadFrame(url){
 }
 
 /* =========================
-    UI
+   LOCALHOST UI
 ========================= */
 
-function setUI(isOnline){
-  const toggle = document.getElementById("Toggle");
-  const text = document.querySelector(".-text");
+function setLocalhostUI(isOnline){
+  const toggle = document.getElementById("localhostToggle");
+  const text = document.querySelector(".localhost-text");
 
   if(!toggle) return;
 
   if(isOnline){
     toggle.classList.remove("offline");
     toggle.classList.add("online");
-
-    if(text){
-      text.textContent = "LOCALHOST";
-    }
   }else{
     toggle.classList.remove("online");
     toggle.classList.add("offline");
+  }
 
-    if(text){
-      text.textContent = "LOCALHOST";
-    }
+  if(text){
+    text.textContent = "LOCALHOST";
   }
 }
 
@@ -108,7 +104,7 @@ async function checkLocalhostStatus(){
 }
 
 /* =========================
-   OPEN LOCALHOST EXE
+   OPEN LOCALHOST
 ========================= */
 
 function openLocalhostExe(){
@@ -143,7 +139,6 @@ async function loadPage(url){
 
     if(!online){
       pendingLocalhostUrl = url;
-
       openLocalhostExe();
 
       const started = await waitLocalhostOnline(20);
@@ -153,7 +148,6 @@ async function loadPage(url){
           loadFrame(pendingLocalhostUrl);
           pendingLocalhostUrl = null;
         }, 800);
-
         return;
       }
 
@@ -167,13 +161,14 @@ async function loadPage(url){
 
       return;
     }
-
-    loadFrame(url);
-    return;
   }
 
   loadFrame(url);
 }
+
+/* =========================
+   BUTTON CLICK
+========================= */
 
 document.querySelectorAll(".nav-btn").forEach(btn=>{
   btn.addEventListener("click", function(){
@@ -204,8 +199,9 @@ async function shutdownLocalhost(){
     hideUpdateButton();
 
     if(isLocalhostPage(mainFrame.src)){
-      loadFrame("https://menuutama.github.io/tropical-dinner/");
-      setActiveMenu("https://menuutama.github.io/tropical-dinner/");
+      const homeUrl = "https://menuutama.github.io/tropical-dinner/";
+      loadFrame(homeUrl);
+      setActiveMenu(homeUrl);
     }
   }, 1200);
 }
@@ -235,7 +231,6 @@ function compareVersion(localV, onlineV){
 
 function hideUpdateButton(){
   const updateBtn = document.getElementById("updateBtn");
-
   if(!updateBtn) return;
 
   updateBtn.style.display = "none";
@@ -245,16 +240,9 @@ function hideUpdateButton(){
 
 async function checkUpdate(){
   const updateBtn = document.getElementById("updateBtn");
-
   if(!updateBtn) return;
 
   hideUpdateButton();
-
-  const isOnline = await checkLocalhostStatus();
-
-  if(!isOnline){
-    return;
-  }
 
   try{
     const onlineRes = await fetch(`${VERSION_URL}?time=${Date.now()}`, {
