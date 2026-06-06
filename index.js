@@ -51,12 +51,12 @@ function setActiveMenu(url){
   });
 }
 
-function isLocalhostPage(url){
-  return String(url).startsWith(LOCALHOST_URL);
+function isPage(url){
+  return String(url).startsWith(_URL);
 }
 
 function loadFrame(url){
-  if(isLocalhostPage(url)){
+  if(isPage(url)){
     mainFrame.src = `${url}?time=${Date.now()}`;
   }else{
     mainFrame.src = url;
@@ -64,12 +64,12 @@ function loadFrame(url){
 }
 
 /* =========================
-   LOCALHOST UI
+    UI
 ========================= */
 
-function setLocalhostUI(isOnline){
-  const toggle = document.getElementById("localhostToggle");
-  const text = document.querySelector(".localhost-text");
+function setUI(isOnline){
+  const toggle = document.getElementById("Toggle");
+  const text = document.querySelector(".-text");
 
   if(!toggle) return;
 
@@ -78,14 +78,14 @@ function setLocalhostUI(isOnline){
     toggle.classList.add("online");
 
     if(text){
-      text.textContent = "LOCALHOST ON";
+      text.textContent = "LOCALHOST";
     }
   }else{
     toggle.classList.remove("online");
     toggle.classList.add("offline");
 
     if(text){
-      text.textContent = "LOCALHOST OFF";
+      text.textContent = "LOCALHOST";
     }
   }
 }
