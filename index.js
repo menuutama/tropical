@@ -1,3 +1,57 @@
+/* =========================
+   PASSWORD LOGIN
+========================= */
+
+const ADMIN_PASSWORD = "Admin-dinner123";
+
+const loginScreen = document.getElementById("loginScreen");
+const adminSystem = document.getElementById("adminSystem");
+const passwordInput = document.getElementById("passwordInput");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
+
+function showAdmin(){
+  loginScreen.style.display = "none";
+  adminSystem.style.display = "block";
+}
+
+function showLogin(){
+  loginScreen.style.display = "flex";
+  adminSystem.style.display = "none";
+}
+
+function login(){
+  const password = passwordInput.value.trim();
+
+  if(password === ADMIN_PASSWORD){
+    sessionStorage.setItem("adminLogin", "yes");
+    showAdmin();
+  }else{
+    loginError.textContent = "Wrong password.";
+    passwordInput.value = "";
+    passwordInput.focus();
+  }
+}
+
+if(sessionStorage.getItem("adminLogin") === "yes"){
+  showAdmin();
+}else{
+  showLogin();
+}
+
+loginBtn.addEventListener("click", login);
+
+passwordInput.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    login();
+  }
+});
+
+
+/* =========================
+   ADMIN JS
+========================= */
+
 const LOCALHOST_URL = "http://localhost:3000";
 const VERSION_URL = "https://menuutama.github.io/tropical/version.json";
 const LOCALHOST_PROTOCOL = "eventmedia://start";
