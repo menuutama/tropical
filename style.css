@@ -25,7 +25,7 @@ body{
 .topnav{
   height:64px;
   display:grid;
-  grid-template-columns:220px auto;
+  grid-template-columns:220px auto 220px;
   align-items:center;
   padding:10px 18px;
   background:linear-gradient(90deg,rgba(6,20,46,.95),rgba(18,60,122,.95));
@@ -39,6 +39,12 @@ body{
   z-index:9999;
 }
 
+.nav-left{
+  min-width:220px;
+  display:flex;
+  justify-content:flex-start;
+}
+
 .nav-center{
   display:flex;
   align-items:center;
@@ -48,10 +54,6 @@ body{
 
 .nav-right{
   min-width:220px;
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:10px;
 }
 
 .nav-btn{
@@ -93,11 +95,6 @@ body{
   box-shadow:0 0 15px rgba(29,111,255,.25);
 }
 
-.topnav{
-  height:64px;
-  display:grid;
-  grid-template-columns:220px auto;
-  
 /* =========================
    SIDE MENU
 ========================= */
@@ -209,7 +206,6 @@ body{
 
 /* =========================
    PHONE / TABLET
-   PULL DOWN REFRESH ENABLE
 ========================= */
 
 @media(max-width:1200px){
@@ -229,7 +225,7 @@ body{
 
   .topnav{
     height:64px;
-    grid-template-columns:60px 1fr auto;
+    grid-template-columns:60px 1fr 60px;
     padding:10px 12px;
   }
 
@@ -243,6 +239,10 @@ body{
 
   .nav-center{
     display:none;
+  }
+
+  .nav-right{
+    min-width:60px;
   }
 
   .iframe-wrap{
