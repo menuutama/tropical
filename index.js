@@ -137,7 +137,7 @@ function loadPage(url){
     return;
   }
 
-  // Page dalaman seperti winner.html jangan load index.html semula.
+  // Page dalaman sepertihttps://menuutama.github.io/tropical-dinner/index.html jangan load index.html semula.
   mainFrame.src = url;
 }
 
@@ -154,4 +154,4 @@ document.querySelectorAll(".side-btn").forEach(btn => {
 });
 
 // Pastikan active menu betul untuk default iframe.
-setActiveMenu("winner.html");
+setActiveMenu("https://menuutama.github.io/tropical-dinner/index.html");
