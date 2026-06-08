@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Tropical Dinner 2026 - Admin Panel</title>
-
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="menu.css">
 </head>
-
 <body>
 
 <!-- PASSWORD SCREEN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
-    <h1> TROPICAL DINNER 2026 </h1>
+    <h1>TROPICAL DINNER 2026</h1>
     <h2>Admin Panel Login</h2>
 
-    <input
-      type="password"
-      id="passwordInput"
-      placeholder="Enter Password"
-      autocomplete="off"
-    >
+    <input type="password" id="passwordInput" placeholder="Enter Password" autocomplete="off">
 
     <button id="loginBtn">LOGIN</button>
     <p id="loginError"></p>
@@ -33,80 +25,42 @@
 <div id="adminSystem" style="display:none;">
 
   <div class="topnav">
-
     <div class="nav-left">
       <button class="hamburger-btn" id="hamburgerBtn">☰</button>
     </div>
 
     <div class="nav-center">
-
-      <button class="nav-btn active" data-url="https://menuutama.github.io/tropical-dinner/">
-        MENU
-      </button>
-
-      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">
-        REGISTRATION
-      </button>
-
-      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">
-        LUCKY DRAW
-      </button>
-
-      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">
-        COLLECT PRIZE
-      </button>
-
-      <button class="nav-btn" data-url="http://localhost:3000/media.html">
-        MEDIA
-      </button>
-
+      <button class="nav-btn active" data-url="index.html">LUCKY DRAW WINNERS</button>
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
+      <button class="nav-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
+      <button class="nav-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
     </div>
-
   </div>
 
   <!-- SIDE MENU -->
   <div class="side-overlay" id="sideOverlay"></div>
 
   <div class="side-menu" id="sideMenu">
-
     <div class="side-header">
       <span>ADMIN MENU</span>
       <button class="side-close" id="sideClose">×</button>
     </div>
 
-    <button class="side-btn active" data-url="https://menuutama.github.io/tropical-dinner/">
-      MENU
-    </button>
-
-    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">
-      REGISTRATION
-    </button>
-
-    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">
-      LUCKY DRAW
-    </button>
-
-    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">
-      COLLECT PRIZE
-    </button>
-
-    <button class="side-btn" data-url="http://localhost:3000/media.html">
-      MEDIA
-    </button>
-
+    <button class="side-btn active" data-url="index.html">LUCKY DRAW WINNERS</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/attend.html">REGISTRATION</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/input.html">LUCKY DRAW</button>
+    <button class="side-btn" data-url="https://menuutama.github.io/tropical-dinner/collect.html">COLLECT PRIZE</button>
+    <button class="side-btn" data-url="http://localhost:3000/media.html">MEDIA</button>
   </div>
 
   <!-- IFRAME -->
   <div class="iframe-wrap">
-    <iframe
-      id="mainFrame"
-      src="https://menuutama.github.io/tropical-dinner/"
-    ></iframe>
+    <iframe id="mainFrame" src="index.html"></iframe>
   </div>
 
 </div>
 
-<script src="index.js"></script>
-
+<script src="menu.js"></script>
 </body>
 </html>
