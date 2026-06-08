@@ -33,6 +33,7 @@ function login(){
     );
 
     showAdmin();
+    setTimeout(sendAdminAccessToFrame, 250);
 
   }else{
 
@@ -99,6 +100,41 @@ const sideClose =
   document.getElementById(
     "sideClose"
   );
+
+
+
+/* =========================
+   SEND ADMIN ACCESS TO IFRAME
+========================= */
+
+function sendAdminAccessToFrame(){
+
+  if(
+    sessionStorage.getItem("adminLogin") !== "yes" ||
+    !mainFrame ||
+    !mainFrame.contentWindow
+  ) return;
+
+  mainFrame.contentWindow.postMessage(
+    { type:"TROPICAL_ADMIN_LOGIN_OK" },
+    "*"
+  );
+
+}
+
+window.addEventListener("message", function(e){
+
+  if(!e.data || typeof e.data !== "object") return;
+
+  if(e.data.type === "TROPICAL_WINNER_PAGE_READY"){
+    sendAdminAccessToFrame();
+  }
+
+});
+
+mainFrame?.addEventListener("load", function(){
+  sendAdminAccessToFrame();
+});
 
 /* =========================
    SIDE MENU
