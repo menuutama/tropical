@@ -1,8 +1,8 @@
 /* =========================
    PASSWORD LOGIN
-========================= */ 
+========================= */
 
-const ADMIN_PASSWORD = "Admindinner123";
+const ADMIN_PASSWORD = "Admin-dinner123";
 
 const loginScreen = document.getElementById("loginScreen");
 const adminSystem = document.getElementById("adminSystem");
