@@ -11,6 +11,13 @@ const loginBtn = document.getElementById("loginBtn");
 const loginError = document.getElementById("loginError");
 const mainFrame = document.getElementById("mainFrame");
 
+/*
+  PUNCA MASALAH LOGIN 3 KALI:
+  iframe sebelum ni load index.html. Bila index.html tu ialah admin panel,
+  dia masuk admin panel dalam admin panel, jadi nav/login jadi berlapis.
+  Fix: iframe default sekarang load winner.html, bukan index.html.
+*/
+
 function showAdmin(){
   loginScreen.style.display = "none";
   adminSystem.style.display = "block";
@@ -27,6 +34,7 @@ function login(){
 
   if(password === ADMIN_PASSWORD){
     sessionStorage.setItem("adminLogin", "yes");
+    loginError.textContent = "";
     showAdmin();
   }else{
     loginError.textContent = "Wrong password.";
@@ -41,9 +49,9 @@ if(sessionStorage.getItem("adminLogin") === "yes"){
   showLogin();
 }
 
-loginBtn.addEventListener("click", login);
+loginBtn?.addEventListener("click", login);
 
-passwordInput.addEventListener("keydown", function(e){
+passwordInput?.addEventListener("keydown", function(e){
   if(e.key === "Enter"){
     login();
   }
@@ -69,8 +77,8 @@ function sendAdminStatusToIframe(){
 }
 
 mainFrame?.addEventListener("load", function(){
-  setTimeout(sendAdminStatusToIframe, 300);
-  setTimeout(sendAdminStatusToIframe, 1000);
+  setTimeout(sendAdminStatusToIframe, 200);
+  setTimeout(sendAdminStatusToIframe, 800);
 });
 
 window.addEventListener("message", function(event){
@@ -91,13 +99,13 @@ const sideOverlay = document.getElementById("sideOverlay");
 const sideClose = document.getElementById("sideClose");
 
 function openSideMenu(){
-  sideMenu.classList.add("show");
-  sideOverlay.classList.add("show");
+  sideMenu?.classList.add("show");
+  sideOverlay?.classList.add("show");
 }
 
 function closeSideMenu(){
-  sideMenu.classList.remove("show");
-  sideOverlay.classList.remove("show");
+  sideMenu?.classList.remove("show");
+  sideOverlay?.classList.remove("show");
 }
 
 hamburgerBtn?.addEventListener("click", openSideMenu);
@@ -114,15 +122,23 @@ function setActiveMenu(url){
   });
 }
 
+function cacheBustUrl(url){
+  const joiner = url.includes("?") ? "&" : "?";
+  return `${url}${joiner}time=${Date.now()}`;
+}
+
 function loadPage(url){
   closeSideMenu();
   setActiveMenu(url);
 
+  // Localhost media perlu fresh reload.
   if(url.startsWith("http://localhost:3000")){
-    mainFrame.src = `${url}?time=${Date.now()}`;
-  }else{
-    mainFrame.src = url;
+    mainFrame.src = cacheBustUrl(url);
+    return;
   }
+
+  // Page dalaman seperti winner.html jangan load index.html semula.
+  mainFrame.src = url;
 }
 
 document.querySelectorAll(".nav-btn").forEach(btn => {
@@ -136,3 +152,6 @@ document.querySelectorAll(".side-btn").forEach(btn => {
     loadPage(this.dataset.url);
   });
 });
+
+// Pastikan active menu betul untuk default iframe.
+setActiveMenu("winner.html");
