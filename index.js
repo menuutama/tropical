@@ -1,7 +1,7 @@
 /* =========================
    PASSWORD LOGIN
 ========================= */ 
-
+ 
 const ADMIN_PASSWORD = "Admin-dinner123";
 
 const loginScreen = document.getElementById("loginScreen");
